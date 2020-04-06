@@ -7,6 +7,7 @@ namespace Tompany.Data.Models
     using Tompany.Data.Common.Models;
 
     using Microsoft.AspNetCore.Identity;
+    using Tompany.Data.Models.Enums;
 
     public class ApplicationUser : IdentityUser, IAuditInfo, IDeletableEntity
     {
@@ -17,6 +18,8 @@ namespace Tompany.Data.Models
             this.Claims = new HashSet<IdentityUserClaim<string>>();
             this.Logins = new HashSet<IdentityUserLogin<string>>();
         }
+
+        public Gender Gender { get; set; }
 
         // Audit info
         public DateTime CreatedOn { get; set; }
@@ -33,5 +36,6 @@ namespace Tompany.Data.Models
         public virtual ICollection<IdentityUserClaim<string>> Claims { get; set; }
 
         public virtual ICollection<IdentityUserLogin<string>> Logins { get; set; }
+
     }
 }

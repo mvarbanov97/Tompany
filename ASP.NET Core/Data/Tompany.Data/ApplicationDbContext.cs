@@ -24,6 +24,14 @@
         {
         }
 
+        public DbSet<Car> Cars { get; set; }
+
+        public DbSet<Travel> Travels { get; set; }
+
+        public DbSet<Review> Reviews { get; set; }
+
+        public DbSet<UserReview> UserReviews { get; set; }
+
         public DbSet<Setting> Settings { get; set; }
 
         public override int SaveChanges() => this.SaveChanges(true);
