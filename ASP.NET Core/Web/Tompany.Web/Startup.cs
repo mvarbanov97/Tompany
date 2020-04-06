@@ -52,8 +52,9 @@
                     {
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                     });
-            services.AddRazorPages();
 
+            services.AddRazorPages();
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddSingleton(this.configuration);
 
             // Data repositories
