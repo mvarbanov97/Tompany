@@ -1,0 +1,56 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Tompany.Data.Common.Repositories;
+using Tompany.Data.Models;
+using Tompany.Services.Data.Contracts;
+using Tompany.Services.Mapping;
+using Tompany.Web.ViewModels.Cars;
+
+namespace Tompany.Services.Data
+{
+    public class CarsService : ICarsService
+    {
+        private readonly IRepository<Car> carsRepository;
+
+        public CarsService(
+            IRepository<Car> carsRepository)
+        {
+            this.carsRepository = carsRepository;
+        }
+
+        public IEnumerable<T> GetAll<T>(int? count = null)
+        {
+            IQueryable<Car> query = this.carsRepository.All().OrderBy(x => x.Brand);
+
+            if (count.HasValue)
+            {
+                query = query.Take(count.Value);
+            }
+
+            return query.To<T>().ToList();
+        }
+
+        public async Task CreateAsync(CarCreateInputModel carInputModel)
+        {
+            var car = new Car
+            {
+                ImageUrl = carInputModel.ImageUrl,
+                Brand = carInputModel.Brand,
+                Model = carInputModel.Model,
+                YearOfManufacture = carInputModel.YearOfManufacture,
+                Color = carInputModel.Color,
+                Seats = carInputModel.Seats,
+                IsLuggageAvaliable = carInputModel.IsLuggageAvaliable,
+                IsSmokingAllowed = carInputModel.IsSmokingAllowed,
+                IsAirConditiningAvailable = carInputModel.IsAirConditiningAvailable,
+                IsAllowedForPets = carInputModel.IsAllowedForPets,
+            };
+
+            await this.carsRepository.AddAsync(car);
+            await this.carsRepository.SaveChangesAsync();
+        }
+    }
+}

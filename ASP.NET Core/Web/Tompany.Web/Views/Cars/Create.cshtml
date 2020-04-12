@@ -1,0 +1,56 @@
+﻿@model Tompany.Web.ViewModels.Cars.CarCreateInputModel
+@{
+    this.ViewData["Title"] = "Create Trip";
+}
+<div class="row justify-content-center">
+    <form enctype="multipart/form-data" asp-area="" asp-controller="Cars" asp-action="Create" method="post" class="text-center col-md-6">
+        <h4>Add a Vehicle</h4>
+        <hr />
+        <div class="form-group">
+            <label asp-for="Brand"></label>
+            <input asp-for="Brand" class="form-control col-md-12" />
+            <span asp-validation-for="Brand" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Model"></label>
+            <input asp-for="Model" class="form-control col-md-12" />
+            <span asp-validation-for="Model" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="YearOfManufacture"></label>
+            <input asp-for="YearOfManufacture" class="form-control col-md-12" />
+            <span asp-validation-for="YearOfManufacture" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Color"></label>
+            <input asp-for="Color" class="form-control col-md-12" />
+            <span asp-validation-for="Color" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Seats"></label>
+            <input asp-for="Seats" class="form-control col-md-12" />
+            <span asp-validation-for="Seats" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="IsSmokingAllowed"></label>
+            <input asp-for="IsSmokingAllowed" class="form-control col-md-12" />
+            <span asp-validation-for="IsSmokingAllowed" class="text-danger"></span>
+        
+            <label asp-for="IsLuggageAvaliable"></label>
+            <input asp-for="IsLuggageAvaliable" class="form-control col-md-12" />
+            <span asp-validation-for="IsLuggageAvaliable" class="text-danger"></span>
+        
+            <label asp-for="IsAirConditiningAvailable"></label>
+            <input asp-for="IsAirConditiningAvailable" class="form-control col-md-12" />
+            <span asp-validation-for="IsAirConditiningAvailable" class="text-danger"></span>
+        
+            <label asp-for="IsAllowedForPets"></label>
+            <input asp-for="IsAllowedForPets" class="form-control col-md-12" />
+            <span asp-validation-for="IsAllowedForPets" class="text-danger"></span>
+        </div>
+
+
+        <button type="submit" class="btn btn-outline-success">Add vehicle</button>
+    </form>
+</div>

@@ -10,8 +10,8 @@ using Tompany.Data;
 namespace Tompany.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200406134023_AddModels")]
-    partial class AddModels
+    [Migration("20200412204848_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -226,9 +226,6 @@ namespace Tompany.Data.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TravelId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -248,8 +245,6 @@ namespace Tompany.Data.Migrations
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("TravelId");
-
                     b.ToTable("AspNetUsers");
                 });
 
@@ -259,6 +254,9 @@ namespace Tompany.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Brand")
                         .HasColumnType("nvarchar(max)");
@@ -299,10 +297,15 @@ namespace Tompany.Data.Migrations
                     b.Property<int>("Seats")
                         .HasColumnType("int");
 
+                    b.Property<string>("TripId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("YearOfManufacture")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("IsDeleted");
 
@@ -378,7 +381,7 @@ namespace Tompany.Data.Migrations
                     b.ToTable("Settings");
                 });
 
-            modelBuilder.Entity("Tompany.Data.Models.Travel", b =>
+            modelBuilder.Entity("Tompany.Data.Models.Trip", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -413,13 +416,19 @@ namespace Tompany.Data.Migrations
                     b.Property<string>("ToCity")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CarId");
 
                     b.HasIndex("IsDeleted");
 
-                    b.ToTable("Travels");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Trips");
                 });
 
             modelBuilder.Entity("Tompany.Data.Models.UserReview", b =>
@@ -512,11 +521,11 @@ namespace Tompany.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Tompany.Data.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Tompany.Data.Models.Car", b =>
                 {
-                    b.HasOne("Tompany.Data.Models.Travel", null)
-                        .WithMany("Passengers")
-                        .HasForeignKey("TravelId");
+                    b.HasOne("Tompany.Data.Models.ApplicationUser", null)
+                        .WithMany("Cars")
+                        .HasForeignKey("ApplicationUserId");
                 });
 
             modelBuilder.Entity("Tompany.Data.Models.Review", b =>
@@ -526,11 +535,17 @@ namespace Tompany.Data.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("Tompany.Data.Models.Travel", b =>
+            modelBuilder.Entity("Tompany.Data.Models.Trip", b =>
                 {
                     b.HasOne("Tompany.Data.Models.Car", "Car")
-                        .WithMany()
+                        .WithMany("Trips")
                         .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tompany.Data.Models.ApplicationUser", "User")
+                        .WithMany("Trips")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

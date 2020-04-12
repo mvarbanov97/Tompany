@@ -4,8 +4,8 @@
 
     using Tompany.Web.ViewModels.Travels;
 
-    public interface ITravelsService
+    public interface ITripsService
     {
-        Task CreateAsync(TravelCreateInputModel travelCreateInputModel);
+        Task CreateAsync(TravelCreateInputModel travelCreateInputModel, string userId);
     }
 }

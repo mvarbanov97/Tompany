@@ -1,18 +1,19 @@
-﻿@model Tompany.Web.ViewModels.Travels.TravelCreateInputModel
+﻿@model Tompany.Web.ViewModels.Travels.TravelCreateInputModel;
 @{
     this.ViewData["Title"] = "Create Trip";
+    var cars = Model.Cars.Select(x => new SelectListItem(x.CarBrandName, x.Id.ToString()));
 }
 <div class="row justify-content-center">
     <form enctype="multipart/form-data" asp-area="" asp-controller="Trips" asp-action="Create" method="post" class="text-center col-md-6">
         <h4>Create new trip</h4>
         <hr />
         <div class="form-group">
-            <label asp-for="FromCity"></label>
+            <label asp-for="FromCity">Going from</label>
             <input asp-for="FromCity" class="form-control col-md-12" />
             <span asp-validation-for="FromCity" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="ToCity"></label>
+            <label asp-for="ToCity">Going to</label>
             <input asp-for="ToCity" class="form-control col-md-12" />
             <span asp-validation-for="ToCity" class="text-danger"></span>
         </div>
@@ -31,6 +32,13 @@
             <input asp-for="AdditionalInformation" class="form-control col-md-12" />
             <span asp-validation-for="AdditionalInformation" class="text-danger"></span>
         </div>
-        <button type="submit" class="btn btn-outline-success">Create activity</button>
+        <div class="form-group">
+            <label asp-for="CarId"></label>
+            <select asp-for="CarId" asp-items="cars" class="form-control col-md-12">
+                <option selected="" disabled="">--Select car--</option>
+            </select>
+            <span asp-validation-for="CarId" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-outline-success">Create travel post</button>
     </form>
 </div>

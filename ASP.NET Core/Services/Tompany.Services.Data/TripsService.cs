@@ -9,25 +9,27 @@ using Tompany.Web.ViewModels.Travels;
 
 namespace Tompany.Services.Data
 {
-    public class TravelsService : ITravelsService
+    public class TripsService : ITripsService
     {
-        private readonly IRepository<Travel> travelsRepository;
+        private readonly IRepository<Trip> travelsRepository;
 
-        public TravelsService(
-            IRepository<Travel> travelsRepository)
+        public TripsService(
+            IRepository<Trip> travelsRepository)
         {
             this.travelsRepository = travelsRepository;
         }
 
-        public async Task CreateAsync(TravelCreateInputModel input)
+        public async Task CreateAsync(TravelCreateInputModel input, string userId)
         {
-            var travel = new Travel
+            var travel = new Trip
             {
+                UserId = userId,
+                CarId = input.CarId,
                 FromCity = input.FromCity,
                 ToCity = input.ToCity,
                 DateOfDeparture = input.DateOfDeparture,
                 TimeOfDeparture = input.TimeOfDeparture,
-                AdditionalInformation = input.AdditionalInformation
+                AdditionalInformation = input.AdditionalInformation,
             };
 
             await this.travelsRepository.AddAsync(travel);

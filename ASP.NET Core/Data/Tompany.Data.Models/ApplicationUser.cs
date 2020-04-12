@@ -8,6 +8,7 @@ namespace Tompany.Data.Models
 
     using Microsoft.AspNetCore.Identity;
     using Tompany.Data.Models.Enums;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class ApplicationUser : IdentityUser, IAuditInfo, IDeletableEntity
     {
@@ -17,6 +18,8 @@ namespace Tompany.Data.Models
             this.Roles = new HashSet<IdentityUserRole<string>>();
             this.Claims = new HashSet<IdentityUserClaim<string>>();
             this.Logins = new HashSet<IdentityUserLogin<string>>();
+            this.Trips = new HashSet<Trip>();
+            this.Cars = new HashSet<Car>();
         }
 
         public Gender Gender { get; set; }
@@ -37,5 +40,8 @@ namespace Tompany.Data.Models
 
         public virtual ICollection<IdentityUserLogin<string>> Logins { get; set; }
 
+        public virtual ICollection<Trip> Trips { get; set; }
+
+        public virtual ICollection<Car> Cars { get; set; }
     }
 }

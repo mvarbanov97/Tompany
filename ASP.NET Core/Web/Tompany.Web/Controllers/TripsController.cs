@@ -6,21 +6,25 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tompany.Data.Models;
 using Tompany.Services.Data.Contracts;
+using Tompany.Web.ViewModels.Cars;
 using Tompany.Web.ViewModels.Travels;
 
 namespace Tompany.Web.Controllers
 {
     public class TripsController : BaseController
     {
-        private readonly ITravelsService travelsService;
+        private readonly ITripsService travelsService;
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly ICarsService carsService;
 
         public TripsController(
-            ITravelsService travelsService,
-            UserManager<ApplicationUser> userManager)
+            ITripsService travelsService,
+            UserManager<ApplicationUser> userManager,
+            ICarsService carsService)
         {
             this.travelsService = travelsService;
             this.userManager = userManager;
+            this.carsService = carsService;
         }
 
         public IActionResult Index()
@@ -30,14 +34,21 @@ namespace Tompany.Web.Controllers
 
         public IActionResult Create()
         {
-            return this.View();
+            var cars = this.carsService.GetAll<CarDropDownViewModel>();
+
+            var viewModel = new TravelCreateInputModel
+            {
+                Cars = cars,
+            };
+
+            return this.View(viewModel);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(TravelCreateInputModel input)
         {
             var userId = this.userManager.GetUserId(this.User);
-            await this.travelsService.CreateAsync(input);
+            await this.travelsService.CreateAsync(input, userId);
             return this.RedirectToAction("Index", "Home");
         }
     }

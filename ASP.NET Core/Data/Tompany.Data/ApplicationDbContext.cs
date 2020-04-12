@@ -26,7 +26,7 @@
 
         public DbSet<Car> Cars { get; set; }
 
-        public DbSet<Travel> Travels { get; set; }
+        public DbSet<Trip> Trips { get; set; }
 
         public DbSet<Review> Reviews { get; set; }
 

@@ -2,14 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using Tompany.Data.Common.Models;
 
-    public class Travel : BaseModel<string>, IDeletableEntity
+    public class Trip : BaseModel<string>, IDeletableEntity
     {
-        public Travel()
+        public Trip()
         {
             this.Id = Guid.NewGuid().ToString();
-            this.Passengers = new HashSet<ApplicationUser>();
         }
 
         public string FromCity { get; set; }
@@ -22,11 +22,14 @@
 
         public string AdditionalInformation { get; set; }
 
-        public ICollection<ApplicationUser> Passengers { get; set; }
-
         public int CarId { get; set; }
 
         public Car Car { get; set; }
+
+        [Required]
+        public string UserId { get; set; }
+
+        public virtual ApplicationUser User { get; set; }
 
         public bool IsDeleted { get; set; }
 

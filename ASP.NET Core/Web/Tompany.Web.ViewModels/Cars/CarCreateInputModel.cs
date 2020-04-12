@@ -1,15 +1,12 @@
-﻿namespace Tompany.Data.Models
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+
+namespace Tompany.Web.ViewModels.Cars
 {
-    using System;
-    using System.Collections.Generic;
-    using Tompany.Data.Common.Models;
-
-    public class Car : BaseModel<int>, IDeletableEntity
+    public class CarCreateInputModel
     {
-        public Car()
-        {
-        }
-
         public string ImageUrl { get; set; }
 
         public string Brand { get; set; }
@@ -29,13 +26,5 @@
         public bool IsAirConditiningAvailable { get; set; }
 
         public bool IsAllowedForPets { get; set; }
-
-        public bool IsDeleted { get; set; }
-
-        public DateTime? DeletedOn { get; set; }
-
-        public string TripId { get; set; }
-
-        public virtual ICollection<Trip> Trips { get; set; }
     }
 }
