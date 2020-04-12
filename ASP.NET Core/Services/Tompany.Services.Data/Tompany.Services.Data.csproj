@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Data\Tompany.Data.Common\Tompany.Data.Common.csproj" />
     <ProjectReference Include="..\..\Data\Tompany.Data.Models\Tompany.Data.Models.csproj" />
+    <ProjectReference Include="..\..\Web\Tompany.Web.ViewModels\Tompany.Web.ViewModels.csproj" />
     <ProjectReference Include="..\Tompany.Services.Mapping\Tompany.Services.Mapping.csproj" />
   </ItemGroup>
 

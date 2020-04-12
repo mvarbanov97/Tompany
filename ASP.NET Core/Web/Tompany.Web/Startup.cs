@@ -21,6 +21,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Tompany.Services.Data.Contracts;
 
     public class Startup
     {
@@ -64,6 +65,7 @@
 
             // Application services
             services.AddTransient<IEmailSender>(provider => new SendGridEmailSender(this.configuration["SendGridApiKey"]));
+            services.AddTransient<ITravelsService, TravelsService>();
             services.AddTransient<ISettingsService, SettingsService>();
         }
 
