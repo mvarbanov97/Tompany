@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tompany.Data.Common.Repositories;
 using Tompany.Data.Models;
 using Tompany.Services.Data.Contracts;
-using Tompany.Web.ViewModels.Travels;
+using Tompany.Services.Mapping;
+using Tompany.Web.ViewModels.Trips;
 
 namespace Tompany.Services.Data
 {
     public class TripsService : ITripsService
     {
-        private readonly IRepository<Trip> travelsRepository;
+        private readonly IRepository<Trip> tripsRepository;
 
         public TripsService(
-            IRepository<Trip> travelsRepository)
+            IRepository<Trip> tripsRepository)
         {
-            this.travelsRepository = travelsRepository;
+            this.tripsRepository = tripsRepository;
         }
 
-        public async Task CreateAsync(TravelCreateInputModel input, string userId)
+        public async Task CreateAsync(TripCreateInputModel input, string userId)
         {
             var travel = new Trip
             {
@@ -32,8 +34,28 @@ namespace Tompany.Services.Data
                 AdditionalInformation = input.AdditionalInformation,
             };
 
-            await this.travelsRepository.AddAsync(travel);
-            await this.travelsRepository.SaveChangesAsync();
+            await this.tripsRepository.AddAsync(travel);
+            await this.tripsRepository.SaveChangesAsync();
+        }
+
+        public T GetById<T>(string id)
+        {
+            var trip = this.tripsRepository.All().Where(x => x.Id == id)
+                .To<T>().FirstOrDefault();
+
+            return trip;
+        }
+
+        public IEnumerable<T> GetAll<T>(int? count = null)
+        {
+            IQueryable<Trip> query = this.tripsRepository.All();
+
+            if (count.HasValue)
+            {
+                query = query.Take(count.Value);
+            }
+
+            return query.To<T>().ToList();
         }
     }
 }

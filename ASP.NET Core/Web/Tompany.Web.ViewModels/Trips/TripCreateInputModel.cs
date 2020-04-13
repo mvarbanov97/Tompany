@@ -5,9 +5,9 @@ using System.Text;
 using Tompany.Data.Models;
 using Tompany.Web.ViewModels.Cars;
 
-namespace Tompany.Web.ViewModels.Travels
+namespace Tompany.Web.ViewModels.Trips
 {
-    public class TravelCreateInputModel
+    public class TripCreateInputModel
     {
         public string FromCity { get; set; }
 

@@ -41,6 +41,10 @@
             services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
                 .AddRoles<ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddAuthentication()
+                .AddCookie()
+                .AddJwtBearer();
+
             services.Configure<CookiePolicyOptions>(
                 options =>
                     {

@@ -23,4 +23,10 @@
     <ProjectReference Include="..\..\Services\Tompany.Services.Mapping\Tompany.Services.Mapping.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Trips\TripCreateInputModel.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
 </Project>
