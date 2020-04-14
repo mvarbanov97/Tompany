@@ -32,7 +32,7 @@ namespace Tompany.Web.Controllers
         public IActionResult Index(int page = 1)
         {
             var count = this.tripsService.GetTripsCount();
-            var viewModel = new TripViewModel()
+            var viewModel = new TripListViewModel()
             {
                 Trips = this.tripsService.GetTripPosts<TripDetailsViewModel>(ItemsPerPage,(page - 1) * ItemsPerPage),
                 PagesCount = (int)Math.Ceiling((double)count / ItemsPerPage),
@@ -41,6 +41,8 @@ namespace Tompany.Web.Controllers
 
             return this.View(viewModel);
         }
+
+        
 
         public IActionResult Create()
         {
@@ -60,6 +62,19 @@ namespace Tompany.Web.Controllers
             var userId = this.userManager.GetUserId(this.User);
             await this.tripsService.CreateAsync(input, userId);
             return this.RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult Details(string id)
+        {
+            var tripViewModel = this.tripsService.GetById<TripDetailsViewModel>(id);
+
+            if (tripViewModel == null)
+            {
+                return this.NotFound();
+            }
+
+            return this.View(tripViewModel);
         }
     }
 }

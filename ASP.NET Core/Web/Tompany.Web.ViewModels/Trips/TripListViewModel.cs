@@ -6,7 +6,7 @@ using Tompany.Services.Mapping;
 
 namespace Tompany.Web.ViewModels.Trips
 {
-    public class TripViewModel : IMapFrom<Trip>
+    public class TripListViewModel : IMapFrom<Trip>
     {
         public int PagesCount { get; set; }
 

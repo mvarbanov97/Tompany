@@ -115,12 +115,9 @@
             app.UseEndpoints(
                 endpoints =>
                     {
+                        endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id:guid}");
                         endpoints.MapControllerRoute("areaRoute", "{area:exists}/{controller=Home}/{action=Index}/{id?}");
                         endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-                        //endpoints.MapControllerRoute(
-                        //    "tripsRoute",
-                        //    "{controller=Home}/{action=Index}/{page}",
-                        //    new { controller = "Categories", action = "Index", page = 1 });
                         endpoints.MapRazorPages();
                     });
         }

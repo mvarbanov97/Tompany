@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
 
@@ -27,6 +27,7 @@
                           {
                               new RolesSeeder(),
                               new SettingsSeeder(),
+                              new CitiesSeeder(),
                           };
 
             foreach (var seeder in seeders)
@@ -36,5 +37,6 @@
                 logger.LogInformation($"Seeder {seeder.GetType().Name} done.");
             }
         }
+
     }
 }

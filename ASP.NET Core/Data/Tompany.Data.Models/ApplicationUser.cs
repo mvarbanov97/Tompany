@@ -18,6 +18,7 @@ namespace Tompany.Data.Models
             this.Roles = new HashSet<IdentityUserRole<string>>();
             this.Claims = new HashSet<IdentityUserClaim<string>>();
             this.Logins = new HashSet<IdentityUserLogin<string>>();
+
             this.Trips = new HashSet<Trip>();
             this.Cars = new HashSet<Car>();
         }

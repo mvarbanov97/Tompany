@@ -1,12 +1,30 @@
-﻿@model Tompany.Web.ViewModels.Trips.TripViewModel;
+﻿@model Tompany.Web.ViewModels.Trips.TripListViewModel;
 @{
     this.ViewData["Title"] = "All trips";
 }
 
+    @*<div id="searchContainer" class="jumbotron text-center" style="padding-top: 30px; padding-bottom: 30px;">
+        <fieldset>
+            <h3>Wonder what to do?</h3>
+            <hr />
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <h6><label ></label></h6>
+                    <select  class="form-control col-md-12">
+                        <option selected="" disabled="">Where to</option>
+                    </select>
+                    <span class="text-danger"></span>
+                </div>
+            </div>
+            <button onclick="getSearchResult()" type="submit" id="search" class="btn btn-lg btn-outline-primary"><i class="fas fa-search"></i>&nbsp;Search</button>
+        </fieldset>
+    </div>*@
+
 @foreach (var item in Model.Trips)
 {
+
     <div class="card mb-3">
-        <div class="card-header bg-white">
+        <div class="card-header bg-light">
             <i class="fas fa-user-edit"></i>@item.UserUserName
             <div class="row mt-2">
                 <div class="col-auto">
@@ -68,8 +86,15 @@
                 </div>
             </div>
         </div>
+        <a class="stretched-link" asp-area="" asp-controller="Trips" asp-action="Details" asp-route-id="@item.Id"></a>
     </div>
+
 }
+
+<span class="custom-combobox">
+
+</span>
+
 
 <nav>
     <ul class="pagination justify-content-center">

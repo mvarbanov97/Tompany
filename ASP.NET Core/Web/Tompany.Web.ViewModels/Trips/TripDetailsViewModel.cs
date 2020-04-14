@@ -8,6 +8,8 @@ namespace Tompany.Web.ViewModels.Trips
 {
     public class TripDetailsViewModel : IMapFrom<Trip>
     {
+        public string Id { get; set; }
+
         public string UserUserName { get; set; }
 
         public int CarId { get; set; }
