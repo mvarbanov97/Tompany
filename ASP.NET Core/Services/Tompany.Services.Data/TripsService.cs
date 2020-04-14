@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,11 +15,14 @@ namespace Tompany.Services.Data
     public class TripsService : ITripsService
     {
         private readonly IRepository<Trip> tripsRepository;
+        private readonly ILogger<TripsService> logger;
 
         public TripsService(
-            IRepository<Trip> tripsRepository)
+            IRepository<Trip> tripsRepository,
+            ILogger<TripsService> logger)
         {
             this.tripsRepository = tripsRepository;
+            this.logger = logger;
         }
 
         public async Task CreateAsync(TripCreateInputModel input, string userId)
@@ -56,6 +60,26 @@ namespace Tompany.Services.Data
             }
 
             return query.To<T>().ToList();
+        }
+
+        public IEnumerable<T> GetTripPosts<T>(int? take = null, int skip = 0)
+        {
+            var query = this.tripsRepository
+                .All()
+                .OrderByDescending(x => x.CreatedOn)
+                .Skip(skip);
+
+            if (take.HasValue)
+            {
+                query = query.Take(take.Value);
+            }
+
+            return query.To<T>().ToList();
+        }
+
+        public int GetTripsCount()
+        {
+            return this.tripsRepository.All().Count();
         }
     }
 }

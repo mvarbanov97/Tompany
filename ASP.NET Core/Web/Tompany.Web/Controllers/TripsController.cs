@@ -13,6 +13,8 @@ namespace Tompany.Web.Controllers
 {
     public class TripsController : BaseController
     {
+        private const int ItemsPerPage = 5;
+
         private readonly ITripsService tripsService;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly ICarsService carsService;
@@ -27,11 +29,14 @@ namespace Tompany.Web.Controllers
             this.carsService = carsService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page = 1)
         {
+            var count = this.tripsService.GetTripsCount();
             var viewModel = new TripViewModel()
             {
-                Trips = this.tripsService.GetAll<TripDetailsViewModel>(),
+                Trips = this.tripsService.GetTripPosts<TripDetailsViewModel>(ItemsPerPage,(page - 1) * ItemsPerPage),
+                PagesCount = (int)Math.Ceiling((double)count / ItemsPerPage),
+                CurrentPage = page,
             };
 
             return this.View(viewModel);

@@ -11,6 +11,10 @@
 
         T GetById<T>(string id);
 
+        int GetTripsCount();
+
         IEnumerable<T> GetAll<T>(int? count = null);
+
+        IEnumerable<T> GetTripPosts<T>(int? take = null, int skip = 0);
     }
 }
