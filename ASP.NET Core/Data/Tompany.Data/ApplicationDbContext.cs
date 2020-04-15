@@ -60,7 +60,7 @@
 
             this.ConfigureUserIdentityRelations(builder);
 
-            EntityIndexesConfiguration.Configure(builder);
+            builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
             var entityTypes = builder.Model.GetEntityTypes().ToList();
 

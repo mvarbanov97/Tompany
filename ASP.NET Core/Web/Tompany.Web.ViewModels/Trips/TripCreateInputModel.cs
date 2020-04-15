@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Tompany.Data.Models;
+using Tompany.Services.Mapping;
 using Tompany.Web.ViewModels.Cars;
 
 namespace Tompany.Web.ViewModels.Trips
 {
-    public class TripCreateInputModel
+    public class TripCreateInputModel : IMapFrom<Trip>
     {
         public string FromCity { get; set; }
 

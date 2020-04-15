@@ -21,9 +21,16 @@ namespace Tompany.Services.Data
             this.carsRepository = carsRepository;
         }
 
+        public IEnumerable<T> GetCarByUserId<T>(string userId)
+        {
+            IQueryable<Car> query = this.carsRepository.All().Where(x => x.UserId == userId);
+
+            return query.To<T>().ToList();
+        }
+
         public IEnumerable<T> GetAll<T>(int? count = null)
         {
-            IQueryable<Car> query = this.carsRepository.All().OrderBy(x => x.Brand);
+            IQueryable<Car> query = this.carsRepository.All();
 
             if (count.HasValue)
             {
@@ -33,10 +40,11 @@ namespace Tompany.Services.Data
             return query.To<T>().ToList();
         }
 
-        public async Task CreateAsync(CarCreateInputModel carInputModel)
+        public async Task CreateAsync(string userId, CarCreateInputModel carInputModel)
         {
             var car = new Car
             {
+                UserId = userId,
                 ImageUrl = carInputModel.ImageUrl,
                 Brand = carInputModel.Brand,
                 Model = carInputModel.Model,

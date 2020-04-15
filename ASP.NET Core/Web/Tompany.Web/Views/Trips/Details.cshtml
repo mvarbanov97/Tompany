@@ -1,1 +1,63 @@
-﻿<h1>trip full information with driver and car etc.</h1>
+﻿@model Tompany.Web.ViewModels.Trips.TripDetailsViewModel;
+    <div class='container trip-info' border="">
+        <h2>Full information regarding the trip</h2>
+        <div class='row'>
+            <div class="col-md-4">
+                <div class="col-md-12">
+                    <p class="data"><i class="far fa-eye"></i> Add to Watch list</p>
+                </div>
+                <h5><p> <time datetime="@Model.DateOfDeparture"</p>@Model.DateOfDeparture.ToLocalTime()</h5>
+                <div class="price">
+                    <div class="row mt-2">
+                        <div class="col-auto">
+                            <span class="h5">
+                                <i class="fa fa-map-marker-alt" aria-hidden="false"></i>
+                                <span class="text-muted align-top">От</span>
+                                <span class="align-top">@Model.FromCity</span>
+                            </span>
+                        </div>
+                        <div class="col-auto d-none d-md-block">
+                            <i class="fas fa-arrow-circle-right"></i>
+                        </div>
+                        <div class="col-auto">
+                            <span class="h5">
+                                <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
+                                <span class="text-muted align-top">До</span>
+                                <span class="align-top">@Model.ToCity</span>
+                            </span>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="product-info">
+                        <div class='row'>
+                            <div class="col-md-6">
+                                <p class="title">manufacturer:</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="data"> Brand Name</p>
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class="col-md-6">
+                                <p class="title">Materials:</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="data"> Brand Name</p>
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class="col-md-6">
+                                <p class="title">Availability:</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="data"><i class="far fa-user-circle"></i>@Model.CarSeats</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @*TODO: ADD container for the user who posted the trip
+            ADD container for the car information - smoking/pets etc..
+            ADD Container for each passenger
+            *@

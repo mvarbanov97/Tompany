@@ -3,8 +3,6 @@
     using System;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.DependencyInjection;
-    using Tompany.Data.Seeding;
 
     public static class Program
     {

@@ -8,7 +8,10 @@ namespace Tompany.Services.Data.Contracts
 {
     public interface ICarsService
     {
-        Task CreateAsync(CarCreateInputModel carInputModel);
+        Task CreateAsync(string userId, CarCreateInputModel carInputModel);
+
+        IEnumerable<T> GetCarByUserId<T>(string userId);
+
         IEnumerable<T> GetAll<T>(int? count = null);
     }
 }

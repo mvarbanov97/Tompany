@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -44,7 +45,9 @@ namespace Tompany.Web.Controllers
 
         public IActionResult Create()
         {
-            var cars = this.carsService.GetAll<CarDropDownViewModel>();
+            var userId = this.userManager.GetUserId(this.User);
+
+            var cars = this.carsService.GetCarByUserId<CarDropDownViewModel>(userId);
 
             var viewModel = new TripCreateInputModel
             {
@@ -55,14 +58,16 @@ namespace Tompany.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create(TripCreateInputModel input)
         {
             var userId = this.userManager.GetUserId(this.User);
             await this.tripsService.CreateAsync(input, userId);
-            return this.RedirectToAction("Index", "Home");
+            return this.RedirectToAction("Trips", "Index");
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Details(string id)
         {
             var tripViewModel = this.tripsService.GetById<TripDetailsViewModel>(id);
@@ -75,10 +80,17 @@ namespace Tompany.Web.Controllers
             return this.View(tripViewModel);
         }
 
+        [HttpPost]
         public async Task<IActionResult> Edit(TripEditViewModel tripToEditViewModel)
         {
             await this.tripsService.EditAsync(tripToEditViewModel);
-            return this.RedirectToAction("Details", "Trips", new { area = "", id = tripToEditViewModel.Id });
+            return this.RedirectToAction("Details", "Trips", new { area = "", id = tripToEditViewModel.Id});
+        }
+
+        public async Task<IActionResult> Edit(string id)
+        {
+            var tripToEdit = this.tripsService.GetById<TripEditViewModel>(id);
+            return this.View(tripToEdit);
         }
     }
 }
