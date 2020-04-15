@@ -81,5 +81,39 @@ namespace Tompany.Services.Data
         {
             return this.tripsRepository.All().Count();
         }
+
+        public async Task DeleteById(string id)
+        {
+            var tripToDelete = this.tripsRepository.All().FirstOrDefault(t => t.Id == id);
+
+            if (tripToDelete == null)
+            {
+                throw new NullReferenceException($"Activity with id {id} not found.");
+            }
+
+            tripToDelete.IsDeleted = true;
+            tripToDelete.DeletedOn = DateTime.Now;
+            this.tripsRepository.Update(tripToDelete);
+            await this.tripsRepository.SaveChangesAsync();
+        }
+
+        public async Task EditAsync(TripEditViewModel tripToEdit)
+        {
+            var trip = this.tripsRepository.All().FirstOrDefault(t => t.Id == tripToEdit.Id);
+
+            if (trip == null)
+            {
+                throw new NullReferenceException($"Activity with id {tripToEdit.Id} not found");
+            }
+
+            trip.FromCity = tripToEdit.FromCity;
+            trip.ToCity = tripToEdit.ToCity;
+            trip.DateOfDeparture = tripToEdit.DateOfDeparture;
+            trip.AdditionalInformation = tripToEdit.AdditionalInformation;
+
+            this.tripsRepository.Update(trip);
+            await this.tripsRepository.SaveChangesAsync();
+        }
+
     }
 }

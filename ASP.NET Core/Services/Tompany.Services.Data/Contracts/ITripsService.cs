@@ -16,5 +16,9 @@
         IEnumerable<T> GetAll<T>(int? count = null);
 
         IEnumerable<T> GetTripPosts<T>(int? take = null, int skip = 0);
+
+        Task DeleteById(string id);
+
+        Task EditAsync(TripEditViewModel tripToEdit);
     }
 }

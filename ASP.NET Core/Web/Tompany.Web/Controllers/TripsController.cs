@@ -42,8 +42,6 @@ namespace Tompany.Web.Controllers
             return this.View(viewModel);
         }
 
-        
-
         public IActionResult Create()
         {
             var cars = this.carsService.GetAll<CarDropDownViewModel>();
@@ -75,6 +73,12 @@ namespace Tompany.Web.Controllers
             }
 
             return this.View(tripViewModel);
+        }
+
+        public async Task<IActionResult> Edit(TripEditViewModel tripToEditViewModel)
+        {
+            await this.tripsService.EditAsync(tripToEditViewModel);
+            return this.RedirectToAction("Details", "Trips", new { area = "", id = tripToEditViewModel.Id });
         }
     }
 }
