@@ -12,6 +12,8 @@ namespace Tompany.Services.Data.Contracts
 
         IEnumerable<T> GetCarByUserId<T>(string userId);
 
+        T GetById<T>(int carId);
+
         IEnumerable<T> GetAll<T>(int? count = null);
     }
 }

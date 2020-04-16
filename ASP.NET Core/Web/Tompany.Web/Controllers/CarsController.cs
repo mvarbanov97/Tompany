@@ -35,7 +35,27 @@ namespace Tompany.Web.Controllers
             var userId = this.userManager.GetUserId(this.HttpContext.User);
 
             await this.carsService.CreateAsync(userId, input);
-            return this.RedirectToAction("Index", "Home");
+            return this.RedirectToAction("List", "Cars");
+        }
+
+        public async Task<IActionResult> List(CarViewModel input)
+        {
+            var userId = this.userManager.GetUserId(this.HttpContext.User);
+            var cars = this.carsService.GetCarByUserId<CarViewModel>(userId);
+
+            var viewModel = new CarListViewModel
+            {
+                Cars = cars,
+            };
+
+            return this.View(viewModel);
+        }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            var viewModel = this.carsService.GetById<CarViewModel>(id);
+
+            return this.View(viewModel);
         }
     }
 }

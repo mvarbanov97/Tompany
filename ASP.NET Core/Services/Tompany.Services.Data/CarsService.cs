@@ -28,6 +28,22 @@ namespace Tompany.Services.Data
             return query.To<T>().ToList();
         }
 
+        public T GetById<T>(int carId)
+        {
+            var car = this.carsRepository
+                .All()
+                .Where(x => x.Id == carId)
+                .To<T>()
+                .FirstOrDefault();
+
+            if (car == null)
+            {
+                throw new NullReferenceException($"Car with id {carId} not found.");
+            }
+
+            return car;
+        }
+
         public IEnumerable<T> GetAll<T>(int? count = null)
         {
             IQueryable<Car> query = this.carsRepository.All();
