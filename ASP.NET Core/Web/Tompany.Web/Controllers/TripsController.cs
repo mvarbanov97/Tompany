@@ -35,7 +35,7 @@ namespace Tompany.Web.Controllers
             var count = this.tripsService.GetTripsCount();
             var viewModel = new TripListViewModel()
             {
-                Trips = this.tripsService.GetTripPosts<TripDetailsViewModel>(ItemsPerPage,(page - 1) * ItemsPerPage),
+                Trips = this.tripsService.GetTripPosts<TripDetailsViewModel>(ItemsPerPage, (page - 1) * ItemsPerPage),
                 PagesCount = (int)Math.Ceiling((double)count / ItemsPerPage),
                 CurrentPage = page,
             };
@@ -70,11 +70,12 @@ namespace Tompany.Web.Controllers
         [Authorize]
         public IActionResult Details(string id)
         {
+            var userId = this.userManager.GetUserId(this.User);
             var tripViewModel = this.tripsService.GetById<TripDetailsViewModel>(id);
             var car = this.carsService.GetById<CarViewModel>(tripViewModel.CarId);
 
             tripViewModel.Car = car;
-            tripViewModel.Views++;
+            tripViewModel.Views.Add(new View { UserId = userId });
 
             if (tripViewModel == null)
             {

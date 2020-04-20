@@ -31,6 +31,7 @@ namespace Tompany.Services.Data
             {
                 UserId = userId,
                 CarId = input.CarId,
+                PricePerPassenger = input.PricePerPassenger,
                 FromCity = input.FromCity,
                 ToCity = input.ToCity,
                 DateOfDeparture = input.DateOfDeparture,
@@ -52,7 +53,7 @@ namespace Tompany.Services.Data
 
         public IEnumerable<T> GetAll<T>(int? count = null)
         {
-            IQueryable<Trip> query = this.tripsRepository.All();
+            IQueryable<Trip> query = this.tripsRepository.All().Where(x => x.Car.IsDeleted == false & x.IsDeleted == false);
 
             if (count.HasValue)
             {
@@ -66,6 +67,7 @@ namespace Tompany.Services.Data
         {
             var query = this.tripsRepository
                 .All()
+                .Where(x => x.Car.IsDeleted == false & x.IsDeleted == false)
                 .OrderByDescending(x => x.CreatedOn)
                 .Skip(skip);
 

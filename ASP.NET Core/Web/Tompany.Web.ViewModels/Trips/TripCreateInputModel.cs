@@ -14,6 +14,8 @@ namespace Tompany.Web.ViewModels.Trips
 
         public string ToCity { get; set; }
 
+        public decimal PricePerPassenger { get; set; }
+
         public DateTime DateOfDeparture { get; set; }
 
         public TimeSpan TimeOfDeparture { get; set; }

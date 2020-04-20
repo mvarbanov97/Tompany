@@ -32,6 +32,10 @@
 
         public DbSet<UserReview> UserReviews { get; set; }
 
+        public DbSet<UserTrip> UserTrips { get; set; }
+
+        public DbSet<View> Views { get; set; }
+
         public DbSet<Setting> Settings { get; set; }
 
         public override int SaveChanges() => this.SaveChanges(true);

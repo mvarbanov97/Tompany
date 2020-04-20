@@ -13,5 +13,7 @@ namespace Tompany.Web.ViewModels.Users
         public string UserName { get; set; }
 
         public DateTime CreatedOn { get; set; }
+
+
     }
 }

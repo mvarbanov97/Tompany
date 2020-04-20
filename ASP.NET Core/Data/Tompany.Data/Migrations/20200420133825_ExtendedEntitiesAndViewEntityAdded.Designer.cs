@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tompany.Data;
 
 namespace Tompany.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200420133825_ExtendedEntitiesAndViewEntityAdded")]
+    partial class ExtendedEntitiesAndViewEntityAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -187,17 +189,11 @@ namespace Tompany.Data.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -228,9 +224,6 @@ namespace Tompany.Data.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TripId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -250,8 +243,6 @@ namespace Tompany.Data.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("TripId");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -579,13 +570,6 @@ namespace Tompany.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Tompany.Data.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("Tompany.Data.Models.Trip", null)
-                        .WithMany("Passengers")
-                        .HasForeignKey("TripId");
-                });
-
             modelBuilder.Entity("Tompany.Data.Models.Car", b =>
                 {
                     b.HasOne("Tompany.Data.Models.ApplicationUser", "User")
@@ -626,14 +610,14 @@ namespace Tompany.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("Tompany.Data.Models.ApplicationUser", "User")
-                        .WithMany("UserReviews")
+                        .WithMany()
                         .HasForeignKey("UserId1");
                 });
 
             modelBuilder.Entity("Tompany.Data.Models.UserTrip", b =>
                 {
                     b.HasOne("Tompany.Data.Models.Trip", "Trip")
-                        .WithMany()
+                        .WithMany("Passengers")
                         .HasForeignKey("TripId");
 
                     b.HasOne("Tompany.Data.Models.ApplicationUser", "User")

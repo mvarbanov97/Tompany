@@ -61,7 +61,7 @@ namespace Tompany.Services.Data
             var car = new Car
             {
                 UserId = userId,
-                ImageUrl = carInputModel.ImageUrl,
+                CarImageUrl = carInputModel.CarImageUrl,
                 Brand = carInputModel.Brand,
                 Model = carInputModel.Model,
                 YearOfManufacture = carInputModel.YearOfManufacture,

@@ -9,9 +9,10 @@
     {
         public Car()
         {
+            this.Trips = new HashSet<Trip>();
         }
 
-        public string ImageUrl { get; set; }
+        public string CarImageUrl { get; set; }
 
         public string Brand { get; set; }
 

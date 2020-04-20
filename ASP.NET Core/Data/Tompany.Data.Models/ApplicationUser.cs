@@ -19,11 +19,18 @@ namespace Tompany.Data.Models
             this.Claims = new HashSet<IdentityUserClaim<string>>();
             this.Logins = new HashSet<IdentityUserLogin<string>>();
 
-            this.Trips = new HashSet<Trip>();
+            this.Trips = new HashSet<UserTrip>();
             this.Cars = new HashSet<Car>();
+            this.UserReviews = new HashSet<UserReview>();
         }
 
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
         public Gender Gender { get; set; }
+
+        public string UserImageUrl { get; set; }
 
         // Audit info
         public DateTime CreatedOn { get; set; }
@@ -41,8 +48,10 @@ namespace Tompany.Data.Models
 
         public virtual ICollection<IdentityUserLogin<string>> Logins { get; set; }
 
-        public virtual ICollection<Trip> Trips { get; set; }
+        public virtual ICollection<UserTrip> Trips { get; set; }
 
         public virtual ICollection<Car> Cars { get; set; }
+
+        public virtual ICollection<UserReview> UserReviews { get; set; }
     }
 }

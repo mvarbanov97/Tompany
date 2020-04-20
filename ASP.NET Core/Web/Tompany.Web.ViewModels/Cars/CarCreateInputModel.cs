@@ -7,7 +7,7 @@ namespace Tompany.Web.ViewModels.Cars
 {
     public class CarCreateInputModel
     {
-        public string ImageUrl { get; set; }
+        public string CarImageUrl { get; set; }
 
         public string Brand { get; set; }
 
