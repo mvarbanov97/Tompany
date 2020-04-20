@@ -74,6 +74,7 @@ namespace Tompany.Web.Controllers
             var car = this.carsService.GetById<CarViewModel>(tripViewModel.CarId);
 
             tripViewModel.Car = car;
+            tripViewModel.Views++;
 
             if (tripViewModel == null)
             {

@@ -17,6 +17,8 @@ namespace Tompany.Web.ViewModels.Trips
 
         public int CarId { get; set; }
 
+        public int Views { get; set; }
+
         public CarViewModel Car { get; set; }
 
         public DateTime CreatedOn { get; set; }
