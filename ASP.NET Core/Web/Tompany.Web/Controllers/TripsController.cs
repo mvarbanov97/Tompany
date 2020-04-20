@@ -43,6 +43,7 @@ namespace Tompany.Web.Controllers
             return this.View(viewModel);
         }
 
+        [Authorize]
         public IActionResult Create()
         {
             var userId = this.userManager.GetUserId(this.User);

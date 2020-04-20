@@ -7,21 +7,10 @@
 {
     <div class="card mb-3">
         <div class="card-header bg-light">
-            <i class="fas fa-user-edit"></i>@car.Brand
             <div class="row mt-2">
                 <div class="col-auto">
                     <span class="h5">
-                        <span class="text-muted align-top">От</span>
-                        <span class="align-top">@car.Model</span>
-                    </span>
-                </div>
-                <div class="col-auto d-none d-md-block">
-                    <i class="fas fa-arrow-circle-right"></i>
-                </div>
-                <div class="col-auto">
-                    <span class="h5">
-                        <span class="text-muted align-top">До</span>
-                        <span class="align-top">@car.Color</span>
+                        <span class="align-top">@(car.Brand + " " + car.Model)</span>
                     </span>
                 </div>
             </div>
@@ -39,29 +28,35 @@
                     <span class="align-top">@car.Seats</span>
                 </div>
             </div>
-            <hr />
-            <div class="card-body">
-                <div class="row">
-                    <span class="text-muted align-top">Air conditioning: </span>
-                    <span>@(car.IsAirConditiningAvailable.Equals(true) ? "Yes" : "No")</span>
-                </div>
-                <div class="row">
-                    <i class="material-icons md-18 center text-success"></i> <span class="text-muted">Luggage space: </span>
-                    <span>@(car.IsLuggageAvaliable.Equals(true) ? "Yes" : "No")</span>
-                </div>
-                <div class="row">
-                    <i class="material-icons md-18 center text-success"></i> <span class="text-muted">Pets: </span>
-                    <span>@(car.IsAllowedForPets.Equals(true) ? "Yes" : "No")</span>
-                </div>
-                <div class="row">
-                    <i class="material-icons md-18 center text-success"></i> <span class="text-muted">Smoking: </span>
-                    <span>@(car.IsSmokingAllowed.Equals(true) ? "Yes" : "No")</span>
+            <div class="row">
+                <div class="col-12 d-block d-lg-none">
+                    <span class="text-muted align-top">Color: </span>
+                    <span class="align-top">@car.Color</span>
                 </div>
             </div>
-        </div>
-        <div class="col-6 d-inline-block d-lg-inline-block">
-            <a type="submit" class="btn btn-outline-success" asp-controller="Cars" asp-action="Edit" asp-route-id="@car.Id">Edit</a>
-            <a type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete selected vehicle?')" asp-controller="Cars" asp-action="Delete" asp-route-id="@car.Id">Delete</a>
+            <hr />
+            <div class="card-body">
+                <div class="col-12 col-xl-6">
+                    <i class="fa fa-smoking"></i> <span class="text-muted">Пушачи: </span>
+                    <span class="@(car.IsSmokingAllowed == true ? "text-success" : "text-danger")">@(car.IsSmokingAllowed == true ? "Да" : "Не")</span>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <i class="fa fa-wind"></i> <span class="text-muted">Климатик: </span>
+                    <span class="@(car.IsAirConditiningAvailable == true ? "text-success" : "text-danger")">@(car.IsAirConditiningAvailable == true ? "Да" : "Не")</span>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <i class="fa fa-paw"></i> <span class="text-muted">Домашни любимци: </span>
+                    <span class="@(car.IsAllowedForPets == true ? "text-success" : "text-danger")">@(car.IsAllowedForPets == true ? "Да" : "Не")</span>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <i class="fa fa-suitcase-rolling"></i> <span class="text-muted">Място за багаж: </span>
+                    <span class="@(car.IsLuggageAvaliable == true ? "text-success" : "text-danger")">@(car.IsLuggageAvaliable == true ? "Да" : "Не")</span>
+                </div>
+            </div>
+            <div class="col-6 d-inline-block d-lg-inline-block">
+                <a type="submit" class="btn btn-outline-success" asp-controller="Cars" asp-action="Edit" asp-route-id="@car.Id">Edit</a>
+                <a type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete selected vehicle?')" asp-controller="Cars" asp-action="Delete" asp-route-id="@car.Id">Delete</a>
+            </div>
         </div>
     </div>
 }
