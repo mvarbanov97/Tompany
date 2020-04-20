@@ -15,5 +15,7 @@ namespace Tompany.Services.Data.Contracts
         T GetById<T>(int carId);
 
         IEnumerable<T> GetAll<T>(int? count = null);
+
+        Task DeleteByIdAsync(int id);
     }
 }

@@ -76,5 +76,19 @@ namespace Tompany.Services.Data
             await this.carsRepository.AddAsync(car);
             await this.carsRepository.SaveChangesAsync();
         }
+
+        public async Task DeleteByIdAsync(int id)
+        {
+            var car = this.carsRepository.All().FirstOrDefault(x => x.Id == id);
+
+            if (car == null)
+            {
+                throw new NullReferenceException($"Car with id {id} cannot be found.");
+            }
+
+            car.IsDeleted = true;
+            this.carsRepository.Update(car);
+            await this.carsRepository.SaveChangesAsync();
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Tompany.Data.Models;
 using Tompany.Services.Mapping;
+using Tompany.Web.ViewModels.Cars;
 
 namespace Tompany.Web.ViewModels.Trips
 {
@@ -10,17 +11,13 @@ namespace Tompany.Web.ViewModels.Trips
     {
         public string Id { get; set; }
 
+        public string UserId { get; set; }
+
         public string UserUserName { get; set; }
 
         public int CarId { get; set; }
 
-        public string CarBrand { get; set; }
-
-        public string CarModel { get; set; }
-
-        public string Vehicle => $"{this.CarBrand} {this.CarModel}";
-
-        public int CarSeats { get; set; }
+        public CarViewModel Car { get; set; }
 
         public DateTime CreatedOn { get; set; }
 
@@ -31,6 +28,5 @@ namespace Tompany.Web.ViewModels.Trips
         public string ToCity { get; set; }
 
         public string AdditionalInformation { get; set; }
-
     }
 }

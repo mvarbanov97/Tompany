@@ -63,7 +63,7 @@ namespace Tompany.Web.Controllers
         {
             var userId = this.userManager.GetUserId(this.User);
             await this.tripsService.CreateAsync(input, userId);
-            return this.RedirectToAction("Trips", "Index");
+            return this.RedirectToAction("Index", "Trips");
         }
 
         [HttpGet]
@@ -71,6 +71,9 @@ namespace Tompany.Web.Controllers
         public IActionResult Details(string id)
         {
             var tripViewModel = this.tripsService.GetById<TripDetailsViewModel>(id);
+            var car = this.carsService.GetById<CarViewModel>(tripViewModel.CarId);
+
+            tripViewModel.Car = car;
 
             if (tripViewModel == null)
             {

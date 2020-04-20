@@ -57,5 +57,12 @@ namespace Tompany.Web.Controllers
 
             return this.View(viewModel);
         }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            await this.carsService.DeleteByIdAsync(id);
+
+            return this.RedirectToAction("List", "Cars");
+        }
     }
 }
