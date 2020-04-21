@@ -9,6 +9,7 @@ using Tompany.Data.Models;
 using Tompany.Services.Data.Contracts;
 using Tompany.Web.ViewModels.Cars;
 using Tompany.Web.ViewModels.Trips;
+using Tompany.Web.ViewModels.Users;
 
 namespace Tompany.Web.Controllers
 {
@@ -19,15 +20,18 @@ namespace Tompany.Web.Controllers
         private readonly ITripsService tripsService;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly ICarsService carsService;
+        private readonly IUsersService usersService;
 
         public TripsController(
             ITripsService tripsService,
             UserManager<ApplicationUser> userManager,
-            ICarsService carsService)
+            ICarsService carsService,
+            IUsersService usersService)
         {
             this.tripsService = tripsService;
             this.userManager = userManager;
             this.carsService = carsService;
+            this.usersService = usersService;
         }
 
         public IActionResult Index(int page = 1)
@@ -97,6 +101,23 @@ namespace Tompany.Web.Controllers
         {
             var tripToEdit = this.tripsService.GetById<TripEditViewModel>(id);
             return this.View(tripToEdit);
+        }
+
+        public async Task<IActionResult> Delete(string id)
+        {
+            await this.tripsService.DeleteById(id);
+
+            return this.RedirectToAction("UserListTrip", "Users");
+        }
+
+        public IActionResult Candidate(string tripId)
+        {
+            var user = this.User.Identity.Name;
+            var trip = this.tripsService.GetById<TripDetailsViewModel>(tripId);
+            var ownerId = trip.UserId;
+            var tripDriver = this.usersService.GetUserByTripId(ownerId);
+
+            return this.View("_TripRequestSendSuccessfully");
         }
     }
 }

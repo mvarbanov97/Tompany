@@ -63,6 +63,15 @@ namespace Tompany.Services.Data
             return query.To<T>().ToList();
         }
 
+        public IEnumerable<T> GetUserTrips<T>(string userId)
+        {
+            IQueryable<Trip> query = this.tripsRepository
+                .All()
+                .Where(x => x.UserId == userId);
+
+            return query.To<T>().ToList();
+        }
+
         public IEnumerable<T> GetTripPosts<T>(int? take = null, int skip = 0)
         {
             var query = this.tripsRepository
@@ -77,6 +86,16 @@ namespace Tompany.Services.Data
             }
 
             return query.To<T>().ToList();
+        }
+
+        public T GetTripByUserId<T>(string userId, string id)
+        {
+            var trip = this.tripsRepository.All()
+                .Where(x => x.UserId == userId)
+                .To<T>()
+                .FirstOrDefault();
+
+            return trip;
         }
 
         public int GetTripsCount()

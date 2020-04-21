@@ -14,4 +14,3 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
         }
     }
 }
-

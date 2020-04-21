@@ -1,0 +1,102 @@
+﻿@model Tompany.Web.ViewModels.Trips.TripListViewModel;
+
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <a class="btn btn-primary btn-block" asp-controller="Trips" asp-action="Create">
+                <i class="fa fa-plus"></i>
+                <span class="align-top">Добави обява</span>
+            </a>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+
+<hr />
+@foreach (var item in Model.Trips)
+{
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4 col-lg-3 mb-3 mb-md-0">
+                <div class="d-flex flex-row justify-content-center">
+                    <h1 class="display-3">
+                        <span class="fa-stack fa-1x">
+                            <i class="fa fa-circle fa-stack-2x icon-background"></i>
+                            @*<span class="roundedInfoContent header">0</span>*@
+                            @*<span class="roundedInfoContent footer">кандидати</span>*@
+                        </span>
+                    </h1>
+                </div>
+            </div>
+            <div class="col-md-8 col-lg-9">
+                <div class="row">
+                    <div class="col-12 col-xl-6">
+                        <i class="fa fa-map-marker-alt"></i>
+                        <span class="text-muted">Начална точка: </span>
+                        <span>@item.FromCity</span>
+                    </div>
+                    <div class="col-12 col-xl-6">
+                        <i class="fa fa-map-marker-alt"></i>
+                        <span class="text-muted">Крайна точка: </span>
+                        <span>@item.ToCity</span>
+                    </div>
+                    <div class="col-12 col-xl-6">
+                        <i class="fa fa-calendar-alt"></i>
+                        <span class="text-muted">Дата: </span>
+                        <span>@item.DateOfDeparture.Date</span>
+                    </div>
+                    <div class="col-12 col-xl-6">
+                        <i class="fa fa-clock"></i>
+                        <span class="text-muted">Час: между</span>
+                        <span class="align-top">13:45 ч.</span>
+                        <span class="text-muted align-top">и</span>
+                        <span class="align-top">14:15 ч.</span>
+                    </div>
+                    <div class="col-12 col-xl-6">
+                        <i class="fa fa-car-alt"></i>
+                        <span class="text-muted">Автомобил: </span>
+                        <span>@item.Car.Brand @item.Car.Model</span>
+                    </div>
+                    <div class="col-12 col-xl-6">
+                        <i class="fa fa-money-bill-alt"></i>
+                        <span class="text-muted">Разход на човек: </span>
+                        <span>@item.PricePerPassenger лв.</span>
+                    </div>
+                    <div class="col-12 col-xl-6">
+                        <i class="fa fa-users"></i>
+                        <span class="text-muted">Свободни места: </span>
+                        <span>4 от 4</span>
+                    </div>
+                    <div class="col-12">
+                        <span class="text-muted">
+                            <i class="fa fa-info-circle"></i>
+                            Допълнителна информация:
+                        </span>
+                    </div>
+                    <div class="col-12">
+                        <span class="text-muted">@item.AdditionalInformation</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 col-lg-4 mb-3 mb-lg-0">
+                <a class="btn btn-primary btn-block" asp-controller="Trips" asp-action="Details" asp-route-id="@item.Id">
+                    <i class="fa fa-eye"></i>
+                    <span class="align-top">Детайли</span>
+                </a>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4 mb-3 mb-sm-0">
+                <a class="btn btn-success btn-block" asp-controller="Trips" asp-action="Edit" asp-route-id="@item.Id">
+                    <i class="fa fa-pen"></i>
+                    <span class="align-top">Редактиране</span>
+                </a>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4">
+                <a class="btn btn-danger btn-block" onclick="return confirm('Сигурни ли сте, че искате да изтриете пътуването?')" asp-controller="Trips" asp-action="Delete" asp-route-id="@item.Id">
+                    <i class="fa fa-trash"></i>
+                    <span class="align-top">Изтриване</span>
+                </a>
+            </div>
+        </div>
+    </div>
+}

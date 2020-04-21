@@ -1,140 +1,148 @@
-﻿@model Tompany.Web.ViewModels.Trips.TripDetailsViewModel;
+﻿@using Tompany.Data.Models;
+@using Microsoft.AspNetCore.Identity;
 
-    <div class='container trip-info' border="">
-            <div class="row">
-                <div class="col-lg-7">
-                    <p class="text-muted">Подробна информация</p>
-                    <div class="card mb-3">
-                        <div class="card-header bg-white">
-                            <div class="row mt-2">
-                                <div class="col-auto">
-                                    <span class="h5">
-                                        <i class="fa fa-map-marker-alt"></i>
-                                        <span class="text-muted align-top">От</span>
-                                        <span class="align-top">@Model.FromCity</span>
-                                    </span>
-                                </div>
-                                <div class="col-auto d-none d-md-block">
-                                    <i class="fa fa-arrow-alt-circle-right"></i>
-                                </div>
-                                <div class="col-auto">
-                                    <span class="h5">
-                                        <i class="fa fa-map-marker-alt"></i>
-                                        <span class="text-muted align-top">До</span>
-                                        <span class="align-top">@Model.ToCity</span>
-                                    </span>
-                                </div>
-                            </div>
+@model Tompany.Web.ViewModels.Trips.TripDetailsViewModel;
+
+<div class="row-cols-4">
+    <div class="col-lg-7">
+        <a type="submit" class="btn btn-outline-success" asp-controller="Trips" asp-action="Candidate" asp-route-tripId="@Model.Id">Candidate</a>
+    </div>
+</div>
+<div class='container trip-info' border="">
+    <div class="row">
+        <div class="col-lg-7">
+            <p class="text-muted">Подробна информация</p>
+            <div class="card mb-3">
+                <div class="card-header bg-white">
+                    <div class="row mt-2">
+                        <div class="col-auto">
+                            <span class="h5">
+                                <i class="fa fa-map-marker-alt"></i>
+                                <span class="text-muted align-top">От</span>
+                                <span class="align-top">@Model.FromCity</span>
+                            </span>
                         </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-12 col-xl-6">
-                                    <i class="fa fa-calendar-alt"></i>
-                                    <span class="text-muted align-top">Дата: </span>
-                                    <span class="align-top">@Model.DateOfDeparture</span>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12 col-xl-6">
-                                    <i class="fa fa-money-bill-wave"></i>
-                                    <span class="text-muted align-top">Разход на човек: </span>
-                                    <span class="align-top">10 лв.</span>
-                                </div>
-                                <div class="col-12 col-xl-6">
-                                    <i class="fa fa-users"></i>
-                                    <span class="text-muted align-top">Свободни места: </span>
-                                    <span class="align-top">0 <span class="text-muted align-top">от общо</span> 3</span>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12 col-xl-6">
-                                    <i class="fa fa-eye"></i>
-                                    <span class="text-muted align-top">Видяна: </span>
-                                    <span class="align-top">@Model.Views.Count пъти</span>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <i class="fa fa-info-circle"></i>
-                                    <span class="text-muted align-top">Информация</span>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <div class="card bg-light">
-                                        <div class="card-body">
-                                            <span>@(Model.AdditionalInformation == null ? "Няма допълнителна информация" : Model.AdditionalInformation)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="col-auto d-none d-md-block">
+                            <i class="fa fa-arrow-alt-circle-right"></i>
+                        </div>
+                        <div class="col-auto">
+                            <span class="h5">
+                                <i class="fa fa-map-marker-alt"></i>
+                                <span class="text-muted align-top">До</span>
+                                <span class="align-top">@Model.ToCity</span>
+                            </span>
                         </div>
                     </div>
-
-                    <p class="text-muted ">Автомобил</p>
-
-                    <div class="card  mb-3">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4 col-lg-4 mb-3 mb-md-0">
-                                    <div class="d-flex flex-row justify-content-center">
-                                        <img src="/images/noImageAvailable.png" alt="Снимка" class="rounded-circle img-fluid vehicle-picture-drive-details">
-                                    </div>
-                                </div>
-                                <div class="col-md-8 col-lg-8">
-                                    <div class="row">
-                                        <div class="col-12 col-xl-6">
-                                            <span class="text-muted">Марка: </span>
-                                            <span>@Model.Car.Brand</span>
-                                        </div>
-                                        <div class="col-12 col-xl-6">
-                                            <span class="text-muted">Модел: </span>
-                                            <span>@Model.Car.Model</span>
-                                        </div>
-                                        <div class="col-12 col-xl-6">
-                                            <span class="text-muted">Цвят: </span>
-                                            <span>@Model.Car.Color</span>
-                                        </div>
-                                        <div class="col-12 col-xl-6">
-                                            <span class="text-muted">Година: </span>
-                                            <span>@Model.Car.YearOfManufacture</span>
-                                        </div>
-                                        <div class="col-12 col-xl-6">
-                                            <span class="text-muted">Места за пътници: </span>
-                                            <span>@Model.Car.Seats</span>
-                                        </div>
-                                    </div>
-                                    <hr />
-                                    <div class="row">
-                                        <div class="col-12 col-xl-6">
-                                            <i class="fa fa-smoking"></i> <span class="text-muted">Пушачи: </span>
-                                            <span class="@(Model.Car.IsSmokingAllowed == true ? "text-success" : "text-danger")">@(Model.Car.IsSmokingAllowed == true ? "Да" : "Не")</span>
-                                        </div>
-                                        <div class="col-12 col-xl-6">
-                                            <i class="fa fa-wind"></i> <span class="text-muted">Климатик: </span>
-                                            <span class="@(Model.Car.IsAirConditiningAvailable == true ? "text-success" : "text-danger")">@(Model.Car.IsAirConditiningAvailable == true ? "Да" : "Не")</span>
-                                        </div>
-                                        <div class="col-12 col-xl-6">
-                                            <i class="fa fa-paw"></i> <span class="text-muted">Домашни любимци: </span>
-                                            <span class="@(Model.Car.IsAllowedForPets == true ? "text-success" : "text-danger")">@(Model.Car.IsAllowedForPets == true ? "Да" : "Не")</span>
-                                        </div>
-                                        <div class="col-12 col-xl-6">
-                                            <i class="fa fa-suitcase-rolling"></i> <span class="text-muted">Място за багаж: </span>
-                                            <span class="@(Model.Car.IsLuggageAvaliable == true ? "text-success" : "text-danger")">@(Model.Car.IsLuggageAvaliable == true ? "Да" : "Не")</span>
-                                        </div>
-                                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-xl-6">
+                            <i class="fa fa-calendar-alt"></i>
+                            <span class="text-muted align-top">Дата: </span>
+                            <span class="align-top">@Model.DateOfDeparture</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-xl-6">
+                            <i class="fa fa-money-bill-wave"></i>
+                            <span class="text-muted align-top">Разход на човек: </span>
+                            <span class="align-top">@Model.PricePerPassenger лв.</span>
+                        </div>
+                        <div class="col-12 col-xl-6">
+                            <i class="fa fa-users"></i>
+                            <span class="text-muted align-top">Свободни места: </span>
+                            <span class="align-top">0 <span class="text-muted align-top">от общо</span> 3</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-xl-6">
+                            <i class="fa fa-eye"></i>
+                            <span class="text-muted align-top">Видяна: </span>
+                            <span class="align-top">@Model.Views.Count пъти</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <i class="fa fa-info-circle"></i>
+                            <span class="text-muted align-top">Информация</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <span>@(Model.AdditionalInformation == null ? "Няма допълнителна информация" : Model.AdditionalInformation)</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
             </div>
-<script>
-    function updateViewCount(tripId) {
-        
-    }
-</script>
-            @*TODO: ADD container for the user who posted the trip
-            ADD Container for each passenger
-            *@
+
+            <p class="text-muted ">Автомобил</p>
+
+            <div class="card  mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 col-lg-4 mb-3 mb-md-0">
+                            <div class="d-flex flex-row justify-content-center">
+                                <img src="/images/noImageAvailable.png" alt="Снимка" class="rounded-circle img-fluid vehicle-picture-drive-details">
+                            </div>
+                        </div>
+                        <div class="col-md-8 col-lg-8">
+                            <div class="row">
+                                <div class="col-12 col-xl-6">
+                                    <span class="text-muted">Марка: </span>
+                                    <span>@Model.Car.Brand</span>
+                                </div>
+                                <div class="col-12 col-xl-6">
+                                    <span class="text-muted">Модел: </span>
+                                    <span>@Model.Car.Model</span>
+                                </div>
+                                <div class="col-12 col-xl-6">
+                                    <span class="text-muted">Цвят: </span>
+                                    <span>@Model.Car.Color</span>
+                                </div>
+                                <div class="col-12 col-xl-6">
+                                    <span class="text-muted">Година: </span>
+                                    <span>@Model.Car.YearOfManufacture</span>
+                                </div>
+                                <div class="col-12 col-xl-6">
+                                    <span class="text-muted">Места за пътници: </span>
+                                    <span>@Model.Car.Seats</span>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-12 col-xl-6">
+                                    <i class="fa fa-smoking"></i> <span class="text-muted">Пушачи: </span>
+                                    <span class="@(Model.Car.IsSmokingAllowed == true ? "text-success" : "text-danger")">@(Model.Car.IsSmokingAllowed == true ? "Да" : "Не")</span>
+                                </div>
+                                <div class="col-12 col-xl-6">
+                                    <i class="fa fa-wind"></i> <span class="text-muted">Климатик: </span>
+                                    <span class="@(Model.Car.IsAirConditiningAvailable == true ? "text-success" : "text-danger")">@(Model.Car.IsAirConditiningAvailable == true ? "Да" : "Не")</span>
+                                </div>
+                                <div class="col-12 col-xl-6">
+                                    <i class="fa fa-paw"></i> <span class="text-muted">Домашни любимци: </span>
+                                    <span class="@(Model.Car.IsAllowedForPets == true ? "text-success" : "text-danger")">@(Model.Car.IsAllowedForPets == true ? "Да" : "Не")</span>
+                                </div>
+                                <div class="col-12 col-xl-6">
+                                    <i class="fa fa-suitcase-rolling"></i> <span class="text-muted">Място за багаж: </span>
+                                    <span class="@(Model.Car.IsLuggageAvaliable == true ? "text-success" : "text-danger")">@(Model.Car.IsLuggageAvaliable == true ? "Да" : "Не")</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        function updateViewCount(tripId) {
+
+        }
+    </script>
+    @*TODO: ADD container for the user who posted the trip
+        ADD Container for each passenger
+    *@
