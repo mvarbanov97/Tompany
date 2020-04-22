@@ -87,10 +87,12 @@
 
                 if (env.IsDevelopment())
                 {
-                    dbContext.Database.Migrate();
+                    //dbContext.Database.Migrate();
                 }
 
-                //new ApplicationDbContextSeeder().SeedAsync(dbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
+                dbContext.Database.EnsureDeleted();
+                dbContext.Database.EnsureCreated();
+                new ApplicationDbContextSeeder().SeedAsync(dbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
             }
 
             if (env.IsDevelopment())

@@ -19,7 +19,7 @@ namespace Tompany.Data.Models
             this.Claims = new HashSet<IdentityUserClaim<string>>();
             this.Logins = new HashSet<IdentityUserLogin<string>>();
 
-            this.Trips = new HashSet<UserTrip>();
+            this.UserTrips = new HashSet<UserTrip>();
             this.Cars = new HashSet<Car>();
             this.UserReviews = new HashSet<UserReview>();
         }
@@ -48,7 +48,7 @@ namespace Tompany.Data.Models
 
         public virtual ICollection<IdentityUserLogin<string>> Logins { get; set; }
 
-        public virtual ICollection<UserTrip> Trips { get; set; }
+        public virtual ICollection<UserTrip> UserTrips { get; set; }
 
         public virtual ICollection<Car> Cars { get; set; }
 

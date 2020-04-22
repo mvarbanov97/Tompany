@@ -25,7 +25,6 @@ namespace Tompany.Data.Seeding
                     Email = $"FooBar{i}@besl.bg",
                 }, "awedawe1");
 
-
                 if (!result.Succeeded)
                 {
                     throw new InvalidOperationException(string.Join(Environment.NewLine, result.Errors.Select(e => e.Description)));

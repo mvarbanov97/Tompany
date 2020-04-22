@@ -59,6 +59,24 @@
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<UserTrip>()
+                .HasKey(x => new { x.UserId, x.TripId });
+
+            builder.Entity<UserTrip>()
+                .HasOne(x => x.User)
+                .WithMany(x => x.UserTrips)
+                .HasForeignKey(x => x.UserId);
+
+            builder.Entity<UserTrip>()
+                .HasOne(x => x.Trip)
+                .WithMany(x => x.UserTrips)
+                .HasForeignKey(x => x.TripId);
+
+            builder.Entity<ApplicationUser>()
+                .HasMany(x => x.UserTrips)
+                .WithOne(x => x.User)
+                .HasForeignKey(x => x.UserId);
+
             // Needed for Identity models configuration
             base.OnModelCreating(builder);
 

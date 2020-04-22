@@ -15,19 +15,27 @@ namespace Tompany.Services.Data
     public class TripsService : ITripsService
     {
         private readonly IRepository<Trip> tripsRepository;
+        private readonly IRepository<ApplicationUser> usersRepository;
+        private readonly IRepository<UserTrip> userTripsRepository;
         private readonly ILogger<TripsService> logger;
 
         public TripsService(
             IRepository<Trip> tripsRepository,
+            IRepository<ApplicationUser> usersRepository,
+            IRepository<UserTrip> userTripsRepository,
             ILogger<TripsService> logger)
         {
             this.tripsRepository = tripsRepository;
+            this.usersRepository = usersRepository;
+            this.userTripsRepository = userTripsRepository;
             this.logger = logger;
         }
 
         public async Task CreateAsync(TripCreateInputModel input, string userId)
         {
-            var travel = new Trip
+            var user = this.usersRepository.All().FirstOrDefault(x => x.Id == userId);
+
+            var trip = new Trip
             {
                 UserId = userId,
                 CarId = input.CarId,
@@ -39,8 +47,19 @@ namespace Tompany.Services.Data
                 AdditionalInformation = input.AdditionalInformation,
             };
 
-            await this.tripsRepository.AddAsync(travel);
+            var userTrip = new UserTrip
+            {
+                User = user,
+                UserId = user.Id,
+                Trip = trip,
+                TripId = trip.Id,
+            };
+
+            await this.tripsRepository.AddAsync(trip);
             await this.tripsRepository.SaveChangesAsync();
+
+            await this.userTripsRepository.AddAsync(userTrip);
+            await this.userTripsRepository.SaveChangesAsync();
         }
 
         public T GetById<T>(string id)

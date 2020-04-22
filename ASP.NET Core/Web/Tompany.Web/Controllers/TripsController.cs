@@ -9,7 +9,6 @@ using Tompany.Data.Models;
 using Tompany.Services.Data.Contracts;
 using Tompany.Web.ViewModels.Cars;
 using Tompany.Web.ViewModels.Trips;
-using Tompany.Web.ViewModels.Users;
 
 namespace Tompany.Web.Controllers
 {
