@@ -1,5 +1,6 @@
 ﻿@using Tompany.Data.Models;
 @using Microsoft.AspNetCore.Identity;
+@using Tompany.Data.Models.Enums;
 
 @model Tompany.Web.ViewModels.Trips.TripDetailsViewModel;
 
@@ -143,6 +144,23 @@
 
         }
     </script>
+
+
+    @foreach (var request in Model.TripRequests.Where(x => x.RequestStatus == RequestStatus.Accepted))
+    {
+        <p class="text-muted">Пътници</p>
+
+        <div class="card mb-3">
+            <div class="card-body">
+
+                <span>@request.Sender.UserName</span>
+
+            </div>
+        </div>
+    }
+
+
+
     @*TODO: ADD container for the user who posted the trip
         ADD Container for each passenger
     *@
