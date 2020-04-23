@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-
+    using Tompany.Data.Models;
     using Tompany.Web.ViewModels.Trips;
 
     public interface ITripsService
@@ -22,6 +22,8 @@
         IEnumerable<T> GetTripPosts<T>(int? take = null, int skip = 0);
 
         Task SendTripRequest(string userId, string tripId, string ownerId);
+
+        IEnumerable<TripRequest> GetAllTripRequestInTrip(string tripId);
 
         Task DeleteById(string id);
 

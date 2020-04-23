@@ -77,9 +77,12 @@ namespace Tompany.Web.Controllers
             var userId = this.userManager.GetUserId(this.User);
             var tripViewModel = this.tripsService.GetById<TripDetailsViewModel>(id);
             var car = this.carsService.GetById<CarViewModel>(tripViewModel.CarId);
+            var tripRequests = this.tripsService.GetAllTripRequestInTrip(id);
 
             tripViewModel.Car = car;
             tripViewModel.Views.Add(new View { UserId = userId });
+            tripViewModel.TripRequests = tripRequests;
+
 
             if (tripViewModel == null)
             {

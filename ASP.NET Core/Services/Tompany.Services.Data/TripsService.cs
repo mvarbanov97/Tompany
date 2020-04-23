@@ -67,7 +67,7 @@ namespace Tompany.Services.Data
 
         public T GetById<T>(string id)
         {
-            var trip = this.tripsRepository.All().Where(x => x.Id == id)
+            var trip = this.tripsRepository.All().Include(x => x.TripRequest).Where(x => x.Id == id)
                 .To<T>().FirstOrDefault();
 
             return trip;
@@ -184,6 +184,17 @@ namespace Tompany.Services.Data
 
             // this.tripsRepository.Update(trip);
 
+        }
+
+        public IEnumerable<TripRequest> GetAllTripRequestInTrip(string tripId)
+        {
+            var tripRequests = this.tripRequestRepository
+                .All()
+                .Include(x => x.Sender)
+                .Where(x => x.TripId == tripId)
+                .ToList();
+
+            return tripRequests;
         }
     }
 }

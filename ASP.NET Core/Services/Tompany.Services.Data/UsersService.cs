@@ -15,13 +15,16 @@ namespace Tompany.Services.Data
     {
         private readonly IRepository<ApplicationUser> usersRepository;
         private readonly IRepository<Trip> tripsRepository;
+        private readonly IRepository<TripRequest> tripRequestRepository;
 
         public UsersService(
             IRepository<ApplicationUser> usersRepository,
-            IRepository<Trip> tripsRepository)
+            IRepository<Trip> tripsRepository,
+            IRepository<TripRequest> tripRequestRepository)
         {
             this.usersRepository = usersRepository;
             this.tripsRepository = tripsRepository;
+            this.tripRequestRepository = tripRequestRepository;
         }
 
         public ApplicationUser GetUserById(string id)
