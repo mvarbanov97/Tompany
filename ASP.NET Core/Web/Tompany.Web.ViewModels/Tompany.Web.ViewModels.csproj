@@ -24,12 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Trips\TripCreateInputModel.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
+    <Folder Include="NewFolder\" />
     <Folder Include="Users\" />
   </ItemGroup>
 

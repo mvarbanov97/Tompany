@@ -33,6 +33,8 @@ namespace Tompany.Web.ViewModels.Trips
 
         public string AdditionalInformation { get; set; }
 
-        public ICollection<ApplicationUser> Passengers { get; set; }
+        public IEnumerable<ApplicationUser> Passengers { get; set; }
+
+        public IEnumerable<TripRequest> TripRequests { get; set; }
     }
 }
