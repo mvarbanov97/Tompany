@@ -37,5 +37,14 @@ namespace Tompany.Web.Controllers
 
             return this.View(viewModel);
         }
+
+        public async Task<IActionResult> AcceptRequest(string senderId, string tripId)
+        {
+            var userId = this.userManager.GetUserId(this.User);
+            var trip = this.tripsService.GetTripByUserId(userId);
+            var accept = this.usersService.AcceptTripRequest(senderId, trip.Id, userId);
+            
+            return this.View();
+        }
     }
 }

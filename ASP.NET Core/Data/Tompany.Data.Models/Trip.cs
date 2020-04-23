@@ -13,6 +13,7 @@
             this.Id = Guid.NewGuid().ToString();
             this.UserTrips = new HashSet<UserTrip>();
             this.TripRequest = new HashSet<TripRequest>();
+            this.Passengers = new HashSet<ApplicationUser>();
             this.Views = new HashSet<View>();
         }
 
@@ -42,6 +43,9 @@
         public DateTime? DeletedOn { get; set; }
 
         public virtual ICollection<UserTrip> UserTrips { get; set; }
+
+        [NotMapped]
+        public ICollection<ApplicationUser> Passengers { get; set; }
 
         public virtual ICollection<TripRequest> TripRequest { get; set; }
 

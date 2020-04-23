@@ -146,14 +146,23 @@
     </script>
 
 
-    @foreach (var request in Model.TripRequests.Where(x => x.RequestStatus == RequestStatus.Accepted))
+    @foreach (var request in Model.TripRequests.Where(x => x.RequestStatus != RequestStatus.Accepted))
     {
         <p class="text-muted">Пътници</p>
 
         <div class="card mb-3">
             <div class="card-body">
+                @if (User.Identity.Name == Model.UserUserName)
+                {
+                    <span>@request.Sender.UserImageUrl</span>
+                    <span>@request.Sender.UserName</span>
+                    <span>@request.SenderId</span>
 
-                <span>@request.Sender.UserName</span>
+                    <a type="submit" class="btn btn-outline-success" asp-controller="Users" asp-action="AcceptRequest" asp-route-senderId="@request.SenderId" asp-route-tripId="@Model.Id">Accept</a>
+                    <a type="submit" class="btn btn-outline-danger" asp-controller="Users" asp-action="DeclineRequest" asp-route-tripId="@request.SenderId">Decline</a>
+
+                }
+
 
             </div>
         </div>

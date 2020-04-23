@@ -75,7 +75,7 @@ namespace Tompany.Services.Data
 
         public IEnumerable<T> GetAll<T>(int? count = null)
         {
-            IQueryable<Trip> query = this.tripsRepository.All().Where(x => x.Car.IsDeleted == false & x.IsDeleted == false);
+            IQueryable<Trip> query = this.tripsRepository.All().Include(x => x.TripRequest).Where(x => x.Car.IsDeleted == false & x.IsDeleted == false);
 
             if (count.HasValue)
             {
@@ -93,6 +93,25 @@ namespace Tompany.Services.Data
 
             return query.To<T>().ToList();
         }
+
+        public Trip GetTripByUserId(string userId)
+        {
+            var trip = this.tripsRepository.All().Include(x => x.TripRequest).Where(x => x.UserId == userId).FirstOrDefault();
+
+            return trip;
+        }
+
+        //public ApplicationUser GetTripSenderId(TripDetailsViewModel trip)
+        //{
+            
+        //}
+
+        //public TripRequest GetTripRequestInTrip(string tripId)
+        //{
+        //    var trip = this.GetById<TripDetailsViewModel>(tripId);
+
+        //    var triprequest = trip.TripRequests.whe
+        //}
 
         public IEnumerable<T> GetTripPosts<T>(int? take = null, int skip = 0)
         {

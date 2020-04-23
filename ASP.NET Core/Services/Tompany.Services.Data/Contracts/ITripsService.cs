@@ -13,7 +13,7 @@
 
         int GetTripsCount();
 
-        T GetTripByUserId<T>(string userId, string id);
+        Trip GetTripByUserId(string userId);
 
         IEnumerable<T> GetAll<T>(int? count = null);
 
