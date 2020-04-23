@@ -16,7 +16,10 @@ namespace Tompany.Web.ViewModels.Trips
 
         public decimal PricePerPassenger { get; set; }
 
+        [DataType(DataType.Date)]
         public DateTime DateOfDeparture { get; set; }
+
+        public string DateAsString => this.DateOfDeparture.ToString("d");
 
         public TimeSpan TimeOfDeparture { get; set; }
 

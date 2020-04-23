@@ -22,6 +22,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Tompany.Services.Data.Contracts;
+    using System.Linq;
 
     public class Startup
     {
@@ -87,12 +88,14 @@
 
                 if (env.IsDevelopment())
                 {
-                    //dbContext.Database.Migrate();
+                    dbContext.Database.Migrate();
                 }
 
-                dbContext.Database.EnsureDeleted();
-                dbContext.Database.EnsureCreated();
-                new ApplicationDbContextSeeder().SeedAsync(dbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
+                if (!dbContext.Users.Any())
+                {
+                    new ApplicationDbContextSeeder().SeedAsync(dbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
+                }
+
             }
 
             if (env.IsDevelopment())

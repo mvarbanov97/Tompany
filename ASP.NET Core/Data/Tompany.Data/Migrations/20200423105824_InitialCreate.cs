@@ -44,7 +44,10 @@ namespace Tompany.Data.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
+                    FirstName = table.Column<string>(nullable: true),
+                    LastName = table.Column<string>(nullable: true),
                     Gender = table.Column<int>(nullable: false),
+                    UserImageUrl = table.Column<string>(nullable: true),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: true),
                     IsDeleted = table.Column<bool>(nullable: false),
@@ -187,7 +190,7 @@ namespace Tompany.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: true),
-                    ImageUrl = table.Column<string>(nullable: true),
+                    CarImageUrl = table.Column<string>(nullable: true),
                     Brand = table.Column<string>(nullable: true),
                     Model = table.Column<string>(nullable: true),
                     YearOfManufacture = table.Column<int>(nullable: false),
@@ -199,15 +202,15 @@ namespace Tompany.Data.Migrations
                     IsAllowedForPets = table.Column<bool>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
                     DeletedOn = table.Column<DateTime>(nullable: true),
-                    TripId = table.Column<string>(nullable: true),
-                    ApplicationUserId = table.Column<string>(nullable: true)
+                    UserId = table.Column<string>(nullable: false),
+                    TripId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Cars", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cars_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_Cars_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -245,6 +248,7 @@ namespace Tompany.Data.Migrations
                     Id = table.Column<string>(nullable: false),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: true),
+                    PricePerPassenger = table.Column<decimal>(nullable: false),
                     FromCity = table.Column<string>(nullable: true),
                     ToCity = table.Column<string>(nullable: true),
                     DateOfDeparture = table.Column<DateTime>(nullable: false),
@@ -303,15 +307,89 @@ namespace Tompany.Data.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TripRequest",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: true),
+                    TripId = table.Column<string>(nullable: true),
+                    SenderId = table.Column<string>(nullable: true),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    DeletedOn = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TripRequest", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TripRequest_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TripRequest_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserTrips",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(nullable: false),
+                    TripId = table.Column<string>(nullable: false),
+                    Id = table.Column<string>(nullable: true),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: true),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    DeletedOn = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserTrips", x => new { x.UserId, x.TripId });
+                    table.ForeignKey(
+                        name: "FK_UserTrips_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserTrips_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Views",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: true),
+                    UserId = table.Column<string>(nullable: true),
+                    TripId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Views", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Views_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetRoles_IsDeleted",
-                table: "AspNetRoles",
-                column: "IsDeleted");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
@@ -336,11 +414,6 @@ namespace Tompany.Data.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_IsDeleted",
-                table: "AspNetUsers",
-                column: "IsDeleted");
-
-            migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
@@ -353,19 +426,9 @@ namespace Tompany.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cars_ApplicationUserId",
+                name: "IX_Cars_UserId",
                 table: "Cars",
-                column: "ApplicationUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Cars_IsDeleted",
-                table: "Cars",
-                column: "IsDeleted");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Reviews_IsDeleted",
-                table: "Reviews",
-                column: "IsDeleted");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_UserId",
@@ -373,9 +436,14 @@ namespace Tompany.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Settings_IsDeleted",
-                table: "Settings",
-                column: "IsDeleted");
+                name: "IX_TripRequest_SenderId",
+                table: "TripRequest",
+                column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripRequest_TripId",
+                table: "TripRequest",
+                column: "TripId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Trips_CarId",
@@ -383,19 +451,9 @@ namespace Tompany.Data.Migrations
                 column: "CarId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Trips_IsDeleted",
-                table: "Trips",
-                column: "IsDeleted");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Trips_UserId",
                 table: "Trips",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserReviews_IsDeleted",
-                table: "UserReviews",
-                column: "IsDeleted");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserReviews_ReviewId",
@@ -406,6 +464,16 @@ namespace Tompany.Data.Migrations
                 name: "IX_UserReviews_UserId1",
                 table: "UserReviews",
                 column: "UserId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserTrips_TripId",
+                table: "UserTrips",
+                column: "TripId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Views_TripId",
+                table: "Views",
+                column: "TripId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -429,19 +497,28 @@ namespace Tompany.Data.Migrations
                 name: "Settings");
 
             migrationBuilder.DropTable(
-                name: "Trips");
+                name: "TripRequest");
 
             migrationBuilder.DropTable(
                 name: "UserReviews");
 
             migrationBuilder.DropTable(
+                name: "UserTrips");
+
+            migrationBuilder.DropTable(
+                name: "Views");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Cars");
+                name: "Reviews");
 
             migrationBuilder.DropTable(
-                name: "Reviews");
+                name: "Trips");
+
+            migrationBuilder.DropTable(
+                name: "Cars");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

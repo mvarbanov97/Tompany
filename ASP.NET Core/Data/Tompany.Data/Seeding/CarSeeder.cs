@@ -20,6 +20,7 @@ namespace Tompany.Data.Seeding
 
                 var car = new Car
                 {
+                    UserId = user.Id,
                     Brand = $"FooBrand{i}",
                     Model = $"FooModel{i}",
                     Color = $"FooColor{i}",

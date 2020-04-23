@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,17 +18,20 @@ namespace Tompany.Services.Data
         private readonly IRepository<Trip> tripsRepository;
         private readonly IRepository<ApplicationUser> usersRepository;
         private readonly IRepository<UserTrip> userTripsRepository;
+        private readonly IRepository<TripRequest> tripRequestRepository;
         private readonly ILogger<TripsService> logger;
 
         public TripsService(
             IRepository<Trip> tripsRepository,
             IRepository<ApplicationUser> usersRepository,
             IRepository<UserTrip> userTripsRepository,
+            IRepository<TripRequest> tripRequestRepository,
             ILogger<TripsService> logger)
         {
             this.tripsRepository = tripsRepository;
             this.usersRepository = usersRepository;
             this.userTripsRepository = userTripsRepository;
+            this.tripRequestRepository = tripRequestRepository;
             this.logger = logger;
         }
 
@@ -55,11 +59,10 @@ namespace Tompany.Services.Data
                 TripId = trip.Id,
             };
 
+            user.UserTrips.Add(userTrip);
+            this.usersRepository.Update(user);
             await this.tripsRepository.AddAsync(trip);
             await this.tripsRepository.SaveChangesAsync();
-
-            await this.userTripsRepository.AddAsync(userTrip);
-            await this.userTripsRepository.SaveChangesAsync();
         }
 
         public T GetById<T>(string id)
@@ -155,5 +158,32 @@ namespace Tompany.Services.Data
             await this.tripsRepository.SaveChangesAsync();
         }
 
+        public async Task SendTripRequest(string userName, string tripId, string ownerId)
+        {
+            ApplicationUser owner = null;
+            owner = this.usersRepository.All().Include(x => x.UserTrips).FirstOrDefault(y => y.Id == ownerId);
+
+            var trip = this.tripsRepository.All().FirstOrDefault(x => x.Id == tripId);
+
+            ApplicationUser sender = null;
+            sender = this.usersRepository.All().FirstOrDefault(x => x.UserName == userName);
+
+            var tripRequest = new TripRequest
+            {
+                Trip = trip,
+                TripId = tripId,
+                Sender = sender,
+                SenderId = sender.Id,
+            };
+
+            trip.TripRequest.Add(tripRequest);
+
+            await this.tripRequestRepository.AddAsync(tripRequest);
+            await this.tripRequestRepository.SaveChangesAsync();
+            // await this.tripsRepository.SaveChangesAsync();
+
+            // this.tripsRepository.Update(trip);
+
+        }
     }
 }

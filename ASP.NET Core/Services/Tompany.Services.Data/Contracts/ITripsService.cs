@@ -21,6 +21,8 @@
 
         IEnumerable<T> GetTripPosts<T>(int? take = null, int skip = 0);
 
+        Task SendTripRequest(string userId, string tripId, string ownerId);
+
         Task DeleteById(string id);
 
         Task EditAsync(TripEditViewModel tripToEdit);

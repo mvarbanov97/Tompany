@@ -16,8 +16,6 @@ namespace Tompany.Data.Models
 
         public string TripId { get; set; }
 
-        public string OwnerId { get; set; }
-
         public ApplicationUser Sender { get; set; }
 
         public string SenderId { get; set; }

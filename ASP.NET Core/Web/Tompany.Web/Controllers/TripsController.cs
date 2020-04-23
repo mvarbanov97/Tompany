@@ -114,7 +114,8 @@ namespace Tompany.Web.Controllers
             var user = this.User.Identity.Name;
             var trip = this.tripsService.GetById<TripDetailsViewModel>(tripId);
             var ownerId = trip.UserId;
-            var tripDriver = this.usersService.GetUserByTripId(ownerId);
+
+            this.tripsService.SendTripRequest(user, tripId, ownerId);
 
             return this.View("_TripRequestSendSuccessfully");
         }

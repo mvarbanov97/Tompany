@@ -8,8 +8,6 @@ namespace Tompany.Services.Data.Contracts
 {
     public interface IUsersService
     {
-        T GetById<T>(string id);
-
-        Task<ApplicationUser> GetUserByTripId(string ownerId);
+        ApplicationUser GetUserById(string id);
     }
 }

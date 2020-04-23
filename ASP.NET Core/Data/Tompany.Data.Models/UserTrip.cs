@@ -7,6 +7,11 @@ namespace Tompany.Data.Models
 {
     public class UserTrip : BaseModel<string>, IDeletableEntity
     {
+        public UserTrip()
+        {
+            this.Id = Guid.NewGuid().ToString();
+        }
+
         public string UserId { get; set; }
 
         public ApplicationUser User { get; set; }
