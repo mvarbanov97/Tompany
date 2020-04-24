@@ -56,6 +56,7 @@ namespace Tompany.Web.Controllers
             var viewModel = new TripCreateInputModel
             {
                 Cars = cars,
+                DateOfDeparture = DateTime.Now,
             };
 
             return this.View(viewModel);
@@ -66,7 +67,9 @@ namespace Tompany.Web.Controllers
         public async Task<IActionResult> Create(TripCreateInputModel input)
         {
             var userId = this.userManager.GetUserId(this.User);
+            var checkForCars = this.usersService.GetUserCars(userId);
             await this.tripsService.CreateAsync(input, userId);
+
             return this.RedirectToAction("Index", "Trips");
         }
 

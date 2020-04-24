@@ -42,9 +42,10 @@ namespace Tompany.Web.Controllers
         {
             var userId = this.userManager.GetUserId(this.User);
             var trip = this.tripsService.GetTripByUserId(userId);
-            var accept = this.usersService.AcceptTripRequest(senderId, trip.Id, userId);
-            
-            return this.View();
+            var result = this.usersService.AcceptTripRequest(senderId, trip.Id, userId);
+
+            await this.usersService.AddPassengerToTrip(tripId, senderId);
+            return this.RedirectToAction("UserTripList", "Users");
         }
     }
 }

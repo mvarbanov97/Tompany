@@ -33,5 +33,7 @@ namespace Tompany.Web.ViewModels.Trips
         public string UserId { get; set; }
 
         public IEnumerable<CarDropDownViewModel> Cars { get; set; }
+
+        public CarCreateInputModel CarIfNone { get; set; }
     }
 }
