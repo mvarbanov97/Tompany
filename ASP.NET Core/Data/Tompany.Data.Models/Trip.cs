@@ -13,8 +13,8 @@
             this.Id = Guid.NewGuid().ToString();
             this.UserTrips = new HashSet<UserTrip>();
             this.TripRequest = new HashSet<TripRequest>();
-            this.Passengers = new HashSet<ApplicationUser>();
             this.Views = new HashSet<View>();
+            this.Passengers = new HashSet<ApplicationUser>();
         }
 
         public decimal PricePerPassenger { get; set; }
@@ -44,11 +44,10 @@
 
         public virtual ICollection<UserTrip> UserTrips { get; set; }
 
-        [NotMapped]
-        public ICollection<ApplicationUser> Passengers { get; set; }
-
         public virtual ICollection<TripRequest> TripRequest { get; set; }
 
         public virtual ICollection<View> Views { get; set; }
+
+        public virtual ICollection<ApplicationUser> Passengers { get; set; }
     }
 }

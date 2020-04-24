@@ -1,0 +1,68 @@
+﻿@model Tompany.Web.ViewModels.Cars.CarCreateInputModel;
+
+<div class="modal fade" id="add-contact" tabindex="-1" role="dialog" aria-labelledby="addContactLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addContactLabel">Add contact</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Create">
+                    <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+                    <div class="form-group">
+                        <label asp-for="Brand"></label>
+                        <input asp-for="Brand" class="form-control" />
+                        <span asp-validation-for="Brand" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Model"></label>
+                        <input asp-for="Model" class="form-control" />
+                        <span asp-validation-for="Model" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="YearOfManufacture"></label>
+                        <input asp-for="YearOfManufacture" class="form-control" />
+                        <span asp-validation-for="YearOfManufacture" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Color"></label>
+                        <input asp-for="Color" class="form-control" />
+                        <span asp-validation-for="Color" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Seats"></label>
+                        <input asp-for="Seats" class="form-control" />
+                        <span asp-validation-for="Seats" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="IsAirConditiningAvailable"></label>
+                        <input asp-for="IsAirConditiningAvailable" class="form-control" />
+                        <span asp-validation-for="IsAirConditiningAvailable" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="IsAllowedForPets"></label>
+                        <input asp-for="IsAllowedForPets" class="form-control" />
+                        <span asp-validation-for="IsAllowedForPets" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="IsLuggageAvaliable"></label>
+                        <input asp-for="IsLuggageAvaliable" class="form-control" />
+                        <span asp-validation-for="IsLuggageAvaliable" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="IsSmokingAllowed"></label>
+                        <input asp-for="IsSmokingAllowed" class="form-control" />
+                        <span asp-validation-for="IsSmokingAllowed" class="text-danger"></span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-save="modal">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

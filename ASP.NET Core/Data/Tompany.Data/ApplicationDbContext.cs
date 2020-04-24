@@ -76,7 +76,7 @@
                 .HasMany(x => x.UserTrips)
                 .WithOne(x => x.User)
                 .HasForeignKey(x => x.UserId);
-
+                
             // Needed for Identity models configuration
             base.OnModelCreating(builder);
 
