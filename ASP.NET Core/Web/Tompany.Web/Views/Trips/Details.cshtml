@@ -52,7 +52,7 @@
                         <div class="col-12 col-xl-6">
                             <i class="fa fa-users"></i>
                             <span class="text-muted align-top">Свободни места: </span>
-                            <span class="align-top">0 <span class="text-muted align-top">от общо</span> 3</span>
+                            <span class="align-top">@(Model.Car.Seats - Model.Passengers.Count()) <span class="text-muted align-top">от общо</span> @Model.Car.Seats</span>
                         </div>
                     </div>
                     <div class="row">
@@ -145,30 +145,45 @@
         }
     </script>
 
+    <div>
+        <span>@Model.Passengers.Count()</span>
+    </div>
 
-    @foreach (var request in Model.TripRequests.Where(x => x.RequestStatus != RequestStatus.Accepted))
+    <p class="text-muted">Приети Пътници</p>
+    @foreach (var request in Model.TripRequests)
     {
-        <p class="text-muted">Пътници</p>
+        if (request.RequestStatus == RequestStatus.Accepted)
+        {
+            <div class="card mb-8">
+                <div class="card-body">
+                    <div>
+                        <img src="http://placehold.it/110x80" alt="ALT NAME" class="d-block ui-w-40 rounded-circle" style='margin-right:3px'>
+                        <div class="caption" class="pull-left">
+                            <h4>
+                                <a href="#">@request.Sender.UserName</a>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
 
-        <div class="card mb-3">
-            <div class="card-body">
-                @if (User.Identity.Name == Model.UserUserName)
-                {
-                    <span>@request.Sender.UserImageUrl</span>
-                    <span>@request.Sender.UserName</span>
-                    <span>@request.SenderId</span>
+    }
 
-                    <a type="submit" class="btn btn-outline-success" asp-controller="Users" asp-action="AcceptRequest" asp-route-senderId="@request.SenderId" asp-route-tripId="@Model.Id">Accept</a>
-                    <a type="submit" class="btn btn-outline-danger" asp-controller="Users" asp-action="DeclineRequest" asp-route-tripId="@request.SenderId">Decline</a>
-
-                }
-
-
+    <p class="text-black-50">Нови чакащи пътници</p
+    @foreach (var pendingRequest in Model.TripRequests.Where(x => x.RequestStatus == RequestStatus.Pending))
+    {
+        <div class="thumbnail clearfix">
+            <img src="http://placehold.it/110x80" alt="ALT NAME" class="d-block ui-w-40 rounded-circle" style='margin-right:3px'>
+            <div class="caption" class="pull-left">
+                <h4>
+                    <a href="#">@pendingRequest.Sender.UserName</a>
+                    <a type="submit" class="btn btn-outline-success" asp-controller="Users" asp-action="AcceptRequest" asp-route-senderId="@pendingRequest.SenderId" asp-route-tripId="@Model.Id">Accept</a>
+                    <a type="submit" class="btn btn-outline-danger" asp-controller="Users" asp-action="DeclineRequest" asp-route-tripId="@pendingRequest.SenderId">Decline</a>
+                </h4>
             </div>
         </div>
     }
-
-
 
     @*TODO: ADD container for the user who posted the trip
         ADD Container for each passenger

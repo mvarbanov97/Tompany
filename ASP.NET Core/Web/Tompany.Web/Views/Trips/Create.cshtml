@@ -3,6 +3,16 @@
     this.ViewData["Title"] = "Create Trip";
     var cars = Model.Cars.Select(x => new SelectListItem(x.CarBrandName, x.Id.ToString()));
 }
+
+@if (cars.Count() == 0)
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        За да създадете обява е нужно да имате регистрирана кола, можете да го направите от <a class="alert-link" asp-controller="Cars" asp-action="Create">тук</a>.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
 <div class="row justify-content-center">
     <form enctype="multipart/form-data" asp-area="" asp-controller="Trips" asp-action="Create" method="post" class="text-center col-md-6">
         <h4>Create new trip</h4>
@@ -42,3 +52,4 @@
         <button type="submit" class="btn btn-outline-success">Create travel post</button>
     </form>
 </div>
+
