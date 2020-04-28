@@ -24,6 +24,8 @@
         {
         }
 
+        public DbSet<Destination> Destinations { get; set; }
+
         public DbSet<Car> Cars { get; set; }
 
         public DbSet<Trip> Trips { get; set; }
@@ -33,6 +35,8 @@
         public DbSet<UserReview> UserReviews { get; set; }
 
         public DbSet<UserTrip> UserTrips { get; set; }
+
+        public DbSet<ContactFormEntry> ContactFormEntries { get; set; }
 
         public DbSet<View> Views { get; set; }
 
