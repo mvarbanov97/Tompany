@@ -19,6 +19,7 @@ namespace Tompany.Services.Data
         private readonly IRepository<ApplicationUser> usersRepository;
         private readonly IRepository<UserTrip> userTripsRepository;
         private readonly IRepository<TripRequest> tripRequestRepository;
+        private readonly IRepository<Destination> destinationsRepository;
         private readonly ILogger<TripsService> logger;
 
         public TripsService(
@@ -26,12 +27,14 @@ namespace Tompany.Services.Data
             IRepository<ApplicationUser> usersRepository,
             IRepository<UserTrip> userTripsRepository,
             IRepository<TripRequest> tripRequestRepository,
+            IRepository<Destination> destinationsRepository,
             ILogger<TripsService> logger)
         {
             this.tripsRepository = tripsRepository;
             this.usersRepository = usersRepository;
             this.userTripsRepository = userTripsRepository;
             this.tripRequestRepository = tripRequestRepository;
+            this.destinationsRepository = destinationsRepository;
             this.logger = logger;
         }
 
@@ -41,11 +44,11 @@ namespace Tompany.Services.Data
 
             var trip = new Trip
             {
+                FromDestinationName = input.FromDestinationName,
+                ToDestinationName = input.ToDestinationName,
                 UserId = userId,
                 CarId = input.CarId,
                 PricePerPassenger = input.PricePerPassenger,
-                FromCity = input.FromCity,
-                ToCity = input.ToCity,
                 DateOfDeparture = input.DateOfDeparture,
                 TimeOfDeparture = input.TimeOfDeparture,
                 AdditionalInformation = input.AdditionalInformation,
@@ -100,18 +103,6 @@ namespace Tompany.Services.Data
 
             return trip;
         }
-
-        //public ApplicationUser GetTripSenderId(TripDetailsViewModel trip)
-        //{
-            
-        //}
-
-        //public TripRequest GetTripRequestInTrip(string tripId)
-        //{
-        //    var trip = this.GetById<TripDetailsViewModel>(tripId);
-
-        //    var triprequest = trip.TripRequests.whe
-        //}
 
         public IEnumerable<T> GetTripPosts<T>(int? take = null, int skip = 0)
         {
@@ -168,8 +159,8 @@ namespace Tompany.Services.Data
                 throw new NullReferenceException($"Activity with id {tripToEdit.Id} not found");
             }
 
-            trip.FromCity = tripToEdit.FromCity;
-            trip.ToCity = tripToEdit.ToCity;
+            trip.FromDestinationName = tripToEdit.FromDestinationName;
+            trip.ToDestinationName = tripToEdit.ToDestinationName;
             trip.DateOfDeparture = tripToEdit.DateOfDeparture;
             trip.AdditionalInformation = tripToEdit.AdditionalInformation;
 
@@ -214,6 +205,25 @@ namespace Tompany.Services.Data
                 .ToList();
 
             return tripRequests;
+        }
+
+        public async Task<TripSearchViewModel> GetSearchResultAsync(int fromDestinationId, int toDestination, DateTime dateOfDeparture)
+        {
+            var destinations = this.destinationsRepository.All().Select(x => x.Name).ToList().FirstOrDefault();
+
+            if (destinations == null)
+            {
+                throw new NullReferenceException($"Trip with id {destinations} not found.");
+            }
+
+            var searchViewModel = new TripSearchViewModel
+            {
+                FromDestinationName = destinations,
+                ToDestinationName = destinations,
+                DateOfDeparture = DateTime.UtcNow,
+            };
+
+            return searchViewModel;
         }
     }
 }

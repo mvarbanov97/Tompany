@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Tompany.Data.Models;
 using Tompany.Services.Data.Contracts;
 using Tompany.Web.ViewModels.Trips;
+using Tompany.Web.ViewModels.Users;
 
 namespace Tompany.Web.Controllers
 {
@@ -30,7 +31,7 @@ namespace Tompany.Web.Controllers
         {
             var userId = this.userManager.GetUserId(this.User);
 
-            var viewModel = new TripListViewModel
+            var viewModel = new UserTripListViewModel
             {
                 Trips = this.tripsService.GetUserTrips<TripDetailsViewModel>(userId),
             };
@@ -46,6 +47,22 @@ namespace Tompany.Web.Controllers
 
             await this.usersService.AddPassengerToTrip(tripId, senderId);
             return this.RedirectToAction("UserTripList", "Users");
+        }
+
+        public async Task<IActionResult> DeclineRequest(string senderId, string tripId)
+        {
+            var userId = this.userManager.GetUserId(this.User);
+            var trip = this.tripsService.GetTripByUserId(userId);
+            await this.usersService.DeclineTripRequest(senderId, trip.Id, userId);
+
+            return this.RedirectToAction("Details", "Trips", new { id = tripId });
+        }
+
+        public async Task<IActionResult> Details(string userId)
+        {
+            var viewModel = new UserDetailsViewModel();
+
+            return this.View(viewModel);
         }
     }
 }

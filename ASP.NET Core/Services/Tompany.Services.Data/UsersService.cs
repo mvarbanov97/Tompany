@@ -1,15 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Tompany.Data.Common.Repositories;
 using Tompany.Data.Models;
-using Tompany.Services.Data.Contracts;
-using Tompany.Services.Mapping;
-using Tompany.Web.ViewModels.Trips;
 using Tompany.Data.Models.Enums;
+using Tompany.Services.Data.Contracts;
 
 namespace Tompany.Services.Data
 {
@@ -18,15 +14,18 @@ namespace Tompany.Services.Data
         private readonly IRepository<ApplicationUser> usersRepository;
         private readonly IRepository<Trip> tripsRepository;
         private readonly IRepository<TripRequest> tripRequestRepository;
+        private readonly ICarsService carsService;
 
         public UsersService(
             IRepository<ApplicationUser> usersRepository,
             IRepository<Trip> tripsRepository,
-            IRepository<TripRequest> tripRequestRepository)
+            IRepository<TripRequest> tripRequestRepository,
+            ICarsService carsService)
         {
             this.usersRepository = usersRepository;
             this.tripsRepository = tripsRepository;
             this.tripRequestRepository = tripRequestRepository;
+            this.carsService = carsService;
         }
 
         public ApplicationUser GetUserById(string id)
@@ -36,38 +35,46 @@ namespace Tompany.Services.Data
             return user;
         }
 
-        public async Task AcceptTripRequest(string senderId, string tripId, string userId)
+        public async Task GetUserCars(string userId)
         {
-            var user = this.GetUserById(userId);
-            var sender = this.GetUserById(senderId);
+            var cars = this.usersRepository.All().Where(x => x.Cars.Any(x => x.UserId == userId));
+        }
+
+        public async Task AcceptTripRequest(string passengerId, string tripId, string userId)
+        {
+            ApplicationUser user = this.GetUserById(userId);
+            if (user == null)
+            {
+                throw new NullReferenceException($"There is no user with Id {userId}");
+            }
+
+            ApplicationUser passenger = this.GetUserById(passengerId);
+            if (passenger == null)
+            {
+                throw new NullReferenceException($"There is no passenger with Id {passengerId}");
+            }
 
             var trip = this.tripsRepository
                 .All()
                 .Include(x => x.TripRequest)
-                .Include(x => x.Car)
-                .Include(x => x.Passengers)
-                .Where(x => x.TripRequest.Any(x => x.SenderId == senderId && x.TripId == tripId && x.RequestStatus == RequestStatus.Pending))
+                .Where(x => x.TripRequest.Any(x => x.SenderId == passengerId && x.TripId == tripId))
                 .FirstOrDefault();
 
-            var tripRequest = trip.TripRequest.Where(x => x.TripId == trip.Id && x.SenderId == senderId).FirstOrDefault();
-            
+            var tripRequest = trip.TripRequest.Where(x => x.TripId == trip.Id && x.SenderId == passengerId).FirstOrDefault();
+
             tripRequest.RequestStatus = RequestStatus.Accepted;
 
             this.tripRequestRepository.Update(tripRequest);
             await this.tripRequestRepository.SaveChangesAsync();
+
         }
 
-        public async Task DeclineRequest(string senderId, string tripId, string userId)
+        public async Task DeclineTripRequest(string senderId, string tripId, string userId)
         {
-            var trip = this.tripsRepository
+            var tripRequest = this.tripRequestRepository
                 .All()
-                .Include(x => x.TripRequest)
-                .Include(x => x.Car)
-                .Include(x => x.Passengers)
-                .Where(x => x.TripRequest.Any(x => x.SenderId == senderId && x.TripId == tripId && x.RequestStatus == RequestStatus.Pending))
+                .Where(x => x.TripId == tripId && x.SenderId == senderId)
                 .FirstOrDefault();
-
-            var tripRequest = trip.TripRequest.Where(x => x.TripId == trip.Id && x.SenderId == senderId).FirstOrDefault();
 
             tripRequest.RequestStatus = RequestStatus.Declined;
 
@@ -107,9 +114,9 @@ namespace Tompany.Services.Data
             await this.tripsRepository.SaveChangesAsync();
         }
 
-        public async Task GetUserCars(string userId)
+        public bool IsRequestAlreadySent(string senderId, string tripId)
         {
-            var cars = this.usersRepository.All().Where(x => x.Cars.Any(x => x.UserId == userId));
+            return this.tripRequestRepository.All().Any(x => x.SenderId == senderId && x.TripId == tripId);
         }
     }
 }
