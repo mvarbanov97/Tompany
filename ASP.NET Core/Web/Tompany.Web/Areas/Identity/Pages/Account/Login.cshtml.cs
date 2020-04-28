@@ -18,17 +18,18 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly ILogger<LoginModel> logger;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, 
+        public LoginModel(
+            SignInManager<ApplicationUser> signInManager,
             ILogger<LoginModel> logger,
             UserManager<ApplicationUser> userManager)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _logger = logger;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
+            this.logger = logger;
         }
 
         [BindProperty]
@@ -44,75 +45,94 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
+            [Display(Name = "Потребителско име или парола")]
             public string Email { get; set; }
 
             [Required]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
-            [Display(Name = "Remember me?")]
+            [Display(Name = "Запомни ме")]
             public bool RememberMe { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            if (!string.IsNullOrEmpty(ErrorMessage))
+            if (!string.IsNullOrEmpty(this.ErrorMessage))
             {
-                ModelState.AddModelError(string.Empty, ErrorMessage);
+                this.ModelState.AddModelError(string.Empty, this.ErrorMessage);
             }
 
-            returnUrl = returnUrl ?? Url.Content("~/");
+            if (this.User.Identity.IsAuthenticated)
+            {
+                this.Response.Redirect("/Home/Error");
+            }
+
+            returnUrl = returnUrl ?? this.Url.Content("~/");
 
             // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await this.HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            this.ExternalLogins = (await this.signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            ReturnUrl = returnUrl;
+            this.ReturnUrl = returnUrl;
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             if (this.User.Identity.IsAuthenticated)
             {
-                return Forbid();
+                return this.Forbid();
             }
 
-            returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl = returnUrl ?? this.Url.Content("~/");
 
-            ApplicationUser user = Input.Email
+            ApplicationUser user = this.Input.Email
                 .Contains('@')
-                ? await this._userManager.FindByEmailAsync(Input.Email)
-                : await this._userManager.FindByNameAsync(Input.Email);
+                ? await this.userManager.FindByEmailAsync(this.Input.Email)
+                : await this.userManager.FindByNameAsync(this.Input.Email);
 
-            if (ModelState.IsValid)
+            if (this.ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(user , Input.Password, Input.RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
+                if (user != null)
                 {
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
+                    if (user.IsDeleted)
+                    {
+                        return this.Page();
+                    }
+
+                    // This doesn't count login failures towards account lockout
+                    // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                    var result = await this.signInManager.PasswordSignInAsync(user, this.Input.Password, this.Input.RememberMe, lockoutOnFailure: true);
+                    if (result.Succeeded)
+                    {
+                        this.logger.LogInformation("User logged in.");
+                        return this.LocalRedirect(returnUrl);
+                    }
+                    if (result.RequiresTwoFactor)
+                    {
+                        return this.RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = this.Input.RememberMe });
+                    }
+                    if (result.IsLockedOut)
+                    {
+                        this.logger.LogWarning("User account locked out.");
+                        return this.RedirectToPage("./Lockout");
+                    }
+                    else
+                    {
+                        this.ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                        return this.Page();
+                    }
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return Page();
+                    this.ModelState.AddModelError(string.Empty, "Невалидно потребителско име или парола!");
+                    return this.Page();
                 }
             }
 
             // If we got this far, something failed, redisplay form
-            return Page();
+            return this.Page();
         }
     }
 }
