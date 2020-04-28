@@ -1,10 +1,21 @@
 ﻿@using Tompany.Common
+@using Microsoft.AspNetCore.Http
+@model Tompany.Web.ViewModels.Trips.TripSearchViewModel
 @{
     this.ViewData["Title"] = "Home Page";
+    var destinations = this.ViewData["Destinations"] as IEnumerable<SelectListItem>;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to @GlobalConstants.SystemName!</h1>
-    <h1>Changes without refreshing</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@if (!this.User.Identity.IsAuthenticated)
+{
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome to Tompany!</h1>
+        <p class="lead">Share you trip to a desired destination with a good company!</p>
+        <hr class="my-4">
+        <a class="btn btn-primary btn-lg" asp-page="/Account/Login" asp-area="Identity" role="button"><i class="fas fa-sign-in-alt"></i>&nbsp;Sign-in</a>
+    </div>
+}
+
+<div id="searchContainer" class="jumbotron text-center" style="padding-top: 30px; padding-bottom: 30px;">
+    @await this.Html.PartialAsync("_SearchFormPartial", Model)
 </div>

@@ -1,4 +1,4 @@
-﻿@model Tompany.Web.ViewModels.Trips.TripListViewModel;
+﻿@model Tompany.Web.ViewModels.Users.UserTripListViewModel;
 
     <div class="row">
         <div class="col-md-4"></div>
@@ -21,8 +21,6 @@
                     <h1 class="display-3">
                         <span class="fa-stack fa-1x">
                             <i class="fa fa-circle fa-stack-2x icon-background"></i>
-                            @*<span class="roundedInfoContent header">0</span>*@
-                            @*<span class="roundedInfoContent footer">кандидати</span>*@
                         </span>
                     </h1>
                 </div>
@@ -32,24 +30,17 @@
                     <div class="col-12 col-xl-6">
                         <i class="fa fa-map-marker-alt"></i>
                         <span class="text-muted">Начална точка: </span>
-                        <span>@item.FromCity</span>
+                        <span>@item.FromDestinationName</span>
                     </div>
                     <div class="col-12 col-xl-6">
                         <i class="fa fa-map-marker-alt"></i>
                         <span class="text-muted">Крайна точка: </span>
-                        <span>@item.ToCity</span>
+                        <span>@item.ToDestinationName</span>
                     </div>
                     <div class="col-12 col-xl-6">
                         <i class="fa fa-calendar-alt"></i>
                         <span class="text-muted">Дата: </span>
-                        <span>@item.DateOfDeparture.Date</span>
-                    </div>
-                    <div class="col-12 col-xl-6">
-                        <i class="fa fa-clock"></i>
-                        <span class="text-muted">Час: между</span>
-                        <span class="align-top">13:45 ч.</span>
-                        <span class="text-muted align-top">и</span>
-                        <span class="align-top">14:15 ч.</span>
+                        <span>@item.DateAsString</span>
                     </div>
                     <div class="col-12 col-xl-6">
                         <i class="fa fa-car-alt"></i>
@@ -64,7 +55,7 @@
                     <div class="col-12 col-xl-6">
                         <i class="fa fa-users"></i>
                         <span class="text-muted">Свободни места: </span>
-                        <span>4 от 4</span>
+                        <span>@(item.Car.Seats - item.Passengers.Count() + " от " + item.Car.Seats)</span>
                     </div>
                     <div class="col-12">
                         <span class="text-muted">

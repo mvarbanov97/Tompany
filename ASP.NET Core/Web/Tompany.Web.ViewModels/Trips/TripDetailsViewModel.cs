@@ -27,9 +27,11 @@ namespace Tompany.Web.ViewModels.Trips
 
         public DateTime DateOfDeparture { get; set; }
 
-        public string FromCity { get; set; }
+        public string DateAsString => this.DateOfDeparture.ToString("d");
 
-        public string ToCity { get; set; }
+        public string FromDestinationName { get; set; }
+
+        public string ToDestinationName { get; set; }
 
         public string AdditionalInformation { get; set; }
 

@@ -13,5 +13,8 @@ namespace Tompany.Web.ViewModels.Trips
         public int CurrentPage { get; set; }
 
         public IEnumerable<TripDetailsViewModel> Trips { get; set; }
+
+        public TripSearchViewModel SearchQuery { get; set; }
+
     }
 }
