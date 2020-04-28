@@ -1,0 +1,37 @@
+﻿@model Tompany.Web.ViewModels.Trips.TripSearchResultViewModel
+
+<div id="searchResult">
+    <div class="row d-flex.justify-content-center">
+        <h3 class="col-md-12" style="color:salmon">@Model.Trips.Count()</h3>
+    </div>
+    @if (!Model.Trips.Any())
+    {
+        <p class="text-center">
+            <em class="text-muted">No trips avaliable for the selected filters</em>
+        </p>
+    }
+    @foreach (var trip in Model.Trips)
+    {
+        <div class="card-header bg-light">
+            <div class="row">
+                <i class="fas fa-user-edit"></i>@trip.UserUserName
+            </div>
+            <div class="row mt-2">
+                <div class="col-auto">
+                    <span class="h5">
+                        <span class="text-muted align-top">От</span>
+                        <span class="align-top">@trip.FromDestinationName</span>
+                    </span>
+                </div>
+                <div class="col-auto d-none d-md-block">
+                    <i class="fas fa-arrow-circle-right"></i>
+                </div>
+                <div class="col-auto">
+                    <span class="h5">
+                        <span class="text-muted align-top">До</span>
+                        <span class="align-top">@trip.ToDestinationName</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    }
