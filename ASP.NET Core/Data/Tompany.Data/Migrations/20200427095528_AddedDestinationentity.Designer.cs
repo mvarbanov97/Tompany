@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tompany.Data;
 
 namespace Tompany.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200427095528_AddedDestinationentity")]
+    partial class AddedDestinationentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -461,11 +463,11 @@ namespace Tompany.Data.Migrations
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("FromCity")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("FromDestinationId")
                         .HasColumnType("int");
-
-                    b.Property<string>("FromDestinationName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -479,11 +481,11 @@ namespace Tompany.Data.Migrations
                     b.Property<TimeSpan>("TimeOfDeparture")
                         .HasColumnType("time");
 
+                    b.Property<string>("ToCity")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("ToDestinationId")
                         .HasColumnType("int");
-
-                    b.Property<string>("ToDestinationName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()

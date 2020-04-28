@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+
     using Tompany.Data.Common.Models;
 
     public class Trip : BaseModel<string>, IDeletableEntity
@@ -19,9 +19,13 @@
 
         public decimal PricePerPassenger { get; set; }
 
-        public string FromCity { get; set; }
+        public Destination FromDestination { get; set; }
 
-        public string ToCity { get; set; }
+        public string FromDestinationName { get; set; }
+
+        public Destination ToDestination { get; set; }
+
+        public string ToDestinationName { get; set; }
 
         public DateTime DateOfDeparture { get; set; }
 

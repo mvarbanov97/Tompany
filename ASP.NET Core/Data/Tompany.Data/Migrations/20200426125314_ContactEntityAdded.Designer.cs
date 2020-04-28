@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tompany.Data;
 
 namespace Tompany.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200426125314_ContactEntityAdded")]
+    partial class ContactEntityAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -349,33 +351,6 @@ namespace Tompany.Data.Migrations
                     b.ToTable("ContactFormEntries");
                 });
 
-            modelBuilder.Entity("Tompany.Data.Models.Destination", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Population")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Region")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Destinations");
-                });
-
             modelBuilder.Entity("Tompany.Data.Models.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -461,10 +436,7 @@ namespace Tompany.Data.Migrations
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("FromDestinationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FromDestinationName")
+                    b.Property<string>("FromCity")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
@@ -479,10 +451,7 @@ namespace Tompany.Data.Migrations
                     b.Property<TimeSpan>("TimeOfDeparture")
                         .HasColumnType("time");
 
-                    b.Property<int?>("ToDestinationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ToDestinationName")
+                    b.Property<string>("ToCity")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
@@ -492,10 +461,6 @@ namespace Tompany.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CarId");
-
-                    b.HasIndex("FromDestinationId");
-
-                    b.HasIndex("ToDestinationId");
 
                     b.HasIndex("UserId");
 
@@ -709,14 +674,6 @@ namespace Tompany.Data.Migrations
                         .HasForeignKey("CarId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("Tompany.Data.Models.Destination", "FromDestination")
-                        .WithMany()
-                        .HasForeignKey("FromDestinationId");
-
-                    b.HasOne("Tompany.Data.Models.Destination", "ToDestination")
-                        .WithMany()
-                        .HasForeignKey("ToDestinationId");
 
                     b.HasOne("Tompany.Data.Models.ApplicationUser", "User")
                         .WithMany()
