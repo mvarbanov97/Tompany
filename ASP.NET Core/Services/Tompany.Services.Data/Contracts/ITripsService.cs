@@ -1,5 +1,6 @@
 ﻿namespace Tompany.Services.Data.Contracts
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Tompany.Data.Models;
@@ -24,6 +25,8 @@
         Task SendTripRequest(string userId, string tripId, string ownerId);
 
         IEnumerable<TripRequest> GetAllTripRequestInTrip(string tripId);
+
+        Task<TripSearchViewModel> GetSearchResultAsync(int fromDestinationId, int toDestination, DateTime dateOfDeparture);
 
         Task DeleteById(string id);
 

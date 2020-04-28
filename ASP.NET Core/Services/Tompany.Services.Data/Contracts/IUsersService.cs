@@ -13,6 +13,8 @@ namespace Tompany.Services.Data.Contracts
 
         Task AcceptTripRequest(string senderId, string tripId, string userId);
 
+        Task DeclineTripRequest(string senderId, string tripId, string userId);
+
         Task AddPassengerToTrip(string tripId, string passengerId);
 
         Task GetUserCars(string userId);
