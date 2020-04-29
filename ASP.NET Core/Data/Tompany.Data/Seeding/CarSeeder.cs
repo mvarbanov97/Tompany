@@ -12,7 +12,6 @@ namespace Tompany.Data.Seeding
         public async Task SeedAsync(ApplicationDbContext dbContext, IServiceProvider serviceProvider)
         {
             var random = new Random();
-            var cars = new List<Car>();
 
             for (int i = 1; i <= 36; i++)
             {
@@ -20,6 +19,7 @@ namespace Tompany.Data.Seeding
 
                 var car = new Car
                 {
+                    User = user,
                     UserId = user.Id,
                     Brand = $"FooBrand{i}",
                     Model = $"FooModel{i}",
@@ -33,10 +33,8 @@ namespace Tompany.Data.Seeding
                 };
 
                 user.Cars.Add(car);
-                cars.Add(car);
+                await dbContext.Cars.AddAsync(car);
             }
-
-            await dbContext.Cars.AddRangeAsync(cars);
         }
     }
 }

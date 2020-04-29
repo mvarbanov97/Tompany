@@ -23,8 +23,8 @@ namespace Tompany.Data.Seeding
 
             for (int i = 1; i <= 36; i++)
             {
-                var car = dbContext.Cars.FirstOrDefault(x => x.Id == i);
                 var user = dbContext.Users.FirstOrDefault(x => x.UserName == $"FooUser{i}");
+                var car = dbContext.Cars.FirstOrDefault(x => x.UserId == user.Id);
                 var randomFromId = random.Next(1, 257);
                 var randomToId = random2.Next(1, 257);
                 var destinationFrom = dbContext.Destinations.Where(x => x.Id == randomFromId).FirstOrDefault();
