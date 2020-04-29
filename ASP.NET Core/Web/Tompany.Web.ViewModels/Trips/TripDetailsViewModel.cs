@@ -17,8 +17,6 @@ namespace Tompany.Web.ViewModels.Trips
 
         public decimal PricePerPassenger { get; set; }
 
-        public int CarId { get; set; }
-
         public ICollection<View> Views { get; set; }
 
         public CarViewModel Car { get; set; }

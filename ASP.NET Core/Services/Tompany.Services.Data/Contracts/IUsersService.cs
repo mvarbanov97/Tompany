@@ -9,14 +9,18 @@ namespace Tompany.Services.Data.Contracts
 {
     public interface IUsersService
     {
+        T GetUserByUsername<T>(string username);
+
         ApplicationUser GetUserById(string id);
 
-        Task AcceptTripRequest(string senderId, string tripId, string userId);
+        Task AcceptTripRequest(string senderId, Trip trip, string userId);
 
         Task DeclineTripRequest(string senderId, string tripId, string userId);
 
         Task AddPassengerToTrip(string tripId, string passengerId);
 
         Task GetUserCars(string userId);
+
+        bool IsRequestAlreadySent(string senderId, string tripId);
     }
 }

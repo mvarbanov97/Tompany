@@ -27,6 +27,7 @@
         public decimal PricePerPassenger { get; set; }
 
         [DataType(DataType.Date)]
+        [Required(ErrorMessage = "Моля изберете датата, на която ще пътувате")]
         public DateTime DateOfDeparture { get; set; }
 
         [Display(Name = "Дата на пътуването")]

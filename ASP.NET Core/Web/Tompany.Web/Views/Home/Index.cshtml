@@ -9,10 +9,10 @@
 @if (!this.User.Identity.IsAuthenticated)
 {
     <div class="jumbotron">
-        <h1 class="display-4">Welcome to Tompany!</h1>
-        <p class="lead">Share you trip to a desired destination with a good company!</p>
+        <h1 class="display-4">Добре дошли в Tompany!</h1>
+        <p class="lead">Сподели пътуването си с добра компания!</p>
         <hr class="my-4">
-        <a class="btn btn-primary btn-lg" asp-page="/Account/Login" asp-area="Identity" role="button"><i class="fas fa-sign-in-alt"></i>&nbsp;Sign-in</a>
+        <a class="btn btn-lg btn-outline-primary" asp-page="/Account/Login" asp-area="Identity" role="button"><i class="fas fa-sign-in-alt"></i>&nbsp;Вход</a>
     </div>
 }
 

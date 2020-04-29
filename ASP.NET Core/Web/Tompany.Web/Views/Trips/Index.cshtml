@@ -3,133 +3,78 @@
     this.ViewData["Title"] = "All trips";
     var trips = Model.Trips.Select(x => new SelectListItem(x.DateOfDeparture.ToString(), x.DateOfDeparture.ToString()));
 }
+<div class="row-cols-1">
+        <div class="col">
+            @foreach (var item in Model.Trips)
+            {
+                <div class="card mb-3">
+                    <div class="card-header bg-light">
+                        <i class="fas fa-user-edit"></i>@item.UserUserName
+                        <div class="row mt-2">
+                            <div class="col-auto">
+                                <span class="h5">
+                                    <span class="text-muted align-top">От</span>
+                                    <span class="align-top">@item.FromDestinationName</span>
+                                </span>
+                            </div>
+                            <div class="col-auto d-none d-md-block">
+                                <i class="fas fa-arrow-circle-right"></i>
+                            </div>
+                            <div class="col-auto">
+                                <span class="h5">
+                                    <span class="text-muted align-top">До</span>
+                                    <span class="align-top">@item.ToDestinationName</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-xl-6">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span class="text-muted align-top">Дата: </span>
+                                <span class="align-top">@item.DateAsString</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 d-block d-lg-none">
+                                <i class="fas fa-car"></i>
+                                <span class="text-muted align-top">Автомобил: </span>
+                                <span class="align-top">@item.Car.Brand</span>
+                            </div>
+                            <div class="col-12 col-xl-6">
+                                <i class="fas fa-chair"></i>
+                                <span class="text-muted align-top">Свободни Mеста: </span>
+                                <span class="align-top">@(item.Car.Seats - item.Passengers.Count())</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                        </div>
+                        <div class="row">
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="text-muted align-top">Информация:</span>
+                                <span class="align-top">@item.AdditionalInformation</span>
 
-@*<div id="searchContainer" class="jumbotron text-center" style="padding-top: 30px; padding-bottom: 30px;">
-        <fieldset>
-            <h3>Wonder what to do?</h3>
-            <hr />
-            <div class="row">
-                <div class="form-group col-md-4">
-                    <h6><label ></label></h6>
-                    <select  class="form-control col-md-12">
-                        <option selected="" disabled="">Where to</option>
-                    </select>
-                    <span class="text-danger"></span>
-                </div>
-            </div>
-            <button onclick="getSearchResult()" type="submit" id="search" class="btn btn-lg btn-outline-primary"><i class="fas fa-search"></i>&nbsp;Search</button>
-        </fieldset>
-    </div>*@
-
-<div class="row">
-
-    <!------ Include the above in your HEAD tag ---------->
-
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
-
-    <div class="col-md-4 bg-light">
-        
-            <div class="container">
-                <div class="">
-                    <div class="filter-sidebar">
-                        <div class="row-cols-2 card-body mb-2 bg-light">
-                            <h4><i class="fa fa-car"></i> Search Options</h4>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Тръгвам от:</label>
-                            <select class="form-control" id="conditionsselect1">
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Пътувам до:</label>
-                            <select class="form-control" id="conditionsselect2">
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="SearchQuery.DateAsString">Дата на пътуването:</label>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <input class="form-control" asp-for="SearchQuery.DateOfDeparture" id="conditionsselect3">
-                        </div>
-                        <button onclick="getSearchResult()" class="btn btn-primary">Потърси</button>
-                        <button class="btn btn-primary">Зачисти посочените настройки</button>
-                        <div class="pb-3">
-                        </div>
-                    </div>
-                </div>
-            </div>
-    </div>
-    <div class="col-6">
-        @foreach (var item in Model.Trips)
-        {
-            <div class="card mb-3">
-                <div class="card-header bg-light">
-                    <i class="fas fa-user-edit"></i>@item.UserUserName
-                    <div class="row mt-2">
-                        <div class="col-auto">
-                            <span class="h5">
-                                <span class="text-muted align-top">От</span>
-                                <span class="align-top">@item.FromDestinationName</span>
-                            </span>
-                        </div>
-                        <div class="col-auto d-none d-md-block">
-                            <i class="fas fa-arrow-circle-right"></i>
-                        </div>
-                        <div class="col-auto">
-                            <span class="h5">
-                                <span class="text-muted align-top">До</span>
-                                <span class="align-top">@item.ToDestinationName</span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-12 col-xl-6">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span class="text-muted align-top">Дата: </span>
-                            <span class="align-top">@item.DateAsString</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 d-block d-lg-none">
-                            <i class="fas fa-car"></i>
-                            <span class="text-muted align-top">Автомобил: </span>
-                            <span class="align-top">@item.Car.Brand</span>
-                        </div>
-                        <div class="col-12 col-xl-6">
-                            <i class="fas fa-chair"></i>
-                            <span class="text-muted align-top">Свободни Mеста: </span>
-                            <span class="align-top">@(item.Car.Seats - item.Passengers.Count())</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                    </div>
-                    <div class="row">
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <i class="fas fa-info-circle"></i>
-                            <span class="text-muted align-top">Информация:</span>
-                            <span class="align-top">@item.AdditionalInformation</span>
-
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <span></span>
+                        <div class="row">
+                            <div class="col">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <span></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <a class="stretched-link" asp-area="" asp-controller="Trips" asp-action="Details" asp-route-id="@item.Id"></a>
                 </div>
-                <a class="stretched-link" asp-area="" asp-controller="Trips" asp-action="Details" asp-route-id="@item.Id"></a>
-            </div>
-        }
-    </div>
+            }
+        </div>
+ 
 </div>
 
 

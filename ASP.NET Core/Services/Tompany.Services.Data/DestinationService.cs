@@ -27,13 +27,22 @@ namespace Tompany.Services.Data
             this.tripsRepository = tripsRepository;
         }
 
-
-        public async Task<IEnumerable<DestinationViewModel>> GetAllDestinationsAsync()
+        public IEnumerable<DestinationViewModel> GetAllDestinationsAsync()
         {
-            var destinations = await this.destinationsRepository
+            var destinations = this.destinationsRepository
                 .All()
                 .To<DestinationViewModel>()
-                .ToArrayAsync();
+                .ToArray();
+
+            return destinations;
+        }
+
+        public async Task<IEnumerable<string>> GetAllDestinations()
+        {
+            var destinations = this.destinationsRepository
+                .All()
+                .Select(x => x.Name)
+                .ToArray();
 
             return destinations;
         }

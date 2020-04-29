@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,6 @@ namespace Tompany.Web.Controllers
 
         public async Task<IActionResult> UserTripList()
         {
-            
             var userId = this.userManager.GetUserId(this.User);
 
             var viewModel = new UserTripListViewModel
@@ -44,7 +44,7 @@ namespace Tompany.Web.Controllers
         {
             var userId = this.userManager.GetUserId(this.User);
             var trip = this.tripsService.GetTripByUserId(userId);
-            var result = this.usersService.AcceptTripRequest(senderId, trip.Id, userId);
+            await this.usersService.AcceptTripRequest(senderId, trip, userId);
 
             await this.usersService.AddPassengerToTrip(tripId, senderId);
             return this.RedirectToAction("UserTripList", "Users");
@@ -59,9 +59,14 @@ namespace Tompany.Web.Controllers
             return this.RedirectToAction("Details", "Trips", new { id = tripId });
         }
 
-        public async Task<IActionResult> Details(string userId)
+        [HttpGet]
+        public async Task<IActionResult> Details(string userName)
         {
-            var viewModel = new UserDetailsViewModel();
+            var user = this.usersService.GetUserByUsername<UserViewModel>(userName);
+            var viewModel = new UserDetailsViewModel
+            {
+                User = user,
+            };
 
             return this.View(viewModel);
         }

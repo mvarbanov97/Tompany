@@ -49,12 +49,12 @@
             <div class="row">
                 <div class="col">
                     <div class="form-group">
-                        <label asp-for="@Model.YearOfManufacture"></label>
-                        <select asp-for="@Model.YearOfManufacture" class="form-control col-md-12">
+                        <label asp-for="YearOfManufacture"></label>
+                        <select asp-for="YearOfManufacture" class="form-control col-md-12">
                             <option selected="selected" value="">Моля изберете</option>
                             @for (int i = 1990; i < DateTime.Now.Year; i++)
                             {
-                                <option value="i">@i.ToString()</option>
+                                <option value="@i">@i</option>
 
                             }
                         </select>
@@ -73,8 +73,8 @@
             <div class="row">
                 <div class="col">
                     <div class="form-group">
-                        <label class="control-label" asp-for="@Model.Seats"></label>
-                        <select asp-for="@Model.Seats" class="form-control col-md-12">
+                        <label class="control-label" asp-for="Seats"></label>
+                        <select asp-for="Seats" class="form-control col-md-12">
                             <option selected="selected" value="">Моля изберете</option>
                             <option value="1">1</option>
                             <option value="2">2</option>

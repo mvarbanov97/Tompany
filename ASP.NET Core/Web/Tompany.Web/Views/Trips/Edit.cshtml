@@ -1,1 +1,52 @@
-﻿<h6> HERE WILL BE THE EDIT FORM FOR THE TRIP POST</h6>
+﻿@model Tompany.Web.ViewModels.Trips.TripEditViewModel;
+@{
+    this.ViewData["Title"] = "Edit Page";
+    var destinations = Model.Destinations.Select(x => new SelectListItem(x.Name, x.Name));
+    var cars = Model.Cars.Select(x => new SelectListItem(x.CarBrandName, x.Id.ToString()));
+}
+<div class="row justify-content-center">
+    <form id="tripCreateForm" class="mb-0" enctype="multipart/form-data" asp-area="" asp-controller="Trips" asp-action="Edit" method="post">
+        <h5>Редактиране на обявата</h5>
+        <hr />
+        <div class="form-group">
+            <label asp-for="FromDestinationName"></label>
+            <select asp-for="FromDestinationName" asp-items="@destinations" class="form-control col-md-12">
+                <option selected="">@Model.FromDestinationName</option>
+            </select>
+            <span asp-validation-for="FromDestinationName" class="text-danger"></span>
+
+        </div>
+        <div class="form-group">
+            <label asp-for="ToDestinationName"></label>
+            <select asp-for="ToDestinationName" asp-items="destinations" class="form-control col-md-12">
+                <option selected="">@Model.ToDestinationName</option>
+            </select>
+            <span asp-validation-for="ToDestinationName" class="text-danger"></span>
+
+        </div>
+        <div class="form-group">
+            <label asp-for="DateAsString"></label>
+            <input asp-for="DateOfDeparture" class="form-control col-md-12" />
+            <span asp-validation-for="DateOfDeparture" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="PricePerPassenger"></label>
+            <input asp-for="PricePerPassenger" class="form-control col-md-12" />
+            <span asp-validation-for="PricePerPassenger" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="AdditionalInformation"></label>
+            <input asp-for="AdditionalInformation" class="form-control col-md-12" />
+            <span asp-validation-for="AdditionalInformation" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="CarId"></label>
+            <select asp-for="CarId"
+                    asp-items="cars" class="form-control col-md-12">
+                <option selected="">--Избери автомобил--</option>
+            </select>
+            <span asp-validation-for="CarId" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-outline-success">Запази промените</button>
+    </form>
+</div>

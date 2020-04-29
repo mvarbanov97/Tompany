@@ -23,6 +23,7 @@
     using Microsoft.Extensions.Hosting;
     using Tompany.Services.Data.Contracts;
     using System.Linq;
+    using AutoMapper;
 
     public class Startup
     {

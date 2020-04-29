@@ -10,8 +10,10 @@ namespace Tompany.Services.Data.Contracts
 {
     public interface IDestinationService
     {
-        Task<IEnumerable<DestinationViewModel>> GetAllDestinationsAsync();
+        IEnumerable<DestinationViewModel> GetAllDestinationsAsync();
 
         Task<TripSearchResultViewModel> GetSearchResultAsync(int fromDestinationId, int toDestinationId, DateTime dateOfDeparture);
+
+        Task<IEnumerable<string>> GetAllDestinations();
     }
 }

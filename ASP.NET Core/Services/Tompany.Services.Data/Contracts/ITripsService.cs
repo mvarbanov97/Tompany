@@ -12,6 +12,8 @@
 
         T GetById<T>(string id);
 
+        Trip GetById(string id);
+
         int GetTripsCount();
 
         Trip GetTripByUserId(string userId);
@@ -21,10 +23,6 @@
         IEnumerable<T> GetUserTrips<T>(string userId);
 
         IEnumerable<T> GetTripPosts<T>(int? take = null, int skip = 0);
-
-        Task SendTripRequest(string userId, string tripId, string ownerId);
-
-        IEnumerable<TripRequest> GetAllTripRequestInTrip(string tripId);
 
         Task<TripSearchViewModel> GetSearchResultAsync(int fromDestinationId, int toDestination, DateTime dateOfDeparture);
 

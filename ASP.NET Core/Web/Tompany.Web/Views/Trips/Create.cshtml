@@ -23,12 +23,16 @@
             <select asp-for="FromDestinationName" asp-items="destinations" class="form-control col-md-12">
                 <option selected="" disabled="">--Тръгвам от--</option>
             </select>
+            <span asp-validation-for="FromDestinationName" class="text-danger"></span>
+
         </div>
         <div class="form-group">
             <label asp-for="ToDestinationName"></label>
             <select asp-for="ToDestinationName" asp-items="destinations" class="form-control col-md-12">
                 <option selected="" disabled="">--Пътувам до--</option>
             </select>
+            <span asp-validation-for="ToDestinationName" class="text-danger"></span>
+
         </div>
         <div class="form-group">
             <label asp-for="DateAsString"></label>
