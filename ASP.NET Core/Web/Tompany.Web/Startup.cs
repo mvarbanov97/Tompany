@@ -71,10 +71,27 @@
             // Application services
             services.AddTransient<IEmailSender>(provider => new SendGridEmailSender(this.configuration["SendGridApiKey"]));
             services.AddTransient<IDestinationService, DestinationService>();
+            services.AddTransient<IViewService, ViewsService>();
             services.AddTransient<ITripsService, TripsService>();
             services.AddTransient<ICarsService, CarsService>();
             services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<ISettingsService, SettingsService>();
+            services.AddTransient<ITripRequestsService, TripRequestsService>();
+
+            services.AddAuthentication().AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = this.configuration["Authentication:Facebook:AppId"];
+                facebookOptions.AppSecret = this.configuration["Authentication:Facebook:AppSecret"];
+            });
+
+            services.AddAuthentication().AddGoogle(options =>
+            {
+            IConfigurationSection googleAuthNSection =
+                this.configuration.GetSection("Authentication:Google");
+
+            options.ClientId = googleAuthNSection["ClientId"];
+            options.ClientSecret = googleAuthNSection["ClientSecret"];
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

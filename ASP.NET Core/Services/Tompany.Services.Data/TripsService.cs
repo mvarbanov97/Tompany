@@ -21,6 +21,7 @@ namespace Tompany.Services.Data
         private readonly IRepository<TripRequest> tripRequestRepository;
         private readonly IRepository<Destination> destinationsRepository;
         private readonly ILogger<TripsService> logger;
+        private readonly IRepository<TripRequest> tripRequestsRepository;
 
         public TripsService(
             IRepository<Trip> tripsRepository,
@@ -28,6 +29,7 @@ namespace Tompany.Services.Data
             IRepository<UserTrip> userTripsRepository,
             IRepository<TripRequest> tripRequestRepository,
             IRepository<Destination> destinationsRepository,
+            IRepository<TripRequest> tripRequestsRepository,
             ILogger<TripsService> logger)
         {
             this.tripsRepository = tripsRepository;
@@ -36,6 +38,7 @@ namespace Tompany.Services.Data
             this.tripRequestRepository = tripRequestRepository;
             this.destinationsRepository = destinationsRepository;
             this.logger = logger;
+            this.tripRequestsRepository = tripRequestsRepository;
         }
 
         public async Task CreateAsync(TripCreateInputModel input, string userId)
@@ -70,8 +73,25 @@ namespace Tompany.Services.Data
 
         public T GetById<T>(string id)
         {
-            var trip = this.tripsRepository.All().Include(x => x.TripRequest).Where(x => x.Id == id)
+            var trip = this.tripsRepository.All()
+                .Include(x => x.TripRequest)
+                .Include(x => x.Car)
+                .Include(x => x.Views)
+                .Where(x => x.Id == id)
                 .To<T>().FirstOrDefault();
+
+            return trip;
+        }
+
+        public Trip GetById(string id)
+        {
+            var trip = this.tripsRepository
+                .All()
+                .Include(x => x.Car)
+                .Include(x => x.Passengers)
+                .Include(x => x.TripRequest)
+                .Include(x => x.Views)
+                .Where(x => x.Id == id).FirstOrDefault();
 
             return trip;
         }
@@ -163,48 +183,10 @@ namespace Tompany.Services.Data
             trip.ToDestinationName = tripToEdit.ToDestinationName;
             trip.DateOfDeparture = tripToEdit.DateOfDeparture;
             trip.AdditionalInformation = tripToEdit.AdditionalInformation;
+            trip.CarId = tripToEdit.CarId;
 
             this.tripsRepository.Update(trip);
             await this.tripsRepository.SaveChangesAsync();
-        }
-
-        public async Task SendTripRequest(string userName, string tripId, string ownerId)
-        {
-            ApplicationUser owner = null;
-            owner = this.usersRepository.All().Include(x => x.UserTrips).FirstOrDefault(y => y.Id == ownerId);
-
-            var trip = this.tripsRepository.All().FirstOrDefault(x => x.Id == tripId);
-
-            ApplicationUser sender = null;
-            sender = this.usersRepository.All().FirstOrDefault(x => x.UserName == userName);
-
-            var tripRequest = new TripRequest
-            {
-                Trip = trip,
-                TripId = tripId,
-                Sender = sender,
-                SenderId = sender.Id,
-            };
-
-            trip.TripRequest.Add(tripRequest);
-
-            await this.tripRequestRepository.AddAsync(tripRequest);
-            await this.tripRequestRepository.SaveChangesAsync();
-            // await this.tripsRepository.SaveChangesAsync();
-
-            // this.tripsRepository.Update(trip);
-
-        }
-
-        public IEnumerable<TripRequest> GetAllTripRequestInTrip(string tripId)
-        {
-            var tripRequests = this.tripRequestRepository
-                .All()
-                .Include(x => x.Sender)
-                .Where(x => x.TripId == tripId)
-                .ToList();
-
-            return tripRequests;
         }
 
         public async Task<TripSearchViewModel> GetSearchResultAsync(int fromDestinationId, int toDestination, DateTime dateOfDeparture)

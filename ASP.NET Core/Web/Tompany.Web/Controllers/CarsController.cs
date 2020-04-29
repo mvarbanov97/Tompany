@@ -32,7 +32,7 @@ namespace Tompany.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CarCreateInputModel input)
         {
-            var userId = this.userManager.GetUserId(this.HttpContext.User);
+            var userId = this.userManager.GetUserId(this.User);
 
             await this.carsService.CreateAsync(userId, input);
             return this.RedirectToAction("List", "Cars");
@@ -40,7 +40,7 @@ namespace Tompany.Web.Controllers
 
         public async Task<IActionResult> List(CarViewModel input)
         {
-            var userId = this.userManager.GetUserId(this.HttpContext.User);
+            var userId = this.userManager.GetUserId(this.User);
             var cars = this.carsService.GetCarByUserId<CarViewModel>(userId);
 
             var viewModel = new CarListViewModel

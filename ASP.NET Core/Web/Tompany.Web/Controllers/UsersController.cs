@@ -29,6 +29,7 @@ namespace Tompany.Web.Controllers
 
         public async Task<IActionResult> UserTripList()
         {
+            
             var userId = this.userManager.GetUserId(this.User);
 
             var viewModel = new UserTripListViewModel

@@ -7,7 +7,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tompany.Data.Models;
 using Tompany.Services.Data.Contracts;
+using Tompany.Web.Common;
 using Tompany.Web.ViewModels.Cars;
+using Tompany.Web.ViewModels.Destinations;
 using Tompany.Web.ViewModels.Trips;
 
 namespace Tompany.Web.Controllers
@@ -20,6 +22,8 @@ namespace Tompany.Web.Controllers
         private readonly ICarsService carsService;
         private readonly IUsersService usersService;
         private readonly IDestinationService destinationsService;
+        private readonly IViewService viewsService;
+        private readonly ITripRequestsService tripRequestsService;
         private readonly UserManager<ApplicationUser> userManager;
 
         public TripsController(
@@ -27,12 +31,16 @@ namespace Tompany.Web.Controllers
             ICarsService carsService,
             IUsersService usersService,
             IDestinationService destinationsService,
+            IViewService viewsService,
+            ITripRequestsService tripRequestsService,
             UserManager<ApplicationUser> userManager)
         {
             this.tripsService = tripsService;
             this.carsService = carsService;
             this.usersService = usersService;
             this.destinationsService = destinationsService;
+            this.viewsService = viewsService;
+            this.tripRequestsService = tripRequestsService;
             this.userManager = userManager;
         }
 
@@ -60,7 +68,7 @@ namespace Tompany.Web.Controllers
             var viewModel = new TripCreateInputModel
             {
                 Cars = cars,
-                Destinations = await this.destinationsService.GetAllDestinationsAsync(),
+                Destinations = this.destinationsService.GetAllDestinationsAsync(),
                 DateOfDeparture = DateTime.Now,
             };
 
@@ -80,8 +88,6 @@ namespace Tompany.Web.Controllers
             var cars = this.usersService.GetUserCars(userId);
             await this.tripsService.CreateAsync(input, userId);
 
-
-
             return this.RedirectToAction("Index", "Trips");
         }
 
@@ -91,10 +97,8 @@ namespace Tompany.Web.Controllers
         {
             var userId = this.userManager.GetUserId(this.User);
             var tripViewModel = this.tripsService.GetById<TripDetailsViewModel>(id);
-            var car = this.carsService.GetById<CarViewModel>(tripViewModel.CarId);
-            var tripRequests = this.tripsService.GetAllTripRequestInTrip(id);
+            var tripRequests = this.tripRequestsService.GetAllTripRequestsByTripId(id);
 
-            tripViewModel.Car = car;
             tripViewModel.TripRequests = tripRequests;
 
             if (tripViewModel == null)
@@ -109,12 +113,21 @@ namespace Tompany.Web.Controllers
         public async Task<IActionResult> Edit(TripEditViewModel tripToEditViewModel)
         {
             await this.tripsService.EditAsync(tripToEditViewModel);
+
             return this.RedirectToAction("Details", "Trips", new { area = "", id = tripToEditViewModel.Id});
         }
 
         public async Task<IActionResult> Edit(string id)
         {
+            var userId = this.userManager.GetUserId(this.User);
+            var destinations = this.destinationsService.GetAllDestinationsAsync();
+
+            var cars = this.carsService.GetCarByUserId<CarDropDownViewModel>(userId);
             var tripToEdit = this.tripsService.GetById<TripEditViewModel>(id);
+
+            tripToEdit.Cars = cars;
+            tripToEdit.Destinations = destinations;
+
             return this.View(tripToEdit);
         }
 
@@ -131,7 +144,7 @@ namespace Tompany.Web.Controllers
             var trip = this.tripsService.GetById<TripDetailsViewModel>(tripId);
             var ownerId = trip.UserId;
 
-            this.tripsService.SendTripRequest(user, tripId, ownerId);
+            this.tripRequestsService.SendTripRequest(user, tripId, ownerId);
 
             return this.View("_TripRequestSendSuccessfully");
         }
