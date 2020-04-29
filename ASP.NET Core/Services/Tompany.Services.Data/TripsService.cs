@@ -112,6 +112,9 @@ namespace Tompany.Services.Data
         {
             IQueryable<Trip> query = this.tripsRepository
                 .All()
+                .Include(x => x.Passengers)
+                .Include(x => x.Car)
+                .Include(x => x.UserTrips)
                 .Where(x => x.UserId == userId);
 
             return query.To<T>().ToList();
@@ -119,7 +122,7 @@ namespace Tompany.Services.Data
 
         public Trip GetTripByUserId(string userId)
         {
-            var trip = this.tripsRepository.All().Include(x => x.TripRequest).Where(x => x.UserId == userId).FirstOrDefault();
+            var trip = this.tripsRepository.All().Include(x => x.Car).Include(x => x.TripRequest).Where(x => x.UserId == userId).FirstOrDefault();
 
             return trip;
         }

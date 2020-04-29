@@ -6,6 +6,7 @@ using Tompany.Data.Common.Repositories;
 using Tompany.Data.Models;
 using Tompany.Data.Models.Enums;
 using Tompany.Services.Data.Contracts;
+using Tompany.Services.Mapping;
 
 namespace Tompany.Services.Data
 {
@@ -14,17 +15,20 @@ namespace Tompany.Services.Data
         private readonly IRepository<ApplicationUser> usersRepository;
         private readonly IRepository<Trip> tripsRepository;
         private readonly IRepository<TripRequest> tripRequestRepository;
+        private readonly ITripsService tripsService;
         private readonly ICarsService carsService;
 
         public UsersService(
             IRepository<ApplicationUser> usersRepository,
             IRepository<Trip> tripsRepository,
             IRepository<TripRequest> tripRequestRepository,
+            ITripsService tripsService,
             ICarsService carsService)
         {
             this.usersRepository = usersRepository;
             this.tripsRepository = tripsRepository;
             this.tripRequestRepository = tripRequestRepository;
+            this.tripsService = tripsService;
             this.carsService = carsService;
         }
 
@@ -35,12 +39,19 @@ namespace Tompany.Services.Data
             return user;
         }
 
+        public T GetUserByUsername<T>(string username)
+        {
+            var user = this.usersRepository.All().Where(x => x.UserName == username).To<T>().FirstOrDefault();
+
+            return user;
+        }
+
         public async Task GetUserCars(string userId)
         {
             var cars = this.usersRepository.All().Where(x => x.Cars.Any(x => x.UserId == userId));
         }
 
-        public async Task AcceptTripRequest(string passengerId, string tripId, string userId)
+        public async Task AcceptTripRequest(string passengerId, Trip trip, string userId)
         {
             ApplicationUser user = this.GetUserById(userId);
             if (user == null)
@@ -54,14 +65,12 @@ namespace Tompany.Services.Data
                 throw new NullReferenceException($"There is no passenger with Id {passengerId}");
             }
 
-            var trip = this.tripsRepository
-                .All()
-                .Include(x => x.TripRequest)
-                .Where(x => x.TripRequest.Any(x => x.SenderId == passengerId && x.TripId == tripId))
-                .FirstOrDefault();
+            if (trip.Passengers.Count() >= trip.Car.Seats)
+            {
+                return;
+            }
 
             var tripRequest = trip.TripRequest.Where(x => x.TripId == trip.Id && x.SenderId == passengerId).FirstOrDefault();
-
             tripRequest.RequestStatus = RequestStatus.Accepted;
 
             this.tripRequestRepository.Update(tripRequest);
@@ -84,13 +93,7 @@ namespace Tompany.Services.Data
 
         public async Task AddPassengerToTrip(string tripId, string passengerId)
         {
-            var trip = this.tripsRepository
-                .All()
-                .Include(x => x.TripRequest)
-                .Include(x => x.Passengers)
-                .Include(x => x.Car)
-                .Where(x => x.TripRequest.Any(x => x.TripId == tripId && x.SenderId == passengerId))
-                .FirstOrDefault();
+            var trip = this.tripsService.GetById(tripId);
 
             var passenger = this.GetUserById(passengerId);
 

@@ -10,21 +10,26 @@
         Няма повече свободни места за тази обява.
     </div>
 }
-@if (Model.TripRequests.Any(x => x.Sender.UserName == this.User.Identity.Name))
-{
-<div class="alert alert-info alert-dismissible fade show" role="alert">
-    Вече сте кандидатствали за тази обява.
-</div>
-}
-else
-{
 
-<div class="row-cols-4">
-    <div class="col-lg-7">
-        <a type="submit" class="btn btn-outline-success" asp-controller="Trips" asp-action="Candidate" asp-route-tripId="@Model.Id">Candidate</a>
-    </div>
-</div>
+@if (this.User.Identity.Name != Model.UserUserName)
+{
+    @if (Model.TripRequests.Any(x => x.Sender.UserName == this.User.Identity.Name))
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            Вече сте кандидатствали за тази обява.
+        </div>
+    }
+    else
+    {
+
+        <div class="row-cols-4">
+            <div class="col-lg-7">
+                <a type="submit" class="btn btn-outline-success" asp-controller="Trips" asp-action="Candidate" asp-route-tripId="@Model.Id">Candidate</a>
+            </div>
+        </div>
+    }
 }
+
 <div class='container trip-info' border="">
     <div class="row">
         <div class="col-lg-7">
@@ -56,7 +61,7 @@ else
                         <div class="col-12 col-xl-6">
                             <i class="fa fa-calendar-alt"></i>
                             <span class="text-muted align-top">Дата: </span>
-                            <span class="align-top">@Model.DateOfDeparture</span>
+                            <span class="align-top">@Model.DateAsString</span>
                         </div>
                     </div>
                     <div class="row">
@@ -75,7 +80,7 @@ else
                         <div class="col-12 col-xl-6">
                             <i class="fa fa-eye"></i>
                             <span class="text-muted align-top">Видяна: </span>
-                            <span class="align-top">@Model.Views.Count пъти</span>
+                            <span class="align-top">@Model.Views.Count() пъти</span>
                         </div>
                     </div>
                     <div class="row">
@@ -171,7 +176,7 @@ else
                         <img src="http://placehold.it/110x80" alt="ALT NAME" class="d-block ui-w-40 rounded-circle" style='margin-right:3px'>
                         <div class="caption" class="pull-left">
                             <h4>
-                                <a asp-controller="Users" asp-action="Details" asp-route-userId="@request.SenderId">@request.Sender.UserName</a>
+                                <a asp-controller="Users" asp-action="Details" asp-route-userName="@request.Sender.UserName">@request.Sender.UserName</a>
                             </h4>
                         </div>
                     </div>
@@ -191,7 +196,7 @@ else
                 <img src="http://placehold.it/110x80" alt="ALT NAME" class="d-block ui-w-40 rounded-circle" style='margin-right:3px'>
                 <div class="caption" class="pull-left">
                     <h4>
-                        <a asp-controller="Users" asp-action="Details" asp-route-userId="@pendingRequest.SenderId">@pendingRequest.Sender.UserName</a>
+                        <a asp-controller="Users" asp-action="Details" asp-route-userName="@pendingRequest.Sender.UserName">@pendingRequest.Sender.UserName</a>
                         <a type="submit" class="btn btn-outline-success" asp-controller="Users" asp-action="AcceptRequest" asp-route-senderId="@pendingRequest.SenderId" asp-route-tripId="@Model.Id">Accept</a>
                         <a type="submit" class="btn btn-outline-danger" asp-controller="Users" asp-action="DeclineRequest" asp-route-senderId="@pendingRequest.SenderId" asp-route-tripId="@Model.Id">Decline</a>
                     </h4>

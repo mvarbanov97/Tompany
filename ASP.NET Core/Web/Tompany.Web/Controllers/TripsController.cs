@@ -93,9 +93,10 @@ namespace Tompany.Web.Controllers
 
         [HttpGet]
         [Authorize]
-        public IActionResult Details(string id)
+        public async Task<IActionResult> Details(string id)
         {
             var userId = this.userManager.GetUserId(this.User);
+            await this.viewsService.AddViewAsync(id);
             var tripViewModel = this.tripsService.GetById<TripDetailsViewModel>(id);
             var tripRequests = this.tripRequestsService.GetAllTripRequestsByTripId(id);
 
@@ -138,13 +139,20 @@ namespace Tompany.Web.Controllers
             return this.RedirectToAction("UserListTrip", "Users");
         }
 
-        public IActionResult Candidate(string tripId)
+        public async Task<IActionResult> Candidate(string tripId)
         {
             var user = this.User.Identity.Name;
+            var userId = this.userManager.GetUserId(this.User);
+
+            if (this.usersService.IsRequestAlreadySent(userId, tripId))
+            {
+                return this.View("_TripRequestAlreadySent");
+            }
+
             var trip = this.tripsService.GetById<TripDetailsViewModel>(tripId);
             var ownerId = trip.UserId;
 
-            this.tripRequestsService.SendTripRequest(user, tripId, ownerId);
+            await this.tripRequestsService.SendTripRequest(user, tripId, ownerId);
 
             return this.View("_TripRequestSendSuccessfully");
         }

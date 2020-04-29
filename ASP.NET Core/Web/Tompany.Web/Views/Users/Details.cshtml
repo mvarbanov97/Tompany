@@ -1,22 +1,20 @@
 ﻿@model Tompany.Web.ViewModels.Users.UserDetailsViewModel
 
+
 <div class="container emp-profile">
     <form method="post">
         <div class="row">
             <div class="col-md-4">
                 <div class="profile-img">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog" class="d-block  rounded-circle"  />
+                    <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTEhIVFhUXGRgbGBUWFxcaGBUaGhUdFxgVFRUZHSggGB0lGxUXITEhJSkrLi4uFx8zODMtNygtLisBCgoKDQ0NDg8NDy0ZFRktKysrLS0tNysrKysrKysrKysrKysrKysrKysrKysrKysrKy0rKysrKysrKysrKysrK//AABEIANcA6gMBIgACEQEDEQH/xAAcAAACAwEBAQEAAAAAAAAAAAABAgAGBwMFBAj/xABGEAABAgMEBgcECQMDAgcAAAABAAIDERIEITFBBiJRYYGhBQcTMkJxkRRigvAjUnKSscHC0fFTorIzY9JD4RckNHODs8P/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/EABURAQEAAAAAAAAAAAAAAAAAAAAR/9oADAMBAAIRAxEAPwDanvDhIYoQzTcVHMpvHNRra7z5XIFDCDVkjE1sMlA+ZpywUdqYZ7UDViVOeCWGKcUaLqs8UGmu45bEAcwuMxgne6oSCUvp1Qi5lN45oJDdTcUrWEGo4JmtrvPlcgH1apw/b+EEiCrDJNWJU54JXmjDDOa8W36U2KFe60NLvqs179hpnLiUHtQxTjmg5hJqGCpNs6yYPggRHSwmWsH6jyXnv6zIspNs7APee534AINIiOquHmix4aJHFZazrGtIN0KD6P8A+S6jrIikzfZ4Z+y5zfxmg0pjC0zOCMQVXhUWB1mMddFs72j3HB3+QavZsOm1jfcItBOUUFsvi7vNBYy8EU54JYerjmlhOa5vaMcHA3gggg+RCZuvjls3/wAIAWEmrLFNENVwQrkacsEXCi8c0BY8NEjikYwtMzgmayq8oNfVceSCRG1XjyTOeCKRilc6i4ed/wA7kSyWtn+6CQzTjmloM6ssUzRXjlsQrvpywQGIasMknYFO4UYZ7UvtB2BBGAg62G9GICe7huuUrquwUqouxzQMSJSGPzmhDu73Cd6nZy1uMlO/ukgUgzn4eUvJNEv7vK5Cvw8JoyovxmgLCAJHFLDBB1sN6NFWthuVZ0o0yhwAYbAHxfqz1WfbP6Rf5IPe6QtTIbTEe8MYMXEyE9m8ql9OdYjRNtlhzP8AVeJD4WYniR5KoxYtpt0WRqivyaO6wbhgwb1cuhurxjAH2p1Z/psJDfifi7hLigpVottrtjqXOixj9Rsy0fA24ecl7HR/V9angGJRCb7xqd91t3NadY7HDa2mGxsNo8LQAPO5dq/DwmgpFm6t4I78aI850hrBzmea9SDoNYGiToTnO96JE/SQFZJUb5qUT1uXkg8Fmh1iHes7Zfaf/wAlyj6D2J3dgEDaIkT83KxVV3YZ/PqpXRdigp1q6urK7/SiRWnZNrhzAPNeFb+rqOy+HEhv3GbHHyxHMLT6Kb8VJV34IMSfAtdidOUWATmJhrt0xqu8r1Y+iesKK2TbQwPH12Sa/wAy3uu4SWkPk4GG5oINxneD5gqqdPaBwH60E9k87BqHzZlwl5FBYeiel4FoZVBiNcZXjBzT7wN4X1wxLvc71jFu6MtNiiNcQ5hnqRWHVd5O/SfRXLRzTlsWUK1yY7KKLmO+2PAd+HkgujwSZtw3J3kEauO5L2lN2O9Gii/FBIZA72O+9K0Gczgmprvwy+fVDtJ6vPyQSJf3eMrk0xKXi5z80s6N80aPFxkgEO7vc710rbu9FznXukj7NvQF8pasp7kIcvFjvQDKb8VC2u8XZIAJzvnTyRie5xkjXPV4TUGpjfNAbpZVc5pYfvc1KPFxkqVp3pRKdngmTv8AqPHh9xp27Tlh5Bz0w0xLS6BZXbnRBltbDO33vTaK9o1otEtRrM2wp3vzdtDBn54Dfgvr0Q0Y7ciLGBEEG4YGIRkNjdp4DdpsKCIYEgAAJAASAGQAQfP0R0ZBgQ6GMDRnPF29xN5K+ls53zlvw3Illd4uyRL6tX5u/hAInu8ZJrpZVc5oA0Y3zQo8XGSCQ/e4TQdOd06d2C52y1sa2qI9rGjxOIA8lXbXp7ZmarA+JvaKW+rpHkgtESXhx3bEWSlrSnvVDZ1hyN1mmP8A3ZfoX0wdPoLz9JCiM3iTwPwPJBcGTnrTlvwRie7huXyWDpeDaRKDEa7aMx5tN4X2A0XG9ATKV0quc0sP3+E1KJa3GSh18Lpfn/CDlaYAeCx7Q6Gbi0ibSFnulWhRhTi2ab4eLoeLmDaPrN5jetIrlq8JoAUXm9BmOiGlhgEQo83wcAcXQvLa3dllsOl2aKHAOnNhEwcjPAgql6ZaJVB1pszb8Xwhntewbdoz88fI0O0kMAiDFd9C43E/9InMe6cxx2zDTok/Dhu2pnSldKrdjvStfTdjO+YUDJa3zegMP3uE0t886eUkSK8LpI1+HhNBInu8ZJJv3pgKMb5pvaBsQIxxJk7BGIabm4eqL31XDmox1Fx5ICWgCYx+ckIet3v2QDJGrLFJaYopLyZNYCXE5ACZPJB4emHTxs0ItYfpHzDB9UZv4Tu38VRdGOg3WqKS6fZtM4jsyTfSDtO3/suHSNriW20zAJLyGQ2/VbOTRu2nzJWp9CdGtssJsMcSMXOzcfnCSD7LPBaGgAAACQAuAAuAA8lIbi4ydgi5lRqGCL31XDmgERxbc3D1TOaAJjFBjqbjyStZI1HD90DQxV3v2Vd0o0obZZw2yfEODcmjIvIv4Yncvs0o6YECCYmLu6xpzcfyAvPlvWSRoznuLnkuc4zJOJKDrb7fEjOrivLjvwG5owA8l8yiiCKKKIHhRHNIc0lrhg5pII8iMFfNFtMg8iFayJm5sXAHYHyuH2vXaqAog3MOM5HD8vNGJq93PHNVLQPp8xWGzRDN7BqOPiZsO9v4S2FW1mpjns+d6Bg0Snn+fklhmrvfsoWTNWWKLzXcOaBXuIMhgs+090bEI+0QR9G467R4HHxD3SfQ+d2htfSJFcotmBaWxAHNcC0jaDdJBUOr7pwPHs0Uzc0fREnFoxZ5jEbvJXJriTI4fOayHpiwvslpIaSKSHQ35kT1T53SPkVqfQ3SjbTAY9txcJEfVcO8PUekkH2RNXu/umpEp548fJBhoxz2IUX1ZYoJDNXe/ZdOyb8lI814ZbUns53IHeym8KMbVeeSVjSDN2CMQVXtQQPmacsFUusbpHsoTYDDfFvduY04cT+BVvLgRIYrINKbYY9riSvk7s2DbSabvN0zxQWPq46InXanDuzbD85Tc78Bxcr0w13HLYvj6I6P7CFDhjBgEztOLnS3mZX2xDV3UAc+k0jBF7KbxzRY4ASOKWG0tM3YICxtV55JWvmaTh+yMRpde3BM5wIkMUGX9YFurtRhg6sIAfEQHOP4D4VWV9HScauNFcfE959XFfNNAVEJqTQFRCak0BUQmpNB9nRVuMCMyK3FjgfMYOHEEjitoguEQTyuIlsKwua2HRqKYlks5GIhgHhq/pQeoXyNOWCLxReOaIcJSz/NLDFPeQMxlQmcUrH1XHkg9pJmME73Bwk3FBV9P+ihEgVtGtCm7eWnvj0APwqv9XfSlEV0Em6IJt+2Bf6tn90LRmyAIdnljdgsd6RguslrcG4wogczeJhzJ/CRPig2Ngrxy2IV305YLnCjCKxj4d7XNDh5OEwu1QlLOUuKAPFGGe1J7QdyaHq95dO2b8hBzD6rsFC6i4X5pnylqynuQhy8WO9B8nS0fsYESNO9rHOHnK4esll+hNi7W2Qwbw2bz8IuP3i1XTrCjltjcL5Pexo+9V+DF4XVhZyXxogya1s/tEk/4BBodfh4TRIovF80bpZVc5pYfvc0BDKtZAPquNyDgZ6s5bsEz5S1cdyAF9FwvzR7OnW+b/5Uhy8WO9K0Gd85b8NyDELeymLEacnvHo4hcJr39PLF2VseR3Yknt43O/uBPEKvTQNNSaWak0DTUmlmpNA01JpZqTQNNbDoo0w7HA95gPrrD/JZFY7O6LEZDZ3nuDRxMprcLJBDGhhwaAGz2ASu5IOlE9bjJAGu43IEGd06eUk0T3cdyAF9NyJZTeL0WSlrSnvxSQwZ62G9AwbXebsvn1WddZlmlFhRQO80sPmwzB9HclokSfhw3bVV+smAHWQOEpsiNO+8Fh5uHog66A26qxtGJY5zDw1m8nAcFZKPFxkqH1WWgfTw3S8DhPfUHfg1XqRnnTykgINeN0k3s42lCJ7vGSST9/qgaim/FSmu/DJBhJOthvRiEju4bkFM60Y/0EJn+5P7rCP1KdVxpgRXSxiS+6xp/UuXWsB2UCX1nT+6F9PVZI2WJP8ArO/+tiC30eLjJGdd2EkpJnLw8pJol3d5XoJXTq470KKL8UzACJnFLDJJ1sN6CUV34ZI9pVq8/L+EIhI7uG5M4ACYxQVzTboLt4GoJxWTczePEzjIcQFkpW+Q7+9zuVI0y0PMVzo1mbr4uZgH+804B3I+eIZzNSaERhaS1wIcLiCCCDsIOCWaqHmpNJNSaB5qTSTVw0R0MdHIi2gFkHENNzovlm1u/PLag9Hq46CP/rIguExCBzyc/wDIcdyv3f3S/P8AhLDbKTQJMFwAEgALgBuTxLu7xleoqVy1eE0JUX4pgBKZ73Ofklh397mglFV+CNdd2CV5IOrhuTxAANXHcgFVF2Ofz6Lw9NbNOxRzPwg+jw78l7kMA97HevG0tcfY7RPDs3f9kFL6sTO0xGzxhE+j2/utNr8PCayrq0J9sMv6T/8AJi1aQlPxc5+SBZUb5o+07uaEO/vc7l0obu9UCOfVcFGuouPJF7A0TGKEMVXlBSetSAfZ4T/92X3mOP6UnVUaoEZuyID95gH6F6XWJDL7FE9wscODgDycVWOqm20xo0OfeY133HS//RBp1d1OeCDRRec9iagSqzxSwzVighZVrBFz6rhzSveQZDBPEbSJhAGuouPncgGU6xw/f+UYbahMpWvJNJwQFwrwy2o13U54IRDThmmoEqs5TQeT0xo9Z44+nhgnJ7bnj4sxuMwqlberR17oEcSybFbfxc3H0Wgw9bHJRziDIYIMpb1fWwmQMHzrd/wX12fq4jT+ljw2/YDnnnStJiPa28OE8MQnhtDhM3+SCv8AQ2htmsxD6e0cPE++R2tbKkeeO9e+4V3jmgx5cZHBGIabggJfMU54IN1Mc9m7+UxYAKs8UsPWxyQSiZqyxRca7hzSl5BpywTRBTeEEa+m4oNZTeeSZjA4TOKSG8uMigLm13jyv+d68LTu1BtgjjaGt9XtC92I6m4Kn9acYMsjGjGJEb6NaXHnSg8HqrH/AJmI7ZCI+89v/FadRfVliqD1SWSbbREOZYwfCC4/5tV9rM6csEDONeGW1L7OdoTRBThmk7coCxlJmcEYjarwo19Vx5KOdRcOaDh0nAEaDEg/XY5nlNsprGtDLcbPboJddrGG8bKtS/ycQeC20skKs8Vimn9g7G2xCBJsX6Rsve7394d6hBtJYZ1ZYpohquC8nRjpj2mzQol03NDX7nDVdzBPkQvWcKLxntQFjw0SOKWGym8otZVrHFBr6rjyQSI2q8JnPBFIx/Zc40YQwSSA0CZLjIAZknIXLNtKOsEzMOxGQvBjEXnb2bSLh7xv2AYoL30n07Z7IPp4oaTeGi9x8mi/jgqN0p1lmo+zQQL7nRbz9xpu+8Vn0WM5zi5zi5xvLnEkk7STeUs1Ue/b9L7bF71oeBsZJgH3ZH1K8eNaXv773O+04n8SuE1JoGkNgTQ3lt7SQdoMvwXOak0Hr2XSS1w+5aYstjnFw+6+YVj6J6yo8O6NDZFbtGo7lNp9AqLNSaDa+g9L7LaHCl9D5/6cSTXHc04O8gZqxRNbDLb87l+cZq2aL6dR7KQyJOLC+q467R7jj+Bu8lFbGHgCnPBLDFN5Xy9FW+FaYYjQX1A7PCR4XDEHcvqaa7jyQB7C4zGCd7w4SCVz6bhzRcym8c0EhupuPmsq61LbVaWQgbobJn7TzOR+FrfVajFiNodEeaWtBJOQAEyTzWGEvt9tzqjxfutJ/Swf2oNS0AsBZYYV176oh+M6v9garNWJU54Lm1ghNa1guAAA2ACQA4J6Lqs8dyAQxTjmunbhc2mvHLYm9nG9BHkESbihDMu9jvvULKb8VA2u/DJAoBnM4fOSqXWh0R29m7WGJvgTcZZsPfHCQd8JVu7Serwmo8BokRMHEH8OaDK+qrpwQ4r7K86sW+HuiAYfE0erRtWqQxLvc71hel3QzrDapMm1hIiQHDECcwAdrDd6HNa1oj0+23Wdr7hEbdEaMnSxA2HEemSqPZe0kzGCaM8SuIErycJDMkoV06uKoPWr052MMWWG7WiicQjKHOVPxEHg07VFVrTjS91qcYMJxFnaeMUjxO93YOJylUprnNSaqOk1JrnNSao6TUmuc1JoOk1JrnNSaDpNSa5zUmg6TUmuc1JoPY0c6fi2OKIkMzBlXDJ1Yjdh2HYcvUHcujekodpgsiwDNruBbta7YQbl+dZq49WekRs9o7Fx+ijEC/BsTBruPdPmNig2VhAEnYpIYIOthvTUVX4L5OlOk4cKE+LFNLGCZOZ2NAzJJAA2lRVR61enBDgizwzrRRrSyhg3z+0ZDyDl5XVN0PU6JanDDUh7yb3uHkJD4nKnx4sbpC13D6SK6QGTGjAfZa0TPkTmtz6K6LZZoLIcPusaAN+1x3kkniqj64d3e4TvSyM5+H8vJMBXukhX4eE1FGJf3eVyTs3b/VORRvmh7Tu5oAyc9act+CMSfhw3Il9V2CgdRdjmgJlK6VXOaEP3uE0OzlrcZKHX3SQeFpho+LbAMPBzdaE/JrpZn6pwPrkFkOj/AEzG6PtRJa4EGiNCPiAN42TGIP5Fb5X4eE1SesTQv2hvbwQO3aLxh2rR4T7wyPA5SqLd0XboUeEyLDcHNeJg5+RGRGEspLBNK+kjaLXGikzBeQ37LdVvIT4lfToppTFsL3NkTDdOuGbi1wuqbPuuEpEZykcpV1qB5qTSzUmqhpqTSzUmgaak0s1JoGmpNLNSaBpqTSzUmgaak0s1JoGmiHHEGRyIy3hJNSaD9EdB9JGPZoMecg+G1ztgdLXvyk4FZR1h6WC1xOzgmVnhm44do7AxDuyHE53eXF0pi+ww7CzVhtLy9wN8QOeXhm5oqvGflcbZ1b6GTptlpbqiRgwz4jlFcNmbRnjsnFe91aaLizQjHjtlGiC5rsYcPENkcCcT5AZFXJs53zp34Iltd+GXz6o1z1efkooRPd4yTXSyq5zQBo3zQo8XGSCQ/e4TXTU3JCa90kPZt6BntAE24oQxV3sfRBrKbzyUe2u8c0ADiTI4fOaMTV7vHNEvmKc8FGamOexAaRKeePHySwzV3v2UovqyxRea7hltQUfT3QVtpJjWcBseV4wbGu8Ryd73A7Rj1qs74b3Q4jSx7TJzXCRB3hfplr6RScV4Gk+iMC2M+mFLwJNis77dgP1m7jwliqjAJqTXuaS6I2mxkmI2uFO6MwEs+IYsO43bCV4E1UPNSaSak0DzUmkmpNA81JpJqTQPNSaSak0DzUmkmpNA81Avu6D6Dj2t9Fnhl197sGM+2/AeWOwFbDohoFBsREWLKNHydLVhn/bac/eN/lgoqv6BdXk6bRbmyGLIDsTsdFH6PXYtNhkm52Hoi5lRmEXvquHNRQiEtubh6pnNAExj85IMdRcfO753IBkjVl+6Aw9bvfslqM5ZYcPNF4rwy2o13U54bkEiCnu/uk7V3yEzBRjnsT+0Deg5sfUZFF7qbhzTPcHCQxQhmm5yAlgAqzxQZr45bEoaQZnBGJrd3JAK76csEzxTeM9qIcJU54cUsMU95AzWBwqOKVj6rjyQe0kzGCeI4OEm4oEi3asgQReDfOd0lTNJOrOyxgXwZ2eJ7gnDJ3w8vhIV1huDRJ2KVrSDM4IMG6X0Bt0CZELtmDxwdb1Z3+RG9Vh4IJaQQRiCJEeYOC/UMTW7q+bpDo6BHbTGgw4hlLXYHSO4kXK1I/M01JrdLV1bdHumTCdDJzhxH/4kkD0XlReqOzG9lojge92Z/SEpGQTUmtX/APCKEe7a4h/+Nv7rtD6pLMP9S1R/hEMfi0oMimoXLb7H1X2Bl8RkWIPfiH8IdKsNg0fssGRs9nhMI8QYKvvHWPqlIwzobRC22kjs4Dg0+OJqM85uvcPsgrQOhequFCpda4nbO/psm2GNxPed/b5LRy8ESzwQh6vezSkcrHYocOGBDY1jWi5rAGtHkAujDVceSBaZ1ZYpohq7qig99JkMEXspvCLHACRxSQ2lpm7BAzG1XnyuStfM0nBGIKr24JnOBEhigV5owz2pqLqs8UIer3ktJnVljwQFhrxy2J/ZxvSxDV3UnYu+SgcspvCjW13m7JRRAA+erwUdqYXzRUQSjxcUAa7jdJRRBC+nVRLKbxeooggZXebskA+rV+bv4UUQQmjC+aNHi4qKIA0143SUL5avzeoogJbReL8vn0UDKryoogAfVcoTRcL1FEBolrcUG6+N0vz/AIRUQCuWrwRIovF6iiCBlV5QD6riooghdRcL8/n0RLJa3zeooggFeN0kK/DwmoogJFGF80PaDsCiiD//2Q==" class="d-block  rounded-circle"  />
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="profile-head">
                     <h5>
-                        @Model.FirstName @Model.LastName
+                        <p>@(this.Model.User.FirstName == null ? "Няма въведени имена" : Model.User.FirstName)</p>
                     </h5>
-                    <h6>
-                        Web Developer and Designer
-                    </h6>
-                    <p class="proile-rating">RATING : <span>8/10</span></p>
+                    <p class="proile-rating">Рейтинг : <span>8/10</span></p>
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>
@@ -33,10 +31,10 @@
                 <div class="profile-work">
                     <p>Информация</p>
                     <div class="col-md-6">
-                        <span><strong>Пол:</strong>@Model.Gender</span>
+                        <span><strong>Пол: </strong>@Model.User.Gender</span>
                     </div>
-                    <div class="col-md-6">
-                        <span><strong>Регистриран:</strong>@Model.CreatedOn.ToShortDateString()</span>
+                    <div class="col-md-7">
+                        <span><strong>Регистриран:</strong>@Model.User.CreatedOn.ToString("d")</span>
                     </div>
                 </div>
             </div>
@@ -45,18 +43,10 @@
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <div class="row">
                             <div class="col-md-6">
-                                <label>User Id</label>
+                                <label>Имена:</label>
                             </div>
                             <div class="col-md-6">
-                                <p>Kshiti123</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label>Name</label>
-                            </div>
-                            <div class="col-md-6">
-                                <p>Kshiti Ghelani</p>
+                                <p>@(this.Model.User.FirstName == null ? "Няма въведени имена" : Model.User.FirstName)</p>
                             </div>
                         </div>
                         <div class="row">
@@ -69,18 +59,10 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <label>Phone</label>
+                                <label>Телефонен номер:</label>
                             </div>
                             <div class="col-md-6">
-                                <p>123 456 7890</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label>Profession</label>
-                            </div>
-                            <div class="col-md-6">
-                                <p>Web Developer and Designer</p>
+                                <p>@Model.User.PhoneNumber</p>
                             </div>
                         </div>
                     </div>
