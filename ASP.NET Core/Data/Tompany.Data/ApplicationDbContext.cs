@@ -42,6 +42,10 @@
 
         public DbSet<Setting> Settings { get; set; }
 
+        public DbSet<Message> Messages { get; set; }
+
+        public DbSet<WatchListTrip> WatchListTrips { get; set; }
+
         public override int SaveChanges() => this.SaveChanges(true);
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -63,6 +67,14 @@
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<WatchListTrip>()
+                .HasKey(x => new { x.UserId, x.TripId });
+
+            builder.Entity<Message>()
+                .HasOne(x => x.Sender)
+                .WithMany(x => x.Messages)
+                .HasForeignKey(x => x.UserId);
+
             builder.Entity<UserTrip>()
                 .HasKey(x => new { x.UserId, x.TripId });
 

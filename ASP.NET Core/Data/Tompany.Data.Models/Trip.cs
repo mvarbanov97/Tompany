@@ -15,6 +15,7 @@
             this.TripRequest = new HashSet<TripRequest>();
             this.Views = new HashSet<View>();
             this.Passengers = new HashSet<ApplicationUser>();
+            this.WatchListTrips = new HashSet<WatchListTrip>();
         }
 
         public decimal PricePerPassenger { get; set; }
@@ -53,5 +54,7 @@
         public virtual ICollection<View> Views { get; set; }
 
         public virtual ICollection<ApplicationUser> Passengers { get; set; }
+
+        public virtual ICollection<WatchListTrip> WatchListTrips { get; set; }
     }
 }

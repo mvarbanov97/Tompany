@@ -22,6 +22,8 @@ namespace Tompany.Data.Models
             this.UserTrips = new HashSet<UserTrip>();
             this.Cars = new HashSet<Car>();
             this.UserReviews = new HashSet<UserReview>();
+            this.Messages = new HashSet<Message>();
+            this.WatchListTrips = new HashSet<WatchListTrip>();
         }
 
         public string FirstName { get; set; }
@@ -53,5 +55,9 @@ namespace Tompany.Data.Models
         public virtual ICollection<Car> Cars { get; set; }
 
         public virtual ICollection<UserReview> UserReviews { get; set; }
+
+        public virtual ICollection<Message> Messages { get; set; }
+
+        public virtual ICollection<WatchListTrip> WatchListTrips { get; set; }
     }
 }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tompany.Data;
 
 namespace Tompany.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200429144850_NotificationAndNavEntityAdded")]
+    partial class NotificationAndNavEntityAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -376,9 +378,14 @@ namespace Tompany.Data.Migrations
                     b.ToTable("Destinations");
                 });
 
-            modelBuilder.Entity("Tompany.Data.Models.Message", b =>
+            modelBuilder.Entity("Tompany.Data.Models.Notification", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
@@ -394,24 +401,50 @@ namespace Tompany.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Text")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("When")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("Tompany.Data.Models.NotificationApplicationUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("NotificationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("NotificationId");
+
+                    b.ToTable("NotificationApplicationUsers");
                 });
 
             modelBuilder.Entity("Tompany.Data.Models.Review", b =>
@@ -666,36 +699,6 @@ namespace Tompany.Data.Migrations
                     b.ToTable("Views");
                 });
 
-            modelBuilder.Entity("Tompany.Data.Models.WatchListTrip", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("TripId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("UserId", "TripId");
-
-                    b.HasIndex("TripId");
-
-                    b.ToTable("WatchListTrips");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Tompany.Data.Models.ApplicationRole", null)
@@ -763,11 +766,24 @@ namespace Tompany.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Tompany.Data.Models.Message", b =>
+            modelBuilder.Entity("Tompany.Data.Models.Notification", b =>
                 {
-                    b.HasOne("Tompany.Data.Models.ApplicationUser", "Sender")
-                        .WithMany("Messages")
-                        .HasForeignKey("UserId");
+                    b.HasOne("Tompany.Data.Models.ApplicationUser", null)
+                        .WithMany("Notifications")
+                        .HasForeignKey("ApplicationUserId");
+                });
+
+            modelBuilder.Entity("Tompany.Data.Models.NotificationApplicationUser", b =>
+                {
+                    b.HasOne("Tompany.Data.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("Tompany.Data.Models.Notification", "Notification")
+                        .WithMany("NotificationApplicationUsers")
+                        .HasForeignKey("NotificationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Tompany.Data.Models.Review", b =>
@@ -844,21 +860,6 @@ namespace Tompany.Data.Migrations
                     b.HasOne("Tompany.Data.Models.Trip", "Trip")
                         .WithMany("Views")
                         .HasForeignKey("TripId");
-                });
-
-            modelBuilder.Entity("Tompany.Data.Models.WatchListTrip", b =>
-                {
-                    b.HasOne("Tompany.Data.Models.Trip", "Trip")
-                        .WithMany("WatchListTrips")
-                        .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Tompany.Data.Models.ApplicationUser", "User")
-                        .WithMany("WatchListTrips")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
