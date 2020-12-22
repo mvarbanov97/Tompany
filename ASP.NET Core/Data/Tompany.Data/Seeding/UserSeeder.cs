@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tompany.Common;
 using Tompany.Data.Models;
 
 namespace Tompany.Data.Seeding
@@ -18,12 +19,23 @@ namespace Tompany.Data.Seeding
 
             for (int i = 1; i <= 36; i++)
             {
-                var result = await userManager.CreateAsync(
-                    new ApplicationUser
+                var user = new ApplicationUser
                 {
                     UserName = $"FooUser{i}",
                     Email = $"FooBar{i}@besl.bg",
-                }, "awedawe1");
+                    ImageUrl = GlobalConstants.NoProfilePictureLocation,
+                };
+
+                var result = await userManager.CreateAsync(user, "awedawe1");
+
+                if (i % 3 == 0)
+                {
+                    await userManager.AddToRoleAsync(user, GlobalConstants.AdministratorRoleName);
+                }
+                else
+                {
+                    await userManager.AddToRoleAsync(user, GlobalConstants.UserDefaultRoleName);
+                }
 
                 if (!result.Succeeded)
                 {

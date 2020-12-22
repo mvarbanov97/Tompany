@@ -29,7 +29,7 @@ namespace Tompany.Data.Seeding
                 var randomToId = random2.Next(1, 257);
                 var destinationFrom = dbContext.Destinations.Where(x => x.Id == randomFromId).FirstOrDefault();
                 var destinationTo = dbContext.Destinations.Where(x => x.Id == randomToId).FirstOrDefault();
-                var dateOfDeparture = new DateTime(2019, dateRandom.Next(1, 12), dateRandom.Next(1, 28));
+                var dateOfDeparture = new DateTime(2020, 12, dateRandom.Next(1, 31));
 
                 var trip = new Trip
                 {
@@ -41,6 +41,7 @@ namespace Tompany.Data.Seeding
                     PricePerPassenger = i + 10,
                     Car = car,
                     User = user,
+                    GroupName = Guid.NewGuid().ToString(),
                 };
                 trips.Add(trip);
 

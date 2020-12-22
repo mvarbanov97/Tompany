@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tompany.Common;
 using Tompany.Data.Models;
 
 namespace Tompany.Data.Seeding
@@ -21,6 +22,7 @@ namespace Tompany.Data.Seeding
                 {
                     User = user,
                     UserId = user.Id,
+                    CarImageUrl = GlobalConstants.NoCarPictureLocation,
                     Brand = $"FooBrand{i}",
                     Model = $"FooModel{i}",
                     Color = $"FooColor{i}",
