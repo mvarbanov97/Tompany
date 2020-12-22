@@ -1,0 +1,70 @@
+﻿.badge {
+    position: absolute;
+    top: 8px;
+    right: 5.5px;
+    padding: 5px 7px;
+    border-radius: 50%;
+    background-color: #00C89E;
+    color: white;
+}
+
+    .badge .tooltipUserStatus {
+        visibility: hidden;
+        width: 120px;
+        background-color: black;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        top: 150%;
+        left: 50%;
+        margin-left: -60px;
+    }
+
+        .badge .tooltipUserStatus::after {
+            content: "";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent black transparent;
+        }
+
+    .badge:hover .tooltipUserStatus {
+        visibility: visible;
+    }
+
+    .badge:hover {
+        border: 2px solid white;
+        color: black;
+    }
+
+.notificationCircle {
+    border-radius: 50%;
+    box-shadow: 0px 0px 1px 1px #0000001a;
+}
+
+.notificationPulse {
+    animation: notification-pulse-animation 1s infinite;
+}
+
+@keyframes notification-pulse-animation {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgb(255, 255, 255);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
+    }
+
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+    }
+}
