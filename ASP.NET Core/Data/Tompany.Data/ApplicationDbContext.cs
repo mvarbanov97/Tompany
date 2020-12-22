@@ -26,13 +26,15 @@
 
         public DbSet<Destination> Destinations { get; set; }
 
+        public DbSet<State> States { get; set; }
+
+        public DbSet<Country> Countries { get; set; }
+
+        public DbSet<City> Cities { get; set; }
+
         public DbSet<Car> Cars { get; set; }
 
         public DbSet<Trip> Trips { get; set; }
-
-        public DbSet<Review> Reviews { get; set; }
-
-        public DbSet<UserReview> UserReviews { get; set; }
 
         public DbSet<UserTrip> UserTrips { get; set; }
 
@@ -40,11 +42,19 @@
 
         public DbSet<View> Views { get; set; }
 
-        public DbSet<Setting> Settings { get; set; }
+        public DbSet<Group> Groups { get; set; }
+
+        public DbSet<UserGroup> UsersGroups { get; set; }
+
+        public DbSet<UserRating> UserRatings { get; set; }
+
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
         public DbSet<Message> Messages { get; set; }
 
         public DbSet<WatchListTrip> WatchListTrips { get; set; }
+
+        public DbSet<UserNotification> UserNotifications { get; set; }
 
         public override int SaveChanges() => this.SaveChanges(true);
 
@@ -92,7 +102,19 @@
                 .HasMany(x => x.UserTrips)
                 .WithOne(x => x.User)
                 .HasForeignKey(x => x.UserId);
-                
+
+            builder.Entity<UserRating>().HasKey(x => new
+            {
+                x.Username,
+                x.RaterUsername,
+            });
+
+            builder.Entity<UserGroup>().HasKey(k => new
+            {
+                k.GroupId,
+                k.ApplicationUserId,
+            });
+
             // Needed for Identity models configuration
             base.OnModelCreating(builder);
 
