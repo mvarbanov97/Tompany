@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 using Tompany.Data.Models;
 using Tompany.Services.Mapping;
-using Tompany.Web.ViewModels.Cars;
+using Tompany.Web.ViewModels.Cars.ViewModels;
 
-namespace Tompany.Web.ViewModels.Trips
+namespace Tompany.Web.ViewModels.Trips.ViewModels
 {
     public class TripDetailsViewModel : IMapFrom<Trip>
     {
         public string Id { get; set; }
+
+        public ApplicationUser User { get; set; }
 
         public string UserId { get; set; }
 
@@ -33,8 +35,14 @@ namespace Tompany.Web.ViewModels.Trips
 
         public string AdditionalInformation { get; set; }
 
+        public bool SendRequest { get; set; }
+
+        public string GroupName { get; set; }
+
         public IEnumerable<ApplicationUser> Passengers { get; set; }
 
         public IEnumerable<TripRequest> TripRequests { get; set; }
+
+        public ICollection<Message> Messages { get; set; }
     }
 }

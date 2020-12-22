@@ -4,11 +4,13 @@ using System.Text;
 using Tompany.Data.Models;
 using Tompany.Services.Mapping;
 
-namespace Tompany.Web.ViewModels.Cars
+namespace Tompany.Web.ViewModels.Cars.ViewModels
 {
     public class CarViewModel : IMapFrom<Car>
     {
         public int Id { get; set; }
+
+        public string CarImageUrl { get; set; }
 
         public string Model { get; set; }
 

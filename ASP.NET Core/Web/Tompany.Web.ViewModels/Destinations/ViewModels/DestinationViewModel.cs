@@ -4,7 +4,7 @@ using System.Text;
 using Tompany.Data.Models;
 using Tompany.Services.Mapping;
 
-namespace Tompany.Web.ViewModels.Destinations
+namespace Tompany.Web.ViewModels.Destinations.ViewModels
 {
     public class DestinationViewModel : IMapFrom<Destination>
     {

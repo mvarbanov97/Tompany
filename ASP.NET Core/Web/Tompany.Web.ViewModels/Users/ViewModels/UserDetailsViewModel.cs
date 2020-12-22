@@ -5,7 +5,7 @@ using Tompany.Data.Models;
 using Tompany.Data.Models.Enums;
 using Tompany.Services.Mapping;
 
-namespace Tompany.Web.ViewModels.Users
+namespace Tompany.Web.ViewModels.Users.ViewModels
 {
     public class UserDetailsViewModel : IMapFrom<ApplicationUser>
     {

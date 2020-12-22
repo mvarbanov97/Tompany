@@ -5,9 +5,9 @@ using System.Text;
 using Tompany.Data.Models;
 using Tompany.Services.Mapping;
 
-namespace Tompany.Web.ViewModels.Contacts
+namespace Tompany.Web.ViewModels.Contacts.InputModels
 {
-    public class ContactFormViewModel : IMapFrom<ContactFormEntry>
+    public class ContactInputModel : IMapFrom<ContactFormEntry>
     {
         [Required]
         public string Name { get; set; }
@@ -17,6 +17,9 @@ namespace Tompany.Web.ViewModels.Contacts
 
         [Required]
         public string Title { get; set; }
+
+        [Required]
+        public string Subject { get; set; }
 
         [Required]
         public string Content { get; set; }

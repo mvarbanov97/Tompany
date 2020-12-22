@@ -1,4 +1,4 @@
-﻿namespace Tompany.Web.ViewModels.Trips
+﻿namespace Tompany.Web.ViewModels.Trips.InputModels
 {
     using System;
     using System.Collections.Generic;
@@ -6,8 +6,10 @@
 
     using Tompany.Data.Models;
     using Tompany.Services.Mapping;
-    using Tompany.Web.ViewModels.Cars;
-    using Tompany.Web.ViewModels.Destinations;
+    using Tompany.Web.ViewModels.Cars.ViewModels;
+    using Tompany.Web.ViewModels.Cars.InputModels;
+    using Tompany.Web.ViewModels.Destinations.ViewModels;
+    using Tompany.Web.ViewModels.Users.ViewModels;
 
     public class TripCreateInputModel : IMapFrom<Trip>
     {
@@ -39,10 +41,14 @@
         [Display(Name = "Допълнителна информация")]
         public string AdditionalInformation { get; set; }
 
+        public Car Car { get; set; }
+
         [Range(0, int.MaxValue)]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Моля въведете автомобила, с който ще пътувате")]
         [Display(Name = "Автомобил")]
         public int CarId { get; set; }
+
+        public ApplicationUser ApplicationUser { get; set; }
 
         public string UserId { get; set; }
 
@@ -51,5 +57,7 @@
         public IEnumerable<DestinationViewModel> Destinations { get; set; }
 
         public CarCreateInputModel CarIfNone { get; set; }
+
+        public string GroupName { get; set; }
     }
 }

@@ -4,16 +4,18 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Tompany.Data.Models;
 using Tompany.Services.Mapping;
-using Tompany.Web.ViewModels.Destinations;
+using Tompany.Web.ViewModels.Destinations.ViewModels;
+using Tompany.Web.ViewModels.Trips.ViewModels;
 
-namespace Tompany.Web.ViewModels.Trips
+
+namespace Tompany.Web.ViewModels.Trips.InputModels
 {
-    public class TripSearchViewModel : IMapFrom<Trip>
+    public class TripSearchInputModel : IMapFrom<Trip>
     {
-        [Display(Name = "От град")]
+        [Display(Name = "From town")]
         public int? FromDestinationId { get; set; }
 
-        [Display(Name = "До град")]
+        [Display(Name = "To town")]
         public int? ToDestinationId { get; set; }
 
         [Required]
@@ -22,9 +24,8 @@ namespace Tompany.Web.ViewModels.Trips
         [Required]
         public string FromDestinationName { get; set; }
 
-        [Required]
         [DataType(DataType.Date)]
-        [Display(Name = "Дата на пътуването")]
+        [Display(Name = "Date of travel")]
         public DateTime DateOfDeparture { get; set; }
 
         public string DateAsString => this.DateOfDeparture.ToString("d");

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Tompany.Data.Models;
 using Tompany.Services.Mapping;
+using Tompany.Web.ViewModels.Trips.InputModels;
 
-namespace Tompany.Web.ViewModels.Trips
+namespace Tompany.Web.ViewModels.Trips.ViewModels
 {
     public class TripListViewModel : IMapFrom<Trip>
     {
@@ -14,7 +15,7 @@ namespace Tompany.Web.ViewModels.Trips
 
         public IEnumerable<TripDetailsViewModel> Trips { get; set; }
 
-        public TripSearchViewModel SearchQuery { get; set; }
+        public TripSearchInputModel SearchQuery { get; set; }
 
     }
 }
