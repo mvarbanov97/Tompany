@@ -1,1 +1,118 @@
-﻿
+﻿@model CarListViewModel;
+@{
+    this.ViewData["Title"] = "Registered vehicles";
+}
+
+<div id="banner-area">
+    <img src="~/images/banner/contactFormBanner.jpeg" width="1900" height="400" border="1" alt="" />
+    <div class="parallax-overlay"></div>
+    <div class="banner-title-content">
+        <div class="text-center">
+            <h2>All Registered Vehicles Page</h2>
+            <ul class="breadcrumb">
+                <li>Home</li>
+                <li><a asp-area="" asp-controller="Cars" asp-action="Index"> Cars</a></li>
+
+                @*@if (SignInManager.IsSignedIn(User) && currentUser.Result.IsBlocked == false)
+                    {
+                        @if (User.IsInRole(Roles.Administrator.ToString()) || User.IsInRole(Roles.Author.ToString()) || User.IsInRole(Roles.Contributor.ToString()) || User.IsInRole(Roles.Editor.ToString()))
+                        {
+                            <li>
+                                <a asp-area="" asp-controller="Blog" asp-action="CreatePost" class="btn btn-primary solid square">Create Post</a>
+                            </li>
+                        }
+                    }*@
+            </ul>
+        </div>
+    </div>
+</div>
+
+<br />
+<div class="container">
+
+    <div class="row">
+        <a type="submit" class="btn btn-primary" asp-controller="Cars" asp-action="Create">Add a car</a>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-8 col-md-8">
+            <div class="section-title">
+                <h4>Vehicles information</h4>
+            </div>
+        </div>
+    </div>
+    @if (!Model.Cars.Any())
+    {
+        <h4>No cars added yet.</h4>
+    }
+    else
+    {
+        @foreach (var car in Model.Cars)
+        {
+
+            <div class="row">
+                <a type="submit" class="btn btn-warning" style="border-radius:30%" asp-controller="Cars" asp-action="Create" asp-route-id="@car.Id">Edit vehicle</a>
+                <a type="submit" class="btn btn-danger" style="border-radius:30%" asp-controller="Cars" asp-action="Delete" asp-route-id="@car.Id">Delete vehicle</a>
+
+                <div class="property-item">
+                    <div class="image">
+                        <img src=@car.CarImageUrl width="300" height="150" />
+                    </div>
+                    <div class="pi-text">
+                        <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
+                        <div class="col">
+                            <span class="h4" style="color:#00C89E; font-size:25px">@car.Brand @car.Model</span>
+
+                        </div>
+
+                        <div class="col">
+                            <span class="text-muted align-top">Year Of Manufacture: </span>
+                            <span class="h4">@car.YearOfManufacture</span>
+                        </div>
+
+                        <div class="col">
+                            <span class="text-muted align-top">Color: </span>
+                            <span class="h4">@car.Color</span>
+                        </div>
+
+                        <div class="col">
+                            <span class="text-muted align-top">Passenger seats: </span>
+                            <span class="h4">@car.Seats</span>
+                        </div>
+
+                        <div class="col">
+                            <i class="fas fa-smoking fa-1x"></i>
+                            <span class="text-muted align-top">Smoking allowed: </span>
+                            <span class="h4 @(car.IsSmokingAllowed == true ? "text-success" : "text-danger")">@(car.IsSmokingAllowed ? "Yes" : "No")</span>
+                        </div>
+                        <div class="col">
+                            <i class="fas fa-luggage-cart fa-1x"></i>
+                            <span class="text-muted align-top">Room for luggage: </span>
+                            <span class="h4 @(car.IsLuggageAvaliable == true ? "text-success" : "text-danger")">@(car.IsLuggageAvaliable ? "Yes" : "No")</span>
+                        </div>
+                        <div class="col">
+                            <i class="fas fa-wind fa-1x"></i>
+                            <span class="text-muted align-top">Air conditioning: </span>
+                            <span class="h4 @(car.IsAirConditiningAvailable == true ? "text-success" : "text-danger")">@(car.IsAirConditiningAvailable ? "Yes" : "No")</span>
+                        </div>
+                        <div class="col">
+                            <i class="fas fa-paw fa-1x"></i>
+                            <span class="text-muted align-top">Allowed for pets: </span>
+                            <span class="h4 @(car.IsAllowedForPets == true ? "text-success" : "text-danger")">@(car.IsAllowedForPets ? "Yes" : "No")</span>
+                        </div>
+                        @*<p><span class="icon_pin_alt"></span> 3 Middle Winchendon Rd, Rindge, NH 03461</p>
+                            <ul>
+                                <li><i class="fa fa-object-group"></i> 2, 283</li>
+                                <li><i class="fa fa-bathtub"></i> 03</li>
+                                <li><i class="fa fa-bed"></i> 05</li>
+                                <li><i class="fa fa-automobile"></i> 01</li>
+                            </ul>*@
+                    </div>
+                </div>
+            </div>
+
+            <br />
+        }
+    }
+</div>

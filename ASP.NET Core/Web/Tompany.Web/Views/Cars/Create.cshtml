@@ -1,137 +1,165 @@
-﻿@model Tompany.Web.ViewModels.Cars.CarCreateInputModel
+﻿@model CarCreateInputModel
 @{
     this.ViewData["Title"] = "Create Trip";
 }
 
-<form method="post" asp-controller="Cars" asp-action="Create">
-    <div class="row d-block d-md-none">
-        <div class="col">
-            <div class="text-muted mb-3"></div>
+<div id="banner-area">
+    <img src="~/images/banner/contactFormBanner.jpeg" width="1900" height="400" border="1" alt="" />
+    <div class="parallax-overlay"></div>
+    <div class="banner-title-content">
+        <div class="text-center">
+            <h2>Register Vehicle Page</h2>
+            <ul class="breadcrumb">
+                <li>Home</li>
+                <li><a asp-area="" asp-controller="Cars" asp-action="Index"> Cars</a></li>
+                <li><a asp-area="" asp-controller="Cars" asp-action="Create"> Register a vehicle</a></li>
+            </ul>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-4 mb-md-3">
-            <div class="d-flex flex-row justify-content-center">
-                <div>
-                    <img src="https://www.cardealerrebates.com/images/newcar/640/x27074.png.pagespeed.ic.TtTTjRboAX.png" alt="Снимка на автомобила" class="rounded-circle img-fluid profile-picture ">
+</div>
+
+<section id="main-container">
+    <form method="post" enctype="multipart/form-data" asp-controller="Cars" asp-action="Create">
+        <div class="row d-block d-md-none">
+            <div class="col">
+                <div class="text-muted mb-3"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-md-3">
+                <div class="d-flex flex-row justify-content-center">
+                    <div>
+                        <img src="~/images/carDefaultImage.png" alt="Снимка на автомобила" class="rounded-circle img-fluid profile-picture" width="500px">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CarPicture"></label>
+                    <div class="file-upload" id="chooseCarImage">
+                        <div class="file-select">
+                            <div class="file-select-button" id="fileName">Choose File</div>
+                            <div class="file-select-name" id="noCarFile">No file chosen...</div>
+                            <input type="file" asp-for="CarPicture" id="chooseCarFile" class="form-control">
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row mt-3">
-                <div class="col">
-                    <div class="form-group">
-                        <label class="btn btn-block btn-outline-primary" asp-for="CarImageUrl">Избери нова снимка</label>
-                        <input type="file" class="form-control d-none profile-picture-input" asp-for="CarImageUrl">
-                        <span asp-validation-for="CarImageUrl"></span>
+            <div class="col-md-8 mb-3">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <h2>Register a new vehicle</h2>
+                            <label asp-for="Brand"></label>
+                            <input asp-for="Brand" class="form-control col-md-12" />
+                            <span asp-validation-for="Brand" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label asp-for="Model"></label>
+                            <input asp-for="Model" class="form-control col-md-12" />
+                            <span asp-validation-for="Model" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label asp-for="YearOfManufacture"></label>
+                            <select asp-for="YearOfManufacture" class="form-control col-md-12">
+                                <option selected="selected" value="">Please select the year of manufacture</option>
+                                @for (int i = 1990; i < DateTime.Now.Year; i++)
+                                {
+                                    <option value="@i">@i</option>
+
+                                }
+                            </select>
+                            <span asp-validation-for="YearOfManufacture" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label asp-for="Color">Цвят на колата:</label>
+                            <input asp-for="Color" class="form-control col-md-12" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label class="control-label" asp-for="Seats"></label>
+                            <select asp-for="Seats" class="form-control col-md-6">
+                                <option selected="selected" value="">Please select the amout of seats</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                            </select>
+                            <span asp-validation-for="Seats" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row mb-3">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <div class="form-check">
+                                    <input asp-for="IsAirConditiningAvailable" type="checkbox" class="form-check-input" />
+                                    <i class="fa fa-wind"></i>
+                                    <label asp-for="IsAirConditiningAvailable" class="form-check-label"></label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="form-check">
+                                    <input asp-for="IsLuggageAvaliable" type="checkbox" class="form-check-input" />
+                                    <i class="fa fa-suitcase-rolling"></i>
+                                    <label asp-for="IsLuggageAvaliable" class="form-check-label"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <div class="form-check">
+
+                                    <input asp-for="IsSmokingAllowed" type="checkbox" class="form-check-input" />
+                                    <i class="fa fa-smoking"></i>
+                                    <label asp-for="IsSmokingAllowed" class="form-check-label"></label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="form-check">
+                                    <input asp-for="IsAllowedForPets" type="checkbox" class="form-check-input" />
+                                    <i class="fa fa-paw"></i>
+                                    <label asp-for="IsAllowedForPets" class="form-check-label"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col col-md-6 col-lg-5 col-xl-4">
+                        <div class="form-group">
+                            <input type="submit" asp-controller="Cars" asp-action="Create" value="Register the vehicle" class="btn btn-primary inline">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-8 mb-3">
-            <div class="row">
-                <div class="col">
-                    <div class="text mb-3 d-none d-md-block"><h5>Създаване на автомобил</h5></div>
-                    <div class="form-group">
-                        <label asp-for="Brand"></label>
-                        <input asp-for="Brand" class="form-control col-md-12" />
-                        <span asp-validation-for="Brand" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="form-group">
-                        <label asp-for="Model"></label>
-                        <input asp-for="Model" class="form-control col-md-12" />
-                        <span asp-validation-for="Model" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="form-group">
-                        <label asp-for="YearOfManufacture"></label>
-                        <select asp-for="YearOfManufacture" class="form-control col-md-12">
-                            <option selected="selected" value="">Моля изберете</option>
-                            @for (int i = 1990; i < DateTime.Now.Year; i++)
-                            {
-                                <option value="@i">@i</option>
+    </form>
+</section>
 
-                            }
-                        </select>
-                        <span asp-validation-for="YearOfManufacture" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="form-group">
-                        <label asp-for="Color">Цвят на колата:</label>
-                        <input type="color" id="favcolor" name="favcolor" value="#ff0000">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="form-group">
-                        <label class="control-label" asp-for="Seats"></label>
-                        <select asp-for="Seats" class="form-control col-md-12">
-                            <option selected="selected" value="">Моля изберете</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                        </select>
-                        <span asp-validation-for="Seats" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    <div class="row">
-                        <div class="col-12 col-lg-6">
-                            <div class="form-check">
-                                <input asp-for="IsAirConditiningAvailable" type="checkbox" class="form-check-input" />
-                                <i class="fa fa-wind"></i>
-                                <label asp-for="IsAirConditiningAvailable" class="form-check-label"></label>
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-6">
-                            <div class="form-check">
-                                <input asp-for="IsLuggageAvaliable" type="checkbox" class="form-check-input" />
-                                <i class="fa fa-suitcase-rolling"></i>
-                                <label asp-for="IsLuggageAvaliable" class="form-check-label"></label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-lg-6">
-                            <div class="form-check">
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/profileScripts.js"></script>
 
-                                <input asp-for="IsSmokingAllowed" type="checkbox" class="form-check-input" />
-                                <i class="fa fa-smoking"></i>
-                                <label asp-for="IsSmokingAllowed" class="form-check-label"></label>
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-6">
-                            <div class="form-check">
-                                <input asp-for="IsAllowedForPets" type="checkbox" class="form-check-input" />
-                                <i class="fa fa-paw"></i>
-                                <label asp-for="IsAllowedForPets" class="form-check-label"></label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col col-md-6 col-lg-5 col-xl-4">
-                    <div class="form-group">
-                        <input type="submit" asp-controller="Cars" asp-action="Create" value="Регистрирай автомобила" class="btn btn-block btn-outline-success">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</form>
+
+
+}
