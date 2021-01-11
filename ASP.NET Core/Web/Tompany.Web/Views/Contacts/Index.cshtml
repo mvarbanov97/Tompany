@@ -1,38 +1,81 @@
 ﻿@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
-@model Tompany.Web.ViewModels.Contacts.ContactFormViewModel
+@model ContactInputModel
 @{
-    this.ViewData["Title"] = "Изпратете ни съобщение";
+    this.ViewData["Title"] = "Ask us anything!";
 }
 
-<form method="post">
-    <div asp-validation-summary="All" class="text-danger"></div>
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+<div id="banner-area">
+    <img src="~/images/banner/contactFormBanner.jpeg" width="1900" height="400" border="1" alt="" />
+    <div class="parallax-overlay"></div>
+    <div class="banner-title-content">
+        <div class="text-center">
+            <h2>Contacts Page</h2>
+            <ul class="breadcrumb">
+                <li>Home</li>
+                <li><a asp-area="" asp-controller="Contacts" asp-action="Index"> Contact</a></li>
+            </ul>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" value="@this.User.Identity.Name" />
-        <span asp-validation-for="Email" class="text-danger"></span>
+</div>
+
+<section id="main-container">
+    <div class="container">
+        <div class="row">
+            @*<partial name="_TempDataPartial" />*@
+        </div>
+        <div class="row">
+            <div class="col-md-7">
+                <form asp-action="SendEmail" asp-controller="Contacts" id="contact-form" method="post" role="form">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Name">Name</label>
+                                <input class="form-control" asp-for="Name" placeholder="" type="text">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Email">Email</label>
+                                <input class="form-control" asp-for="Email" placeholder="" type="email">
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Subject">Subject</label>
+                                <input class="form-control" asp-for="Subject" placeholder="">
+                                <span asp-validation-for="Subject" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Content">Content</label>
+                        <textarea class="form-control" asp-for="Content" placeholder="" rows="10" style="resize: vertical"></textarea>
+                        <span asp-validation-for="Content" class="text-danger"></span>
+                    </div>
+                    <div class="text-right">
+                        <br>
+                        <button class="btn btn-primary solid blank" type="submit">Send Message</button>
+                    </div>
+                    @Html.AntiForgeryToken()
+                </form>
+            </div>
+            <div class="col-md-5">
+                <div class="contact-info">
+                    <h3>Contact Details</h3>
+                    <p>Feel free to ask any questions.</p>
+                    <br>
+                    <p><i class="fas fa-home info"></i>Sofia, Bulgaria</p>
+                    <p><i class="fas fa-phone info"></i>(+359) 89 548 865</p>
+                    <p><i class="fa fa-envelope-o info"></i>tompany-support@gmail.com</p>
+                    <p><i class="fas fa-globe info"></i>www.tompany.com</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Title"></label>
-        <input asp-for="Title" class="form-control" />
-        <span asp-validation-for="Title" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Content"></label>
-        <textarea asp-for="Content" class="form-control" rows="5"></textarea>
-        <span asp-validation-for="Content" class="text-danger"></span>
-    </div>
-    <p>
-        Натискайки бутона "Изпратете ни съобщение", вие потвърждавате, че сте запознати и съгласни с нашата
-        <a asp-area="" asp-controller="Home" asp-action="Privacy">политика за опазване на личните данни</a>
-    </p>
-    <input type="hidden" id="RecaptchaValue" name="RecaptchaValue" />
-    <button type="submit" class="btn btn-primary">Изпратете ни съобщение</button>
-</form>
+</section>
+
 
 @section Scripts
 {
