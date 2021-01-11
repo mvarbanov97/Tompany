@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Tompany.Common;
 using Tompany.Data.Models;
 using Tompany.Web.Areas.Identity.Pages.Account.InputModels;
 
@@ -48,8 +49,8 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            ReturnUrl = returnUrl;
-            ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            this.ReturnUrl = returnUrl;
+            this.ExternalLogins = (await this.signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -60,8 +61,10 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
             {
                 var user = new ApplicationUser
                 {
-                    UserName = this.Input.UserName,
+                    UserName = this.Input.Username,
                     Email = this.Input.Email,
+                    RegisteredOn = DateTime.Now,
+                    ImageUrl = GlobalConstants.NoProfilePictureLocation,
                 };
 
                 // For validating unique email
@@ -70,6 +73,7 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
                 try
                 {
                     result = await this.userManager.CreateAsync(user, this.Input.Password);
+                    await this.userManager.AddToRoleAsync(user, GlobalConstants.UserDefaultRoleName);
                 }
                 catch (DbUpdateException ex)
                 {
@@ -89,37 +93,36 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
                 {
                     this.logger.LogInformation("User created a new account with password.");
 
-                    // TODO: Add roles
-
-                    var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var code = await this.userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
+                    var callbackUrl = this.Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,
                         values: new { area = "Identity", userId = user.Id, code = code },
-                        protocol: Request.Scheme);
+                        protocol: this.Request.Scheme);
 
-                    await emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    await this.emailSender.SendEmailAsync(this.Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    if (userManager.Options.SignIn.RequireConfirmedAccount)
+                    if (this.userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
+                        return this.RedirectToPage("RegisterConfirmation", new { email = this.Input.Email });
                     }
                     else
                     {
-                        await signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        await this.signInManager.SignInAsync(user, isPersistent: false);
+                        return this.LocalRedirect(returnUrl);
                     }
                 }
+
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    this.ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 
             // If we got this far, something failed, redisplay form
-            return Page();
+            return this.Page();
         }
     }
 }

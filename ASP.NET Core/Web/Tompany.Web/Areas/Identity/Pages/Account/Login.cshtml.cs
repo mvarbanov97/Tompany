@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Tompany.Data.Models;
+using Tompany.Web.ViewModels.Users.InputModels;
 
 namespace Tompany.Web.Areas.Identity.Pages.Account
 {
@@ -33,7 +34,7 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
         }
 
         [BindProperty]
-        public InputModel Input { get; set; }
+        public LoginInputModel Input { get; set; }
 
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
@@ -41,20 +42,6 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
 
         [TempData]
         public string ErrorMessage { get; set; }
-
-        public class InputModel
-        {
-            [Required]
-            [Display(Name = "Потребителско име или парола")]
-            public string Email { get; set; }
-
-            [Required]
-            [DataType(DataType.Password)]
-            public string Password { get; set; }
-
-            [Display(Name = "Запомни ме")]
-            public bool RememberMe { get; set; }
-        }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
@@ -87,10 +74,7 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
 
             returnUrl = returnUrl ?? this.Url.Content("~/");
 
-            ApplicationUser user = this.Input.Email
-                .Contains('@')
-                ? await this.userManager.FindByEmailAsync(this.Input.Email)
-                : await this.userManager.FindByNameAsync(this.Input.Email);
+            ApplicationUser user = await this.userManager.FindByNameAsync(Input.Username);
 
             if (this.ModelState.IsValid)
             {
