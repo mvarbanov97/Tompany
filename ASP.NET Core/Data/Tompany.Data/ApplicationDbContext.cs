@@ -38,6 +38,8 @@
 
         public DbSet<UserTrip> UserTrips { get; set; }
 
+        public DbSet<TripRequest> TripRequests { get; set; }
+
         public DbSet<ContactFormEntry> ContactFormEntries { get; set; }
 
         public DbSet<View> Views { get; set; }

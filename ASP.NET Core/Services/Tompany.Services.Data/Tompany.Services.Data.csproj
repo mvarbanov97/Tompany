@@ -21,8 +21,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Data\Tompany.Data.Common\Tompany.Data.Common.csproj" />
     <ProjectReference Include="..\..\Data\Tompany.Data.Models\Tompany.Data.Models.csproj" />
+    <ProjectReference Include="..\..\Tompany.Common\Tompany.Common.csproj" />
+    <ProjectReference Include="..\..\Web\Tompany.Web.Infrastructure\Tompany.Web.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Web\Tompany.Web.ViewModels\Tompany.Web.ViewModels.csproj" />
     <ProjectReference Include="..\Tompany.Services.Mapping\Tompany.Services.Mapping.csproj" />
+    <ProjectReference Include="..\Tompany.Services\Tompany.Services.csproj" />
   </ItemGroup>
 
 </Project>

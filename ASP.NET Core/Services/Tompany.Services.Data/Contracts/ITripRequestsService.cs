@@ -14,6 +14,8 @@ namespace Tompany.Services.Data.Contracts
 
         IEnumerable<TripRequest> GetPendingRequestsByTripId(string tripId);
 
-        Task SendTripRequest(string senderId, string tripId, string ownerId);
+        Task<bool> SendTripRequest(string senderId, Trip trip, string ownerId);
+
+        Task<bool> IsRequesAlreadySend(string senderId, string tripId);
     }
 }

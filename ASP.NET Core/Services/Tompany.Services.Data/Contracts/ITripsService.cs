@@ -4,30 +4,29 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Tompany.Data.Models;
-    using Tompany.Web.ViewModels.Trips;
+    using Tompany.Web.ViewModels.Destinations;
+    using Tompany.Web.ViewModels.Trips.InputModels;
 
     public interface ITripsService
     {
-        Task CreateAsync(TripCreateInputModel travelCreateInputModel, string userId);
+        Task CreateAsync(TripCreateInputModel travelCreateInputModel);
 
-        T GetById<T>(string id);
+        Task EditAsync(TripEditInputModel tripToEdit);
+
+        Task DeleteAsync(string id);
+
+        Task<bool> IsTripExist(string id);
 
         Trip GetById(string id);
 
-        int GetTripsCount();
+        T GetById<T>(string id);
 
-        Trip GetTripByUserId(string userId);
+        int Count();
 
-        IEnumerable<T> GetAll<T>(int? count = null);
-
-        IEnumerable<T> GetUserTrips<T>(string userId);
+        IEnumerable<T> GetUserTripsWithUsername<T>(string username);
 
         IEnumerable<T> GetTripPosts<T>(int? take = null, int skip = 0);
 
-        Task<TripSearchViewModel> GetSearchResultAsync(int fromDestinationId, int toDestination, DateTime dateOfDeparture);
-
-        Task DeleteById(string id);
-
-        Task EditAsync(TripEditViewModel tripToEdit);
+        Task<IEnumerable<T>> GetAllDestinationsAsync<T>();
     }
 }

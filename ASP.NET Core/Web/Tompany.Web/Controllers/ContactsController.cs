@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,62 +8,44 @@ using Tompany.Common;
 using Tompany.Data.Common.Repositories;
 using Tompany.Data.Models;
 using Tompany.Services.Messaging;
-using Tompany.Web.ViewModels.Contacts;
+using Tompany.Web.ViewModels.Contacts.InputModels;
 
 namespace Tompany.Web.Controllers
 {
     public class ContactsController : BaseController
     {
-        public readonly IRepository<ContactFormEntry> contactsRepository;
-
-        public readonly IEmailSender emailSender;
+        private readonly IEmailSender emailSender;
+        private readonly UserManager<ApplicationUser> userManager;
 
         public ContactsController(
-            IRepository<ContactFormEntry> contactsRepository,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            UserManager<ApplicationUser> userManager = null)
         {
-            this.contactsRepository = contactsRepository;
             this.emailSender = emailSender;
+            this.userManager = userManager;
         }
 
-        [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            if (this.User.Identity.IsAuthenticated == true)
+            {
+                var user = await this.userManager.GetUserAsync(this.User);
+                var email = await this.userManager.GetEmailAsync(user);
+
+                var viewModel = new ContactInputModel { Name = user.UserName, Email = email };
+
+                return this.View(viewModel);
+            }
+
             return this.View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(ContactFormViewModel model)
+        public async Task<IActionResult> SendEmail(ContactInputModel inputModel)
         {
-            if (!this.ModelState.IsValid)
-            {
-                return this.View(model);
-            }
+            await this.emailSender.SendEmailAsync(inputModel.Email, inputModel.Name, GlobalConstants.SystemEmail, "Contact request", inputModel.Content);
 
-            var ip = this.HttpContext.Connection.RemoteIpAddress.ToString();
-            var contactFormEntry = new ContactFormEntry
-            {
-                Name = model.Name,
-                Email = model.Email,
-                Title = model.Title,
-                Content = model.Content,
-            };
-            await this.contactsRepository.AddAsync(contactFormEntry);
-            await this.contactsRepository.SaveChangesAsync();
-
-            await this.emailSender.SendEmailAsync(
-                model.Email,
-                model.Name,
-                GlobalConstants.SystemEmail,
-                model.Title,
-                model.Content);
-
-            return this.RedirectToAction("ContactSuccessfullySent");
-        }
-
-        public IActionResult ContactSuccessfullySent()
-        {
-            return this.View();
+            return this.RedirectToAction("Index");
         }
     }
 }

@@ -1,52 +1,53 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Tompany.Data.Models;
-using Tompany.Services.Data.Contracts;
-using Tompany.Web.Common;
-using Tompany.Web.ViewModels.Cars;
-using Tompany.Web.ViewModels.Destinations;
-using Tompany.Web.ViewModels.Trips;
-
-namespace Tompany.Web.Controllers
+﻿namespace Tompany.Web.Controllers
 {
+    using System;
+    using System.Threading.Tasks;
+
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Tompany.Common;
+    using Tompany.Data.Models;
+    using Tompany.Services.Data.Contracts;
+    using Tompany.Web.Common;
+    using Tompany.Web.Infrastructure;
+    using Tompany.Web.ViewModels.Cars.ViewModels;
+    using Tompany.Web.ViewModels.Destinations.ViewModels;
+    using Tompany.Web.ViewModels.Trips.InputModels;
+    using Tompany.Web.ViewModels.Trips.ViewModels;
+
     public class TripsController : BaseController
     {
         private const int ItemsPerPage = 5;
 
         private readonly ITripsService tripsService;
         private readonly ICarsService carsService;
-        private readonly IUsersService usersService;
-        private readonly IDestinationService destinationsService;
         private readonly IViewService viewsService;
         private readonly ITripRequestsService tripRequestsService;
+        private readonly IDestinationService destinationsService;
         private readonly UserManager<ApplicationUser> userManager;
 
         public TripsController(
             ITripsService tripsService,
             ICarsService carsService,
-            IUsersService usersService,
-            IDestinationService destinationsService,
             IViewService viewsService,
             ITripRequestsService tripRequestsService,
+            IDestinationService destinationService,
             UserManager<ApplicationUser> userManager)
         {
             this.tripsService = tripsService;
             this.carsService = carsService;
-            this.usersService = usersService;
-            this.destinationsService = destinationsService;
             this.viewsService = viewsService;
             this.tripRequestsService = tripRequestsService;
+            this.destinationsService = destinationService;
             this.userManager = userManager;
         }
 
-        public IActionResult Index(TripSearchViewModel input, int page = 1)
+        public async Task<IActionResult> Index(TripSearchInputModel input, int page = 1)
         {
-            var count = this.tripsService.GetTripsCount();
+            var count = this.tripsService.Count();
+            this.ViewData["Destinations"] = SelectListGenerator.GetAllDestinations(this.destinationsService);
+
             var viewModel = new TripListViewModel()
             {
                 Trips = this.tripsService.GetTripPosts<TripDetailsViewModel>(ItemsPerPage, (page - 1) * ItemsPerPage),
@@ -58,17 +59,32 @@ namespace Tompany.Web.Controllers
             return this.View(viewModel);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Search()
+        {
+            var fromDestination = int.Parse(this.Request.Query["FromDestinationId"]);
+            var toDestination = int.Parse(this.Request.Query["ToDestinationId"]);
+            var date = DateTime.TryParse(this.Request.Query["DateOfDeparture"], out DateTime dateOfDeparture);
+
+            var count = this.tripsService.Count();
+            this.ViewData["Destinations"] = SelectListGenerator.GetAllDestinations(this.destinationsService);
+
+            TripSearchResultViewModel searchResultViewModel = await this.destinationsService.GetSearchResultAsync(fromDestination, toDestination, dateOfDeparture);
+            return this.PartialView("_SearchResultPartial", searchResultViewModel);
+        }
+
         [Authorize]
         public async Task<IActionResult> Create()
         {
-            var userId = this.userManager.GetUserId(this.User);
+            var currentUser = await this.userManager.GetUserAsync(this.User);
 
-            var cars = this.carsService.GetCarByUserId<CarDropDownViewModel>(userId);
+            var cars = this.carsService.GetAllUserCarsByUserId<CarDropDownViewModel>(currentUser.Id);
 
             var viewModel = new TripCreateInputModel
             {
+                ApplicationUser = currentUser,
                 Cars = cars,
-                Destinations = this.destinationsService.GetAllDestinationsAsync(),
+                Destinations = await this.tripsService.GetAllDestinationsAsync<DestinationViewModel>(),
                 DateOfDeparture = DateTime.Now,
             };
 
@@ -79,28 +95,37 @@ namespace Tompany.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Create(TripCreateInputModel input)
         {
-            if (!ModelState.IsValid)
+            if (!this.ModelState.IsValid)
             {
                 return this.View(input);
             }
 
-            var userId = this.userManager.GetUserId(this.User);
-            var cars = this.usersService.GetUserCars(userId);
-            await this.tripsService.CreateAsync(input, userId);
+            var user = await this.userManager.GetUserAsync(this.User);
+            input.ApplicationUser = user;
+            await this.tripsService.CreateAsync(input);
 
             return this.RedirectToAction("Index", "Trips");
         }
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Details(string id)
+        [Route("Trips/Details/{id}/{sendRequest?}")]
+        public async Task<IActionResult> Details(string id, bool? sendRequest)
         {
-            var userId = this.userManager.GetUserId(this.User);
+            var currentUser = await this.userManager.GetUserAsync(this.User);
             await this.viewsService.AddViewAsync(id);
             var tripViewModel = this.tripsService.GetById<TripDetailsViewModel>(id);
             var tripRequests = this.tripRequestsService.GetAllTripRequestsByTripId(id);
 
+            var isRequestAlreadySend = await this.tripRequestsService.IsRequesAlreadySend(currentUser.Id, id);
+            {
+                this.TempData["RequestMessage"] = GlobalConstants.SuccessfullySentTripRequest;
+            }
+
+            var sendRequestBoolean = sendRequest.HasValue ? sendRequest.Value : false;
+
             tripViewModel.TripRequests = tripRequests;
+            tripViewModel.SendRequest = sendRequestBoolean;
 
             if (tripViewModel == null)
             {
@@ -111,20 +136,25 @@ namespace Tompany.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(TripEditViewModel tripToEditViewModel)
+        public async Task<IActionResult> Edit(TripEditInputModel tripToEditViewModel)
         {
+            if (!this.ModelState.IsValid)
+            {
+                return this.View(tripToEditViewModel);
+            }
+
             await this.tripsService.EditAsync(tripToEditViewModel);
 
-            return this.RedirectToAction("Details", "Trips", new { area = "", id = tripToEditViewModel.Id});
+            return this.RedirectToAction("Details", "Trips", new { area = "", id = tripToEditViewModel.Id });
         }
 
         public async Task<IActionResult> Edit(string id)
         {
             var userId = this.userManager.GetUserId(this.User);
-            var destinations = this.destinationsService.GetAllDestinationsAsync();
+            var destinations = await this.tripsService.GetAllDestinationsAsync<DestinationViewModel>();
 
-            var cars = this.carsService.GetCarByUserId<CarDropDownViewModel>(userId);
-            var tripToEdit = this.tripsService.GetById<TripEditViewModel>(id);
+            var cars = this.carsService.GetAllUserCarsByUserId<CarDropDownViewModel>(userId);
+            var tripToEdit = this.tripsService.GetById<TripEditInputModel>(id);
 
             tripToEdit.Cars = cars;
             tripToEdit.Destinations = destinations;
@@ -134,27 +164,30 @@ namespace Tompany.Web.Controllers
 
         public async Task<IActionResult> Delete(string id)
         {
-            await this.tripsService.DeleteById(id);
+            var currentUser = await this.userManager.GetUserAsync(this.User);
+            var tripExist = await this.tripsService.IsTripExist(id);
 
-            return this.RedirectToAction("UserListTrip", "Users");
+            if (tripExist)
+            {
+                await this.tripsService.DeleteAsync(id);
+            }
+            else
+            {
+                return this.NotFound();
+            }
+
+            return this.RedirectToAction("Profile", "Users", new { username = currentUser.UserName, tab = "UserAllTrips" });
         }
 
         public async Task<IActionResult> Candidate(string tripId)
         {
-            var user = this.User.Identity.Name;
-            var userId = this.userManager.GetUserId(this.User);
-
-            if (this.usersService.IsRequestAlreadySent(userId, tripId))
-            {
-                return this.View("_TripRequestAlreadySent");
-            }
-
-            var trip = this.tripsService.GetById<TripDetailsViewModel>(tripId);
+            var currentUser = await this.userManager.GetUserAsync(this.User);
+            var trip = this.tripsService.GetById(tripId);
             var ownerId = trip.UserId;
 
-            await this.tripRequestsService.SendTripRequest(user, tripId, ownerId);
+            var sendRequest = await this.tripRequestsService.SendTripRequest(currentUser.UserName, trip, ownerId);
 
-            return this.View("_TripRequestSendSuccessfully");
+            return this.RedirectToAction("Details", new { id = tripId, sendRequest = sendRequest });
         }
     }
 }

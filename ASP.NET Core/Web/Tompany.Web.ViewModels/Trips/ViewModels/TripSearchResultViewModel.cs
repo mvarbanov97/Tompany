@@ -12,6 +12,6 @@ namespace Tompany.Web.ViewModels.Trips.ViewModels
 
         public DateTime? DateOfDeparture { get; set; }
 
-        public ICollection<TripDetailsViewModel> Trips { get; set; }
+        public IEnumerable<TripDetailsViewModel> Trips { get; set; }
     }
 }

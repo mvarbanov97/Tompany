@@ -13,6 +13,7 @@
     using Tompany.Services.Messaging;
     using Tompany.Web.ViewModels;
 
+    using AutoMapper;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -23,7 +24,11 @@
     using Microsoft.Extensions.Hosting;
     using Tompany.Services.Data.Contracts;
     using System.Linq;
-    using AutoMapper;
+    using Tompany.Web.Infrastructure.Hubs;
+    using Tompany.Web.Infrastructure;
+    using Tompany.Web.Infrastructure.Contracts;
+    using CloudinaryDotNet;
+    using Tompany.Services;
 
     public class Startup
     {
@@ -54,15 +59,31 @@
                         options.MinimumSameSitePolicy = SameSiteMode.None;
                     });
 
-            services.AddControllersWithViews(
-                options =>
-                    {
-                        options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-                    });
+            services.AddAntiforgery(options =>
+            {
+                options.HeaderName = "X-CSRF-TOKEN";
+            });
 
-            services.AddRazorPages();
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
-            services.AddSingleton(this.configuration);
+            // Social Media Authentication
+            services.AddAuthentication()
+                .AddFacebook(facebookOptions =>
+                {
+                    facebookOptions.AppId = this.configuration["Authentication:Facebook:AppId"];
+                    facebookOptions.AppSecret = this.configuration["Authentication:Facebook:AppSecret"];
+                })
+                .AddGoogle(googleOptions =>
+                {
+                    googleOptions.ClientId = this.configuration["Authentication:Google:ClientId"];
+                    googleOptions.ClientSecret = this.configuration["Authentication:Google:ClientSecret"];
+                });
+
+            // Cloudinary Account Initialization
+            var cloudinaryAccount = new CloudinaryDotNet.Account(
+                this.configuration["Cloudinary:Account"],
+                this.configuration["Cloudinary:ApiKey"],
+                this.configuration["Cloudinary:ApiSecret"]);
+            var cloudinary = new Cloudinary(cloudinaryAccount);
+            services.AddSingleton(cloudinary);
 
             // Data repositories
             services.AddScoped(typeof(IDeletableEntityRepository<>), typeof(EfDeletableEntityRepository<>));
@@ -76,29 +97,27 @@
             services.AddTransient<ITripsService, TripsService>();
             services.AddTransient<ICarsService, CarsService>();
             services.AddTransient<IUsersService, UsersService>();
-            services.AddTransient<ISettingsService, SettingsService>();
             services.AddTransient<ITripRequestsService, TripRequestsService>();
+            services.AddTransient<IWatchListsService, WatchListTripsService>();
+            services.AddTransient<ICloudinaryService, CloudinaryService>();
 
-            services.AddAuthentication().AddFacebook(facebookOptions =>
-            {
-                facebookOptions.AppId = this.configuration["Authentication:Facebook:AppId"];
-                facebookOptions.AppSecret = this.configuration["Authentication:Facebook:AppSecret"];
-            });
+            services.AddTransient<IChatService, ChatService>();
+            services.AddTransient<INotificationService, NotificationService>();
 
-            services.AddAuthentication().AddGoogle(options =>
-            {
-            IConfigurationSection googleAuthNSection =
-                this.configuration.GetSection("Authentication:Google");
+            services.AddRazorPages();
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddSingleton(this.configuration);
 
-            options.ClientId = googleAuthNSection["ClientId"];
-            options.ClientSecret = googleAuthNSection["ClientSecret"];
-            });
+            services.AddAutoMapper(typeof(Startup));
+            services.AddControllersWithViews();
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            AutoMapperConfig.RegisterMappings(typeof(ErrorViewModel).GetTypeInfo().Assembly);
+            AutoMapperConfig.RegisterMappings(
+                typeof(ErrorViewModel).GetTypeInfo().Assembly);
 
             // Seed data on application startup
             using (var serviceScope = app.ApplicationServices.CreateScope())
@@ -128,6 +147,7 @@
                 app.UseHsts();
             }
 
+            app.UseStatusCodePagesWithRedirects("/Error/{0}");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
@@ -140,9 +160,18 @@
             app.UseEndpoints(
                 endpoints =>
                     {
-                        endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id:guid}");
-                        endpoints.MapControllerRoute("areaRoute", "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-                        endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                        endpoints.MapControllerRoute(
+                            name: "areas",
+                            pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                        endpoints.MapControllerRoute(
+                            name: "default",
+                            pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                        endpoints.MapHub<ChatHub>("/chatHub");
+                        endpoints.MapHub<NotificationHub>("/notificationHub");
+                        endpoints.MapHub<UserStatusHub>("/userStatusHub");
+
                         endpoints.MapRazorPages();
                     });
         }

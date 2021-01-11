@@ -12,7 +12,7 @@ namespace Tompany.Web.Common
     {
         public static IEnumerable<SelectListItem> GetAllDestinations(IDestinationService destinationsService)
         {
-            var destinations = destinationsService.GetAllDestinationsAsync().GetAwaiter().GetResult();
+            var destinations = destinationsService.GetAllDestinationsAsync();
             var groups = new List<SelectListGroup>();
             foreach (var destinationViewModel in destinations)
             {

@@ -6,7 +6,8 @@
 
     using Microsoft.AspNetCore.Mvc;
     using Tompany.Services.Data.Contracts;
-    using Tompany.Web.ViewModels.Trips;
+    using Tompany.Web.ViewModels.Trips.InputModels;
+    using Tompany.Web.ViewModels.Trips.ViewModels;
     using System.Threading.Tasks;
     using System;
     using Microsoft.AspNetCore.Mvc.Rendering;
@@ -26,25 +27,40 @@
             this.tripsService = tripsService;
         }
 
-        public async Task<IActionResult> Index(TripSearchViewModel model)
+        public async Task<IActionResult> Index(TripSearchInputModel model)
         {
-
+            model.DateOfDeparture = DateTime.Now;
             this.ViewData["Destinations"] = SelectListGenerator.GetAllDestinations(this.destinationsService);
             return this.View();
         }
 
         [Route("[action]")]
+        [HttpGet]
         public async Task<IActionResult> Search()
         {
             // bool isAjaxCall = this.Request.Headers["x-requested-with"] == "XMLHttpRequest";
             var fromDestination = int.Parse(this.Request.Query["FromDestinationId"]);
             var toDestination = int.Parse(this.Request.Query["ToDestinationId"]);
-            var dateOfDeparture = DateTime.Parse(this.Request.Query["DateOfDeparture"]);
+            var date = DateTime.TryParse(this.Request.Query["DateOfDeparture"], out DateTime dateOfDeparture);
 
-            var searchResultViewModel = await this.destinationsService.GetSearchResultAsync(
-                fromDestination,
-                toDestination,
-                dateOfDeparture);
+            DateTime? dateIfNotSelected;
+            TripSearchResultViewModel searchResultViewModel;
+
+            if (dateOfDeparture.Year == 1)
+            {
+                dateIfNotSelected = null;
+                searchResultViewModel = await this.destinationsService.GetSearchResultAsync(
+               fromDestination,
+               toDestination,
+               dateIfNotSelected);
+            }
+            else
+            {
+                searchResultViewModel = await this.destinationsService.GetSearchResultAsync(
+               fromDestination,
+               toDestination,
+               dateOfDeparture);
+            }
 
             return this.PartialView("_SearchResultPartial", searchResultViewModel);
         }

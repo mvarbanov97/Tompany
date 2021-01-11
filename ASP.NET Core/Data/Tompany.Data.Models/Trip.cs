@@ -43,6 +43,8 @@
 
         public virtual ApplicationUser User { get; set; }
 
+        public string GroupName { get; set; }
+
         public bool IsDeleted { get; set; }
 
         public DateTime? DeletedOn { get; set; }

@@ -2,208 +2,305 @@
 @using Microsoft.AspNetCore.Identity;
 @using Tompany.Data.Models.Enums;
 
-@model Tompany.Web.ViewModels.Trips.TripDetailsViewModel;
+@model TripDetailsViewModel
+@{
+    var tripRequestMessage = this.TempData["RequestMessage"];
 
-@if (Model.Passengers.Count() == Model.Car.Seats)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        Няма повече свободни места за тази обява.
+}
+<div id="banner-area">
+    <img src="~/images/banner/contactFormBanner.jpeg" width="1900" height="400" border="1" alt="" />
+    <div class="parallax-overlay"></div>
+    <div class="banner-title-content">
+        <div class="text-center">
+            <h2>Detailed Information</h2>
+            <h3 style="color:white">Trip post added by @Model.UserUserName</h3>
+            <ul class="breadcrumb">
+                <li>Home</li>
+                <li><a asp-area="" asp-controller="Trips" asp-action="Details" asp-route-tripId="@Model.Id"> Detailed Information</a></li>
+            </ul>
+        </div>
     </div>
-}
+</div>
 
-@if (this.User.Identity.Name != Model.UserUserName)
-{
-    @if (Model.TripRequests.Any(x => x.Sender.UserName == this.User.Identity.Name))
-    {
-        <div class="alert alert-info alert-dismissible fade show" role="alert">
-            Вече сте кандидатствали за тази обява.
-        </div>
-    }
-    else
-    {
-
-        <div class="row-cols-4">
-            <div class="col-lg-7">
-                <a type="submit" class="btn btn-outline-success" asp-controller="Trips" asp-action="Candidate" asp-route-tripId="@Model.Id">Candidate</a>
-            </div>
-        </div>
-    }
-}
-
-<div class='container trip-info' border="">
+<hr />
+<div class="container">
     <div class="row">
-        <div class="col-lg-7">
-            <p class="text-muted">Подробна информация</p>
-            <div class="card mb-3">
-                <div class="card-header bg-white">
-                    <div class="row mt-2">
-                        <div class="col-auto">
-                            <span class="h5">
-                                <i class="fa fa-map-marker-alt"></i>
-                                <span class="text-muted align-top">От</span>
-                                <span class="align-top">@Model.FromDestinationName</span>
-                            </span>
-                        </div>
-                        <div class="col-auto d-none d-md-block">
-                            <i class="fa fa-arrow-alt-circle-right"></i>
-                        </div>
-                        <div class="col-auto">
-                            <span class="h5">
-                                <i class="fa fa-map-marker-alt"></i>
-                                <span class="text-muted align-top">До</span>
-                                <span class="align-top">@Model.ToDestinationName</span>
-                            </span>
-                        </div>
-                    </div>
+        <div class="col-md">
+            <div class="row mb-0 mb-md-3">
+                <div class="col-lg-6">
+                    <h3>Trip Post</h3>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-12 col-xl-6">
-                            <i class="fa fa-calendar-alt"></i>
-                            <span class="text-muted align-top">Дата: </span>
-                            <span class="align-top">@Model.DateAsString</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-xl-6">
-                            <i class="fa fa-money-bill-wave"></i>
-                            <span class="text-muted align-top">Разход на човек: </span>
-                            <span class="align-top">@Model.PricePerPassenger лв.</span>
-                        </div>
-                        <div class="col-12 col-xl-6">
-                            <i class="fa fa-users"></i>
-                            <span class="text-muted align-top">Свободни места: </span>
-                            <span class="align-top">@(Model.Car.Seats - Model.Passengers.Count()) <span class="text-muted align-top">от общо</span> @Model.Car.Seats</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-xl-6">
-                            <i class="fa fa-eye"></i>
-                            <span class="text-muted align-top">Видяна: </span>
-                            <span class="align-top">@Model.Views.Count() пъти</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <i class="fa fa-info-circle"></i>
-                            <span class="text-muted align-top">Информация</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <span>@(Model.AdditionalInformation == null ? "Няма допълнителна информация" : Model.AdditionalInformation)</span>
-                                </div>
+                @if (this.User.Identity.Name == Model.UserUserName)
+                {
+                    <a class="btn btn-primary" id="joinGroup" asp-controller="Chats" asp-action="GroupChat" asp-route-group="@Model.GroupName" asp-route-tripId="@Model.Id">Join chat</a>
+                    <a class="btn btn-warning" id="joinGroup" asp-controller="Trips" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+                    <a class="btn btn-danger" id="joinGroup" asp-controller="Trips" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+                }
+                @if (this.User.Identity.Name != Model.UserUserName)
+                {
+                    @if (Model.TripRequests.Any(x => x.Sender.UserName == this.User.Identity.Name))
+                    {
+                        <div class="col-lg-6">
+                            <div class="alert alert-success alert-dismissable" role="alert">
+                                @tripRequestMessage
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
                             </div>
+                            @if (Model.TripRequests.Any(x => x.Sender.UserName == this.User.Identity.Name && x.RequestStatus == RequestStatus.Accepted) || this.User.Identity.Name == Model.User.UserName)
+                            {
+                                <a class="btn btn-primary" asp-controller="Chats" asp-action="GroupChat" asp-route-group="@Model.GroupName" asp-route-tripId="@Model.Id">Join chat</a>
+                            }
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <p class="text-muted ">Автомобил</p>
-
-            <div class="card  mb-3">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4 col-lg-4 mb-3 mb-md-0">
-                            <div class="d-flex flex-row justify-content-center">
-                                <img src="https://www.cardealerrebates.com/images/newcar/640/x27074.png.pagespeed.ic.TtTTjRboAX.png" alt="Снимка" class="rounded-circle img-fluid vehicle-picture-drive-details">
-                            </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-6">
+                            <a class="btn btn-primary" asp-controller="Trips" asp-action="Candidate" asp-route-tripId="@Model.Id">Candidate</a>
                         </div>
-                        <div class="col-md-8 col-lg-8">
-                            <div class="row">
-                                <div class="col-12 col-xl-6">
-                                    <span class="text-muted">Марка: </span>
-                                    <span>@Model.Car.Brand</span>
-                                </div>
-                                <div class="col-12 col-xl-6">
-                                    <span class="text-muted">Модел: </span>
-                                    <span>@Model.Car.Model</span>
-                                </div>
-                                <div class="col-12 col-xl-6">
-                                    <span class="text-muted">Цвят: </span>
-                                    <span>@Model.Car.Color</span>
-                                </div>
-                                <div class="col-12 col-xl-6">
-                                    <span class="text-muted">Година: </span>
-                                    <span>@Model.Car.YearOfManufacture</span>
-                                </div>
-                                <div class="col-12 col-xl-6">
-                                    <span class="text-muted">Места за пътници: </span>
-                                    <span>@Model.Car.Seats</span>
-                                </div>
-                            </div>
-                            <hr />
-                            <div class="row">
-                                <div class="col-12 col-xl-6">
-                                    <i class="fa fa-smoking"></i> <span class="text-muted">Пушачи: </span>
-                                    <span class="@(Model.Car.IsSmokingAllowed == true ? "text-success" : "text-danger")">@(Model.Car.IsSmokingAllowed == true ? "Да" : "Не")</span>
-                                </div>
-                                <div class="col-12 col-xl-6">
-                                    <i class="fa fa-wind"></i> <span class="text-muted">Климатик: </span>
-                                    <span class="@(Model.Car.IsAirConditiningAvailable == true ? "text-success" : "text-danger")">@(Model.Car.IsAirConditiningAvailable == true ? "Да" : "Не")</span>
-                                </div>
-                                <div class="col-12 col-xl-6">
-                                    <i class="fa fa-paw"></i> <span class="text-muted">Домашни любимци: </span>
-                                    <span class="@(Model.Car.IsAllowedForPets == true ? "text-success" : "text-danger")">@(Model.Car.IsAllowedForPets == true ? "Да" : "Не")</span>
-                                </div>
-                                <div class="col-12 col-xl-6">
-                                    <i class="fa fa-suitcase-rolling"></i> <span class="text-muted">Място за багаж: </span>
-                                    <span class="@(Model.Car.IsLuggageAvaliable == true ? "text-success" : "text-danger")">@(Model.Car.IsLuggageAvaliable == true ? "Да" : "Не")</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    }
+                }
             </div>
         </div>
-
     </div>
+</div>
 
-    <div>
-        <span>@Model.Passengers.Count()</span>
-    </div>
 
-    <p class="text-muted">Приети Пътници</p>
-    @foreach (var request in Model.TripRequests)
-    {
-        if (request.RequestStatus == RequestStatus.Accepted)
-        {
-            <div class="card mb-8">
-                <div class="card-body">
-                    <div>
-                        <img src="http://placehold.it/110x80" alt="ALT NAME" class="d-block ui-w-40 rounded-circle" style='margin-right:3px'>
-                        <div class="caption" class="pull-left">
-                            <h4>
-                                <a asp-controller="Users" asp-action="Details" asp-route-userName="@request.Sender.UserName">@request.Sender.UserName</a>
-                            </h4>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="row">
+                <div class="col-lg-8 col-md-8">
+                    <div class="section-title">
+                        <h4>Detailer Information</h4>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="property-item">
+                <div class="pi-text">
+                    <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
+                    <div class="pt-price">
+                        <span class="h4">
+                            <span class="align-top">@Model.FromDestinationName</span>
+                        </span>
+                        <i class="fas fa-arrow-alt-circle-right fa-1x"></i>
+
+                        <span class="h4">
+                            <span class="align-top">@Model.ToDestinationName</span>
+                        </span>
+                    </div>
+                    <h5>
+                        <span class="text-muted align-top">Date of Departure: </span>
+                        <span class="align-top" style="color:#00C89E; font-size:25px">@Model.DateAsString</span>
+                    </h5>
+
+                    <div class="col">
+                        <i class="fas fa-money-bill fa-1x"></i>
+                        <span class="text-muted align-top">Price: </span>
+                        <span class="h4">@Model.PricePerPassenger BGN</span>
+                    </div>
+
+                    <div class="col">
+                        <i class="fas fa-car fa-1x"></i>
+                        <span class="text-muted align-top">Vehicle: </span>
+                        <span class="h4">@Model.Car.Brand @Model.Car.Model</span>
+                    </div>
+
+                    <div class="col">
+                        <i class="fas fa-eye fa-1x"></i>
+                        <span class="text-muted align-top">Viewed: </span>
+                        <span class="h4">@Model.Views.Count times</span>
+                    </div>
+
+                    <div class="col">
+                        <i class="fas fa-users fa-1x"></i>
+                        <span class="text-muted align-top">Free seats: </span>
+                        <span class="h3 @(Model.Passengers.Count() == Model.Car.Seats ? "text-danger" : "text-success")">@(Model.Car.Seats - Model.Passengers.Count())</span>
+                    </div>
+
+                    <hr />
+                    <div class="col">
+                        <div class="about">
+                            <span class="h4">@Model.AdditionalInformation </span>
+
                         </div>
                     </div>
                 </div>
             </div>
-        }
 
-    }
 
-    @if (User.Identity.Name == Model.UserUserName)
-    {
-        <p class="text-black-50">Нови чакащи пътници</p>
-
-        @foreach (var pendingRequest in Model.TripRequests.Where(x => x.RequestStatus == RequestStatus.Pending))
-        {
-            <div class="thumbnail clearfix">
-                <img src="http://placehold.it/110x80" alt="ALT NAME" class="d-block ui-w-40 rounded-circle" style='margin-right:3px'>
-                <div class="caption" class="pull-left">
-                    <h4>
-                        <a asp-controller="Users" asp-action="Details" asp-route-userName="@pendingRequest.Sender.UserName">@pendingRequest.Sender.UserName</a>
-                        <a type="submit" class="btn btn-outline-success" asp-controller="Users" asp-action="AcceptRequest" asp-route-senderId="@pendingRequest.SenderId" asp-route-tripId="@Model.Id">Accept</a>
-                        <a type="submit" class="btn btn-outline-danger" asp-controller="Users" asp-action="DeclineRequest" asp-route-senderId="@pendingRequest.SenderId" asp-route-tripId="@Model.Id">Decline</a>
-                    </h4>
+            <hr />
+            <hr />
+            <hr />
+            <hr />
+            <div class="row">
+                <div class="col-lg-8 col-md-8">
+                    <div class="section-title">
+                        <h4>Vehicle information</h4>
+                    </div>
                 </div>
             </div>
-        }
 
-    }
+            <div class="property-item">
+                <div class="pi-text">
+                    <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
+                    <div class="col">
+                        <span class="h4" style="color:#00C89E; font-size:25px">@Model.Car.Brand @Model.Car.Model</span>
+                    </div>
+                    <div class="col">
+                        <div class="card-img-overlay">
+                            <img src=@Model.Car.CarImageUrl width="200" height="150" />
+                        </div>
+                    </div>
 
-    <hr />
+                    <div class="col">
+                        <span class="text-muted align-top">Year Of Manufacture: </span>
+                        <span class="h4">@Model.Car.YearOfManufacture</span>
+                    </div>
+
+                    <div class="col">
+                        <span class="text-muted align-top">Color: </span>
+                        <span class="h4">@Model.Car.Color</span>
+                    </div>
+
+                    <div class="col">
+                        <span class="text-muted align-top">Passenger seats: </span>
+                        <span class="h4">@Model.Car.Seats</span>
+                    </div>
+
+                    <hr />
+                    <div class="col">
+                        <i class="fas fa-smoking fa-1x"></i>
+                        <span class="text-muted align-top">Smoking allowed: </span>
+                        <span class="h4 @(Model.Car.IsSmokingAllowed == true ? "text-success" : "text-danger")">@(Model.Car.IsSmokingAllowed ? "Yes" : "No")</span>
+                    </div>
+                    <div class="col">
+                        <i class="fas fa-luggage-cart fa-1x"></i>
+                        <span class="text-muted align-top">Room for luggage: </span>
+                        <span class="h4 @(Model.Car.IsLuggageAvaliable == true ? "text-success" : "text-danger")">@(Model.Car.IsLuggageAvaliable ? "Yes" : "No")</span>
+                    </div>
+                    <div class="col">
+                        <i class="fas fa-wind fa-1x"></i>
+                        <span class="text-muted align-top">Air conditioning: </span>
+                        <span class="h4 @(Model.Car.IsAirConditiningAvailable == true ? "text-success" : "text-danger")">@(Model.Car.IsAirConditiningAvailable ? "Yes" : "No")</span>
+                    </div>
+                    <div class="col">
+                        <i class="fas fa-paw fa-1x"></i>
+                        <span class="text-muted align-top">Allowed for pets: </span>
+                        <span class="h4 @(Model.Car.IsAllowedForPets == true ? "text-success" : "text-danger")">@(Model.Car.IsAllowedForPets ? "Yes" : "No")</span>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+        </div>
+        <div class="col-lg-6">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-8">
+                        <div class="section-title">
+                            <h4>Owners Profile</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <a asp-controller="Users" asp-action="Profile" asp-route-username="@Model.UserUserName">
+                            <div class="ts-item">
+                                <div class="ts-text">
+                                    <img src=@Model.User.ImageUrl alt="">
+                                    <h5>@Model.UserUserName</h5>
+                                    <span>@(Model.User.PhoneNumber == null ? "No phone nubmer added" : Model.User.PhoneNumber)</span>
+                                    <p>Check owners profile.</p>
+                                    <div class="ts-social">
+                                        <a href="@Model.User.FacebookUrl"><i class="fa fa-facebook"></i></a>
+                                        <a href="@Model.User.TwitterUrl"><i class="fa fa-twitter"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="row">
+                <div class="col-lg-8 col-md-8">
+                    <div class="section-title">
+                        <h4>Accepted Passengers</h4>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.Passengers.Count() <= 0)
+            {
+                <div class="alert alert-success " role="alert">
+                    There are no passengers accepted for this trip.
+                </div>
+            }
+            else
+            {
+                @foreach (var request in Model.TripRequests.Where(x => x.RequestStatus == RequestStatus.Accepted))
+                {
+                    <div class="row">
+                        <a asp-controller="Users" asp-action="Profile" asp-route-username="@request.Sender.UserName">
+                            <div class="passenger-item">
+                                <div class="passenger-text">
+                                    <img src=@request.Sender.ImageUrl alt="">
+                                    <h5>@request.Sender.UserName</h5>
+                                    <span>Hover and click to view users profile.</span>
+                                </div>
+                            </div>
+                        </a>
+
+                    </div>
+                }
+            }
+
+            @if (Model.UserUserName == User.Identity.Name)
+            {
+                <div class="row">
+                    <div class="col-lg-8 col-md-8">
+                        <div class="section-title">
+                            <h4>Pending Passengers</h4>
+                        </div>
+                    </div>
+                </div>
+                @foreach (var request in Model.TripRequests.Where(x => x.RequestStatus == RequestStatus.Pending))
+                {
+                    <div class="row">
+                        <div class="passenger-item">
+                            <div class="passenger-text">
+                                <img src=@request.Sender.ImageUrl alt="">
+                                <h5>@request.Sender.UserName</h5>
+                                <div class="row">
+                                    <a class="btn btn-success" asp-controller="Users" asp-action="AcceptRequest" asp-route-senderId="@request.SenderId" asp-route-tripId="@Model.Id">Accept Request</a>
+                                    <a class="btn btn-danger" asp-controller="Users" asp-action="DeclineRequest" asp-route-senderId="@request.SenderId" asp-route-tripId="@Model.Id">Decline Request</a>
+
+                                </div>
+                                <a asp-controller="Users" asp-action="Profile" asp-route-username="@request.Sender.UserName">
+                                    <span>Hover and click to view users profile.</span>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+
+            }
+
+            <hr />
+
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/chatGroup.js"></script>
+}

@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using Tompany.Data.Models.Enums;
 using System.Threading.Tasks;
 using Tompany.Services.Data.Contracts;
+using Tompany.Web.Infrastructure.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using Tompany.Web.Infrastructure.Contracts;
 
 namespace Tompany.Services.Data
 {
@@ -15,19 +18,20 @@ namespace Tompany.Services.Data
     {
         private readonly IRepository<TripRequest> tripRequestsRepository;
         private readonly IRepository<ApplicationUser> usersRepository;
-        private readonly ITripsService tripsService;
-        private readonly IRepository<Trip> tripsRepository;
+
+        private readonly IHubContext<NotificationHub> hubContext;
+        private readonly INotificationService notificationService;
 
         public TripRequestsService(
             IRepository<TripRequest> tripRequestsRepository,
             IRepository<ApplicationUser> usersRepository,
-            ITripsService tripsService,
-            IRepository<Trip> tripsRepository)
+            IHubContext<NotificationHub> hubContext,
+            INotificationService notificationService)
         {
             this.tripRequestsRepository = tripRequestsRepository;
             this.usersRepository = usersRepository;
-            this.tripsService = tripsService;
-            this.tripsRepository = tripsRepository;
+            this.hubContext = hubContext;
+            this.notificationService = notificationService;
         }
 
         public TripRequest GetById(string id)
@@ -49,31 +53,56 @@ namespace Tompany.Services.Data
             return this.tripRequestsRepository.All()
                                               .Include(x => x.Sender)
                                               .Include(x => x.Trip)
-                                              .Where(x => x.TripId == tripId && x.RequestStatus == RequestStatus.Pending); 
+                                              .Where(x => x.TripId == tripId && x.RequestStatus == RequestStatus.Pending);
         }
 
-        public async Task SendTripRequest(string userName, string tripId, string ownerId)
+        public async Task<bool> SendTripRequest(string userName, Trip trip, string ownerId)
         {
-            ApplicationUser owner = null;
-            owner = this.usersRepository.All().Include(x => x.UserTrips).FirstOrDefault(y => y.Id == ownerId);
+            var isRequestSent = false;
 
-            var trip = this.tripsService.GetById(tripId);
+            var owner = await this.usersRepository
+                .All()
+                .Where(x => x.Id == ownerId)
+                .Include(x => x.UserTrips)
+                .Include(x => x.TripRequests)
+                .FirstOrDefaultAsync();
 
-            ApplicationUser sender = null;
-            sender = this.usersRepository.All().FirstOrDefault(x => x.UserName == userName);
+            var sender = await this.usersRepository
+                .All()
+                .Where(x => x.UserName == userName)
+                .FirstOrDefaultAsync();
 
-            var tripRequest = new TripRequest
+            if (await this.IsRequesAlreadySend(sender.Id, trip.Id))
             {
-                Trip = trip,
-                TripId = tripId,
-                Sender = sender,
-                SenderId = sender.Id,
-            };
+                return isRequestSent;
+            }
+            else
+            {
+                isRequestSent = true;
 
-            trip.TripRequest.Add(tripRequest);
+                var tripRequest = new TripRequest
+                {
+                    Trip = trip,
+                    TripId = trip.Id,
+                    Sender = sender,
+                    SenderId = sender.Id,
+                };
 
-            await this.tripRequestsRepository.AddAsync(tripRequest);
-            await this.tripRequestsRepository.SaveChangesAsync();
+                trip.TripRequest.Add(tripRequest);
+
+                await this.tripRequestsRepository.AddAsync(tripRequest);
+                await this.tripRequestsRepository.SaveChangesAsync();
+
+                var notificationId = await this.notificationService.AddTripRequestNotification(sender.UserName, owner.UserName, $"{sender.UserName} sent a trip request from your trip!", trip.Id);
+                var notification = await this.notificationService.GetNotificationByIdAsync(notificationId);
+                await this.hubContext.Clients.User(ownerId).SendAsync("VisualizeNotification", notification);
+                return isRequestSent;
+            }
+        }
+
+        public async Task<bool> IsRequesAlreadySend(string senderId, string tripId)
+        {
+            return await this.tripRequestsRepository.All().AnyAsync(x => x.SenderId == senderId && x.TripId == tripId);
         }
     }
 }
