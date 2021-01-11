@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Tompany.Web.ViewModels.Cars;
+using Tompany.Data.Models;
+using Tompany.Web.ViewModels.Cars.InputModels;
 
 namespace Tompany.Services.Data.Contracts
 {
@@ -10,12 +11,18 @@ namespace Tompany.Services.Data.Contracts
     {
         Task CreateAsync(string userId, CarCreateInputModel carInputModel);
 
-        IEnumerable<T> GetCarByUserId<T>(string userId);
+        Task EditAsync(CarEditIputModel model, string userId);
 
-        T GetById<T>(int carId);
+        Task DeleteAsync(int id, string userId);
 
-        IEnumerable<T> GetAll<T>(int? count = null);
+        IEnumerable<T> GetAllUserCarsByUserId<T>(string userId);
 
-        Task DeleteByIdAsync(int id);
+        IEnumerable<T> GetAllUserCarsByUserUsername<T>(string username);
+
+        T GetCarById<T>(int carId);
+
+        Task<CarEditIputModel> ExtractCar(int id, string userId);
+
+        bool IsCarExists(int id, string userId);
     }
 }
