@@ -9,6 +9,7 @@ namespace Tompany.Data.Models
     using Microsoft.AspNetCore.Identity;
     using Tompany.Data.Models.Enums;
     using System.ComponentModel.DataAnnotations.Schema;
+    using System.ComponentModel.DataAnnotations;
 
     public class ApplicationUser : IdentityUser, IAuditInfo, IDeletableEntity
     {
@@ -21,7 +22,7 @@ namespace Tompany.Data.Models
 
             this.UserTrips = new HashSet<UserTrip>();
             this.Cars = new HashSet<Car>();
-            this.UserReviews = new HashSet<UserReview>();
+            this.TripRequests = new HashSet<TripRequest>();
             this.Messages = new HashSet<Message>();
             this.WatchListTrips = new HashSet<WatchListTrip>();
         }
@@ -32,7 +33,30 @@ namespace Tompany.Data.Models
 
         public Gender Gender { get; set; }
 
-        public string UserImageUrl { get; set; }
+        public DateTime BirthDate { get; set; }
+
+        public DateTime RegisteredOn { get; set; }
+
+        public bool IsBlocked { get; set; }
+
+        [MaxLength(600)]
+        public string AboutMe { get; set; }
+
+        public string ImageUrl { get; set; }
+
+        public string CoverImageUrl { get; set; }
+
+        public string GitHubUrl { get; set; }
+
+        public string StackoverflowUrl { get; set; }
+
+        public string FacebookUrl { get; set; }
+
+        public string LinkedinUrl { get; set; }
+
+        public string TwitterUrl { get; set; }
+
+        public string InstagramUrl { get; set; }
 
         // Audit info
         public DateTime CreatedOn { get; set; }
@@ -52,9 +76,9 @@ namespace Tompany.Data.Models
 
         public virtual ICollection<UserTrip> UserTrips { get; set; }
 
-        public virtual ICollection<Car> Cars { get; set; }
+        public virtual ICollection<TripRequest> TripRequests { get; set; }
 
-        public virtual ICollection<UserReview> UserReviews { get; set; }
+        public virtual ICollection<Car> Cars { get; set; }
 
         public virtual ICollection<Message> Messages { get; set; }
 
