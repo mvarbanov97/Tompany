@@ -687,7 +687,7 @@ namespace Tompany.Data.Migrations
 
                     b.HasIndex("TripId");
 
-                    b.ToTable("TripRequest");
+                    b.ToTable("TripRequests");
                 });
 
             modelBuilder.Entity("Tompany.Data.Models.UserGroup", b =>
