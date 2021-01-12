@@ -279,7 +279,7 @@
                                 <img src=@request.Sender.ImageUrl alt="">
                                 <h5>@request.Sender.UserName</h5>
                                 <div class="row">
-                                    <a class="btn btn-success" asp-controller="Users" asp-action="AcceptRequest" asp-route-senderId="@request.SenderId" asp-route-tripId="@Model.Id">Accept Request</a>
+                                    <a class="btn btn-primary" style="background-color:white;color:black" asp-controller="Users" asp-action="AcceptRequest" asp-route-senderId="@request.SenderId" asp-route-tripId="@Model.Id">Accept Request</a>
                                     <a class="btn btn-danger" asp-controller="Users" asp-action="DeclineRequest" asp-route-senderId="@request.SenderId" asp-route-tripId="@Model.Id">Decline Request</a>
 
                                 </div>
