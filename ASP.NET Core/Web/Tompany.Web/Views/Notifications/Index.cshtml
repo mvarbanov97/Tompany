@@ -1,0 +1,106 @@
+﻿@{
+    string username = this.User.Identity.Name;
+    ViewData["Title"] = $"{username} Notifications";
+    var colors = new Dictionary<string, string>()
+{
+        { NotificationStatus.Read.ToString(), "green" },
+        { NotificationStatus.Unread.ToString(), "red" },
+    };
+}
+
+@model List<NotificationViewModel>
+
+
+<div id="banner-area">
+    <img src="~/images/banner/travelBanner.jpg" width="1900" height="400" alt="" />
+    <div class="parallax-overlay"></div>
+    <div class="banner-title-content">
+        <div class="text-center">
+            <h2>Your Notifications</h2>
+            <ul class="breadcrumb">
+                <li>Home</li>
+                <li>
+                    <a asp-controller="Notifications" asp-action="Index">
+                        Notifications
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<section id="main-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 heading">
+                <span class="title-icon classic pull-left"><i class="fa fa-cogs"></i></span>
+                <h2 class="title classic">Keep in touch your Notifications</h2>
+            </div>
+        </div>
+        <div id="allUserNotifications">
+            @foreach (var item in this.Model)
+            {
+                <div id="@item.Id">
+                    <div class="ts-testimonial-content">
+                        <img src="@item.ImageUrl" alt="avatar">
+                        <h4 class="ts-testimonial-text userNotificationsHeading">
+                            <span>
+                                <a class="deleteNotificationIcon" onclick="deleteNotification('@item.Id')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </span>
+                            <span>
+                                @Html.Raw(item.Heading)
+                            </span>
+                        </h4>
+                        <div class="ts-testimonial-text dropdownNotification">
+                            <button class="dropbtnNotification">
+                                <i class="fas fa-chevron-down notificationArrow"></i>
+                            </button>
+                            <div class="dropdown-content-notification">
+                                @foreach (var status in item.AllStatuses)
+                                {
+                                    <a onclick="updateStatus('@status', '@item.Id')">@status</a>
+                                }
+                            </div>
+                            <span>Status: </span>
+                            <b>
+                                <span id="@(item.Id)orderStatus" style="color: @colors[item.Status.ToString()]; text-transform: uppercase">
+                                    @item.Status.ToString()
+                                </span>
+                            </b>
+                        </div>
+                        <p class="ts-testimonial-text">
+                            @item.Text
+                        </p>
+
+                        <div class="ts-testimonial-author">
+                            <h3 class="name userNotificationsHeading">
+                                <a asp-area="" asp-controller="Profile" asp-action="Index" asp-route-username="@item.TargetUsername">
+                                    @item.TargetFirstName @item.TargetLastName
+                                </a>
+                                <span>
+                                    @item.CreatedOn
+                                </span>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <br />
+    <div class="row" style="text-align: center">
+        @*<button id="loadMoreNotifications" type="button" class="btn btn-success" onclick="loadMoreNotifications(@GlobalConstants.NotificationOnClick, false)" @(Model.Item2 == false ? "disabled" : "")>
+            <i class="fas fa-plus"></i> Load More
+        </button>
+        <button id="loadLessNotifications" type="button" class="btn btn-danger" style="display: none" onclick="hideNotifications(@GlobalConstants.NotificationOnClick)">
+            <i class="fas fa-minus"></i> Load Less
+        </button>*@
+    </div>
+</section>
+<input type="hidden" />
+
+@section Scripts{
+    <script type="text/javascript" src="~/notification/js/notificationActions.js"></script>
+}
