@@ -1,0 +1,82 @@
+﻿@model CarListViewModel
+
+<div class="container">
+
+    @if (this.TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissable" role="alert">
+            @this.TempData["Success"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <a type="submit" class="btn btn-primary" asp-controller="Cars" asp-action="Create"><i class="fas fa-plus-circle"></i> Add vehicle</a>
+
+    <hr />
+
+    @foreach (var car in Model.Cars)
+    {
+
+        <div class="row">
+            @if (this.User.Identity.Name == Model.UserUsername)
+            {
+                <a type="submit" class="btn btn-warning" style="border-radius:25px" asp-controller="Cars" asp-action="Edit" asp-route-id="@car.Id">Edit vehicle</a>
+                <a type="submit" class="btn btn-danger" style="border-radius:25px" asp-controller="Cars" asp-action="Delete" asp-route-id="@car.Id">Delete vehicle</a>
+            }
+
+            <div class="property-item">
+                <div class="image">
+                    <img src=@car.CarImageUrl width="300" height="150" />
+                </div>
+                <div class="pi-text">
+                    <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
+                    <div class="col">
+                        <span class="h4" style="color:#00C89E; font-size:25px">@car.Brand @car.Model</span>
+
+                    </div>
+
+                    <div class="col">
+                        <span class="text-muted align-top">Year Of Manufacture: </span>
+                        <span class="h4">@car.YearOfManufacture</span>
+                    </div>
+
+                    <div class="col">
+                        <span class="text-muted align-top">Color: </span>
+                        <span class="h4">@car.Color</span>
+                    </div>
+
+                    <div class="col">
+                        <span class="text-muted align-top">Passenger seats: </span>
+                        <span class="h4">@car.Seats</span>
+                    </div>
+
+                    <div class="col">
+                        <i class="fas fa-smoking fa-1x"></i>
+                        <span class="text-muted align-top">Smoking allowed: </span>
+                        <span class="h4 @(car.IsSmokingAllowed == true ? "text-success" : "text-danger")">@(car.IsSmokingAllowed ? "Yes" : "No")</span>
+                    </div>
+                    <div class="col">
+                        <i class="fas fa-luggage-cart fa-1x"></i>
+                        <span class="text-muted align-top">Room for luggage: </span>
+                        <span class="h4 @(car.IsLuggageAvaliable == true ? "text-success" : "text-danger")">@(car.IsLuggageAvaliable ? "Yes" : "No")</span>
+                    </div>
+                    <div class="col">
+                        <i class="fas fa-wind fa-1x"></i>
+                        <span class="text-muted align-top">Air conditioning: </span>
+                        <span class="h4 @(car.IsAirConditiningAvailable == true ? "text-success" : "text-danger")">@(car.IsAirConditiningAvailable ? "Yes" : "No")</span>
+                    </div>
+                    <div class="col">
+                        <i class="fas fa-paw fa-1x"></i>
+                        <span class="text-muted align-top">Allowed for pets: </span>
+                        <span class="h4 @(car.IsAllowedForPets == true ? "text-success" : "text-danger")">@(car.IsAllowedForPets ? "Yes" : "No")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br />
+    }
+
+</div>
