@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Tompany.Data.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <li>
+        <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="Index" asp-route-username="@User.Identity.Name">Profile</a>
+    </li>
+    <li>
+        <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="AllUsers">All Users</a>
+    </li>
+    <li>
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index">Edit Profile</a>
+    </li>
+    @*@if (User.IsInRole(Roles.Administrator.ToString()))
+    {
+        <li>
+            <a class="nav-link text-dark" asp-area="Administration" asp-controller="Dashboard" asp-action="Index">Administration Panel</a>
+        </li>
+    }
+    else
+    {
+        if (User.IsInRole(Roles.Editor.ToString()))
+        {
+            <li>
+                <a class="nav-link text-dark" asp-area="Editor" asp-controller="AddCategory" asp-action="Index">Add Category</a>
+            </li>
+        }
+    }*@
+    <li>
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Logout">Logout</a>
+    </li>
+}
+else
+{
+    <li><a asp-area="Identity" asp-page="/Account/Register">Register</a></li>
+    <li><a asp-area="Identity" asp-page="/Account/Login">Login</a></li>
+}

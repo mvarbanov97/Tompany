@@ -1,0 +1,75 @@
+﻿@model CarListViewModel
+@{
+    this.ViewData["Title"] = "Registered vehicles";
+}
+
+    <div class="card mb-3">
+        <a type="submit" class="btn btn-outline-success" asp-controller="Cars" asp-action="Create">Add a car</a>
+    </div>
+
+@if (!Model.Cars.Any())
+{
+    <h4>No cars added yet.</h4>
+}
+else
+{
+    @foreach (var car in Model.Cars)
+    {
+        <div class="card mb-3">
+            <div class="card-header bg-light">
+                <div class="row mt-2">
+                    <div class="col-auto">
+                        <span class="h5">
+                            <span class="align-top">@(car.Brand + " " + car.Model)</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-xl-6">
+                        <span class="text-muted align-top">Year of Manufacture: </span>
+                        <span class="align-top">@car.YearOfManufacture</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 d-block d-lg-none">
+                        <span class="text-muted align-top">Seats: </span>
+                        <span class="align-top">@car.Seats</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 d-block d-lg-none">
+                        <span class="text-muted align-top">Color: </span>
+                        <span class="align-top">@car.Color</span>
+                    </div>
+                </div>
+                <hr />
+                <div class="card-body">
+                    <div class="col-12 col-xl-6">
+                        <i class="fa fa-smoking"></i> <span class="text-muted">Пушачи: </span>
+                        <span class="@(car.IsSmokingAllowed == true ? "text-success" : "text-danger")">@(car.IsSmokingAllowed == true ? "Да" : "Не")</span>
+                    </div>
+                    <div class="col-12 col-xl-6">
+                        <i class="fa fa-wind"></i> <span class="text-muted">Климатик: </span>
+                        <span class="@(car.IsAirConditiningAvailable == true ? "text-success" : "text-danger")">@(car.IsAirConditiningAvailable == true ? "Да" : "Не")</span>
+                    </div>
+                    <div class="col-12 col-xl-6">
+                        <i class="fa fa-paw"></i> <span class="text-muted">Домашни любимци: </span>
+                        <span class="@(car.IsAllowedForPets == true ? "text-success" : "text-danger")">@(car.IsAllowedForPets == true ? "Да" : "Не")</span>
+                    </div>
+                    <div class="col-12 col-xl-6">
+                        <i class="fa fa-suitcase-rolling"></i> <span class="text-muted">Място за багаж: </span>
+                        <span class="@(car.IsLuggageAvaliable == true ? "text-success" : "text-danger")">@(car.IsLuggageAvaliable == true ? "Да" : "Не")</span>
+                    </div>
+                </div>
+                <div class="col-6 d-inline-block d-lg-inline-block">
+                    <a type="submit" class="btn btn-outline-success" asp-controller="Cars" asp-action="Edit" asp-route-id="@car.Id">Edit</a>
+                    <a type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete selected vehicle?')" asp-controller="Cars" asp-action="Delete" asp-route-id="@car.Id">Delete</a>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+

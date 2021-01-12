@@ -1,0 +1,78 @@
+﻿@model TripSearchResultViewModel
+
+<section id="main-container">
+
+    <div id="searchResult">
+        <div class="row d-flex.justify-content-center">
+            <h3 class="col-md-12" style="color:salmon">@Model.Trips.Count() Found trips</h3>
+        </div>
+
+        @if (!Model.Trips.Any())
+        {
+            <p class="text-center">
+                <em class="text-muted">No trips avaliable for the selected filters</em>
+            </p>
+        }
+        @foreach (var trip in Model.Trips.OrderBy(x => x.DateOfDeparture))
+        {
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 col-lg-3 mb-3 mb-md-0">
+                        <div class="d-flex flex-row justify-content-center">
+                            <h1 class="display-3">
+                                <span class="fa-stack fa-1x">
+                                    <a class="fa fa-circle fa-stack-2x icon-background" asp-controller="Trips" asp-action="Details" asp-route-id="@trip.Id"></a>
+                                </span>
+                            </h1>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-lg-9">
+                        <div class="row">
+                            <div class="col-12 col-xl-6">
+                                <i class="fa fa-map-marker-alt"></i>
+                                <span class="text-muted">Начална точка: </span>
+                                <span>@trip.FromDestinationName</span>
+                            </div>
+                            <div class="col-12 col-xl-6">
+                                <i class="fa fa-map-marker-alt"></i>
+                                <span class="text-muted">Крайна точка: </span>
+                                <span>@trip.ToDestinationName</span>
+                            </div>
+                            <div class="col-12 col-xl-6">
+                                <i class="fa fa-calendar-alt"></i>
+                                <span class="text-muted">Дата: </span>
+                                <span>@trip.DateAsString</span>
+                            </div>
+                            <div class="col-12 col-xl-6">
+                                <i class="fa fa-car-alt"></i>
+                                <span class="text-muted">Автомобил: </span>
+                                <span>@trip.Car.Brand @trip.Car.Model</span>
+                            </div>
+                            <div class="col-12 col-xl-6">
+                                <i class="fa fa-money-bill-alt"></i>
+                                <span class="text-muted">Разход на човек: </span>
+                                <span>@trip.PricePerPassenger лв.</span>
+                            </div>
+                            <div class="col-12 col-xl-6">
+                                <i class="fa fa-users"></i>
+                                <span class="text-muted">Свободни места: </span>
+                                <span>@(trip.Car.Seats - trip.Passengers.Count() + " от " + trip.Car.Seats)</span>
+                            </div>
+                            <div class="col-12">
+                                <span class="text-muted">
+                                    <i class="fa fa-info-circle"></i>
+                                    Допълнителна информация:
+                                </span>
+                            </div>
+                            <div class="col-12">
+                                <span class="text-muted">@trip.AdditionalInformation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+        }
+    </div>
+</section>
+

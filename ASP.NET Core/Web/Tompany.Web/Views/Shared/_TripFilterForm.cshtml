@@ -1,0 +1,46 @@
+﻿@{
+    var destinations = this.ViewData["Destinations"] as IEnumerable<SelectListItem>;
+    Model.DateOfDeparture = DateTime.Now;
+}
+
+@model TripSearchInputModel
+
+<div id="filteredTrips">
+    <div class="filter-form">
+        <div class="row">
+            <h2>Filter</h2>
+        </div>
+        <div class="row">
+            <div>
+                <h6><label asp-for="FromDestinationId"></label></h6>
+                <select asp-for="FromDestinationId" asp-items="destinations" class="form-control">
+                    <option selected="" disabled="">--Choose town--</option>
+                </select>
+                <span asp-validation-for="FromDestinationId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <h6><label asp-for="ToDestinationId"></label></h6>
+                <select asp-for="ToDestinationId" asp-items="destinations" class="form-control">
+                    <option selected="" disabled="">--Choose town--</option>
+                </select>
+                <span asp-validation-for="ToDestinationId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <h6><label asp-for="DateAsString">Date of travel</label></h6>
+                <input asp-for="DateOfDeparture" class="form-control" />
+                <span asp-validation-for="DateOfDeparture" class="text-danger"></span>
+            </div>
+        </div>
+
+
+        <div class="container" style="text-align:center">
+            <button onclick="filterTrips()" type="submit" class="btn btn-primary solid blank"> Search</button>
+        </div>
+
+
+    </div>
+</div>

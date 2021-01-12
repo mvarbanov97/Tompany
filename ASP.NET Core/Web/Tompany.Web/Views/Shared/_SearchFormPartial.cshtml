@@ -1,0 +1,53 @@
+﻿@{
+    var destinations = this.ViewData["Destinations"] as IEnumerable<SelectListItem>;
+}
+
+@model TripSearchInputModel
+
+<section id="main-container">
+    <div class="container">
+        <div id="searchForm" class="row d-flex justify-content-center">
+            <div class="row">
+                <div class="col-md-12 heading text-center">
+                    <span class="icon-pentagon wow bounceIn animated"><i class="fas fa-route"></i></span>
+                    <h2 class="title2">
+                        Travel now
+                        <span class="title-desc">Find a company to travel with in just few clicks!</span>
+                    </h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <h6><label asp-for="FromDestinationId"></label></h6>
+                    <select asp-for="FromDestinationId" asp-items="destinations" class="form-control col-md-12">
+                        <option selected="" disabled="">--Choose town--</option>
+                    </select>
+                    <span asp-validation-for="FromDestinationId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <h6><label asp-for="ToDestinationId"></label></h6>
+                    <select asp-for="ToDestinationId" asp-items="destinations" class="form-control col-md-12">
+                        <option selected="" disabled="">--Choose town--</option>
+                    </select>
+                    <span asp-validation-for="ToDestinationId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <h6><label asp-for="DateAsString">Date of travel</label></h6>
+                    <input asp-for="DateOfDeparture" class="form-control" />
+                    <span asp-validation-for="DateOfDeparture" class="text-danger"></span>
+                </div>
+                
+                
+
+                <div class="container" style="text-align:center">
+                    <button onclick="getSearchResult()" type="submit" class="btn btn-primary solid blank"> Search</button>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
