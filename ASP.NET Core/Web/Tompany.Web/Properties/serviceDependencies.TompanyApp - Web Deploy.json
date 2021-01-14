@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "signalr1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.SignalRService/SignalR/TompanyWebserviceSignalR",
+      "type": "signalr.azure",
+      "connectionId": "Azure__SignalR__ConnectionString",
+      "secretStore": "AzureAppSettings"
+    },
+    "mssql1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/tompany/databases/TompanyAppDb",
+      "type": "mssql.azure",
+      "connectionId": "DefaultConnection",
+      "secretStore": "AzureAppSettings"
+    },
+    "appInsights1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/microsoft.insights/components/TompanyApp",
+      "type": "appInsights.azure",
+      "connectionId": "APPINSIGHTS_CONNECTIONSTRING",
+      "secretStore": "AzureAppSettings"
+    }
+  }
+}
