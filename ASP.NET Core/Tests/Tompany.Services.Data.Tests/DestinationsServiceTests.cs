@@ -19,7 +19,7 @@ using Xunit;
 
 namespace Tompany.Services.Data.Tests
 {
-    public class DestinationServiceTets
+    public class DestinationsServiceTests
     {
         [Fact]
         public async Task GetAllDestinationShouldReturnCorrectValue()

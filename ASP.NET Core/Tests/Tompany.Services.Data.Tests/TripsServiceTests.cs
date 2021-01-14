@@ -317,7 +317,7 @@ namespace Tompany.Services.Data.Tests
                .UseInMemoryDatabase(databaseName: "GetUserTripsWithUserUsernameDb").Options;
             var dbContext = new ApplicationDbContext(options);
 
-           
+
             await dbContext.Trips.AddRangeAsync(
                                     new Trip(),
                                     new Trip()
