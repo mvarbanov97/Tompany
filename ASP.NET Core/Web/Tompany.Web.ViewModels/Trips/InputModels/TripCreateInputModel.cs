@@ -17,35 +17,35 @@
 
         public Destination ToDestination { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Моля въведете града, от който тръгвате")]
-        [Display(Name = "Град От:")]
+        [Display(Name = "Going from:")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Please select the city you are leaving from.")]
         public string FromDestinationName { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Моля въведете града, за който пътувате")]
-        [Display(Name = "До град:")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Please select the city you are going to.")]
+        [Display(Name = "Going to:")]
         public string ToDestinationName { get; set; }
 
-        [Display(Name = "Цена на пътник")]
+        [Display(Name = "Price per passenger")]
         public decimal PricePerPassenger { get; set; }
 
         [DataType(DataType.Date)]
-        [Required(ErrorMessage = "Моля изберете датата, на която ще пътувате")]
+        [Required(ErrorMessage = "Please select the date of departure")]
         public DateTime DateOfDeparture { get; set; }
 
-        [Display(Name = "Дата на пътуването")]
+        [Display(Name = "Date of departure")]
         public string DateAsString => this.DateOfDeparture.ToString("d");
 
         public TimeSpan TimeOfDeparture { get; set; }
 
         [MaxLength(255)]
-        [Display(Name = "Допълнителна информация")]
+        [Display(Name = "Additional Information")]
         public string AdditionalInformation { get; set; }
 
         public Car Car { get; set; }
 
         [Range(0, int.MaxValue)]
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Моля въведете автомобила, с който ще пътувате")]
-        [Display(Name = "Автомобил")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Please select the vehicle you are going to use for this trip.")]
+        [Display(Name = "Select vehicle")]
         public int CarId { get; set; }
 
         public ApplicationUser ApplicationUser { get; set; }

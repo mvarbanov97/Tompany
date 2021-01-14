@@ -15,7 +15,7 @@
 
         Task DeleteAsync(string id);
 
-        Task<bool> IsTripExist(string id);
+        Task<bool> IsTripExist(string id, string username);
 
         Trip GetById(string id);
 
