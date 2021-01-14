@@ -69,7 +69,7 @@
             var count = this.tripsService.Count();
             this.ViewData["Destinations"] = SelectListGenerator.GetAllDestinations(this.destinationsService);
 
-            TripSearchResultViewModel searchResultViewModel = await this.destinationsService.GetSearchResultAsync(fromDestination, toDestination, dateOfDeparture);
+            TripSearchViewModel searchResultViewModel = await this.destinationsService.GetSearchResultAsync(fromDestination, toDestination, dateOfDeparture);
             return this.PartialView("_SearchResultPartial", searchResultViewModel);
         }
 
@@ -165,7 +165,7 @@
         public async Task<IActionResult> Delete(string id)
         {
             var currentUser = await this.userManager.GetUserAsync(this.User);
-            var tripExist = await this.tripsService.IsTripExist(id);
+            var tripExist = await this.tripsService.IsTripExist(id, currentUser.UserName);
 
             if (tripExist)
             {
@@ -173,7 +173,7 @@
             }
             else
             {
-                return this.NotFound();
+                return this.Unauthorized();
             }
 
             return this.RedirectToAction("Profile", "Users", new { username = currentUser.UserName, tab = "UserAllTrips" });

@@ -37,7 +37,7 @@ namespace Tompany.Services.Data
             return destinations;
         }
 
-        public async Task<TripSearchResultViewModel> GetSearchResultAsync(int fromDestinationId, int toDestinationId, DateTime? dateOfDeparture)
+        public async Task<TripSearchViewModel> GetSearchResultAsync(int fromDestinationId, int toDestinationId, DateTime? dateOfDeparture)
         {
             var fromDestination = await this.destinationsRepository.All().Where(x => x.Id == fromDestinationId).FirstOrDefaultAsync();
             var toDestination = await this.destinationsRepository.All().Where(x => x.Id == toDestinationId).FirstOrDefaultAsync();
@@ -52,7 +52,7 @@ namespace Tompany.Services.Data
                 trips.Where(x => x.DateOfDeparture == dateOfDeparture);
             }
 
-            var serachResultViewModel = new TripSearchResultViewModel
+            var serachResultViewModel = new TripSearchViewModel
             {
                 Trips = trips,
                 DateOfDeparture = dateOfDeparture,

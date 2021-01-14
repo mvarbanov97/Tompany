@@ -44,7 +44,7 @@
             var date = DateTime.TryParse(this.Request.Query["DateOfDeparture"], out DateTime dateOfDeparture);
 
             DateTime? dateIfNotSelected;
-            TripSearchResultViewModel searchResultViewModel;
+            TripSearchViewModel searchResultViewModel;
 
             if (dateOfDeparture.Year == 1)
             {

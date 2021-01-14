@@ -92,9 +92,9 @@ namespace Tompany.Services.Data
             await this.tripsRepository.SaveChangesAsync();
         }
 
-        public async Task<bool> IsTripExist(string id)
+        public async Task<bool> IsTripExist(string id, string username)
         {
-            var trip = await this.tripsRepository.All().AnyAsync(x => x.Id == id);
+            var trip = await this.tripsRepository.All().AnyAsync(x => x.Id == id && x.User.UserName == username);
 
             return trip;
         }

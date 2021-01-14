@@ -12,6 +12,6 @@ namespace Tompany.Services.Data.Contracts
     {
         IEnumerable<DestinationViewModel> GetAllDestinationsAsync();
 
-        Task<TripSearchResultViewModel> GetSearchResultAsync(int fromDestinationId, int toDestinationId, DateTime? dateOfDeparture);
+        Task<TripSearchViewModel> GetSearchResultAsync(int fromDestinationId, int toDestinationId, DateTime? dateOfDeparture);
     }
 }
