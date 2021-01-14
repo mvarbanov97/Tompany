@@ -21,8 +21,7 @@ namespace Tompany.Data.Seeding
             }
 
             var directory = Directory.GetCurrentDirectory();
-            var filePath = Path.GetFullPath(@"F:\dev\TompanyApp\ASP.NET Core\Data\Tompany.Data\Seeding\towns.json");
-            var json = File.ReadAllText(filePath);
+            var json = File.ReadAllText(directory);
             var destinations = JsonConvert.DeserializeObject<IEnumerable<Destination>>(json);
 
             await dbContext.Destinations.AddRangeAsync(destinations);
