@@ -1,5 +1,6 @@
 ﻿@using Tompany.Common
 @using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment environment 
 @model TripSearchInputModel
 @{
     this.ViewData["Title"] = "Home Page";
@@ -39,6 +40,9 @@
                             </h2>
                             <h3 class="animated5">
                                 Feeling positive about it?
+                            </h3>
+                            <h3 class="animated5">
+                                @environment.EnvironmentName
                             </h3>
                             <p class="animated6"><a asp-area="Identity" asp-page="/Account/Register" class="slider btn btn-primary white">Register Now</a></p>
                         </div>
