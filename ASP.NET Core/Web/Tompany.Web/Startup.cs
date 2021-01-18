@@ -68,8 +68,8 @@
             services.AddAuthentication()
                 .AddFacebook(facebookOptions =>
                 {
-                    facebookOptions.AppId = this.configuration["Authentication:Facebook:AppId"];
-                    facebookOptions.AppSecret = this.configuration["Authentication:Facebook:AppSecret"];
+                    facebookOptions.AppId = this.configuration["Facebook:AppId"];
+                    facebookOptions.AppSecret = this.configuration["Facebook:AppSecret"];
                 })
                 .AddGoogle(googleOptions =>
                 {
@@ -125,6 +125,10 @@
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
                 if (env.IsDevelopment())
+                {
+                    dbContext.Database.Migrate();
+                }
+                else if (env.IsProduction())
                 {
                     dbContext.Database.Migrate();
                 }

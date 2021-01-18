@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -36,6 +37,7 @@ namespace Tompany.Web.Controllers
             return this.NotFound();
         }
 
+        [Authorize]
         [Route("Users/{username}/{tab?}/{page?}")]
         public async Task<IActionResult> Profile(string username, ProfileTab tab, int? page)
         {

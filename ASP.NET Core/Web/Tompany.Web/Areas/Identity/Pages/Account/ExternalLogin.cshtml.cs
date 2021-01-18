@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Tompany.Common;
 using Tompany.Data.Models;
 
 namespace Tompany.Web.Areas.Identity.Pages.Account
@@ -50,8 +51,13 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
+            public string Username { get; set; }
+
+            [Required]
             [EmailAddress]
             public string Email { get; set; }
+
+            public string ImageUrl { get; set; }
         }
 
         public IActionResult OnGetAsync()
@@ -122,7 +128,7 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email };
+                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email , ImageUrl = GlobalConstants.NoProfilePictureLocation};
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
