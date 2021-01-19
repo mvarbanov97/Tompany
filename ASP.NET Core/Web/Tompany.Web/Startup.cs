@@ -73,8 +73,8 @@
                 })
                 .AddGoogle(googleOptions =>
                 {
-                    googleOptions.ClientId = this.configuration["Authentication:Google:ClientId"];
-                    googleOptions.ClientSecret = this.configuration["Authentication:Google:ClientSecret"];
+                    googleOptions.ClientId = this.configuration["Google:ClientId"];
+                    googleOptions.ClientSecret = this.configuration["Google:ClientSecret"];
                 });
 
             // Cloudinary Account Initialization

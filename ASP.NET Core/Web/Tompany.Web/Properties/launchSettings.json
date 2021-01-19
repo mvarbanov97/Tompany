@@ -12,6 +12,7 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
+        "CODECOV_TOKEN": "7886e392-05a7-4ae2-a7f0-fb9811de80c7",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
