@@ -1,14 +1,7 @@
 version: 1.0.{build}
-configuration: Debug
-platform: Any CPU
-environment:
-  ASPNETCORE_ENVIRONMENT: Development
-  BUILD_DIR: C:\projects\Tompany
+image: Visual Studio 2019
 before_build:
-- cmd: >-
-    dotnet restore
-    dotnet build
+- ps: nuget restore
 build:
-  project: C:\projects\tompany\ASP.NET Core\Tompany.sln
-  publish_aspnet_core: true
+  project: BESL.sln
   verbosity: minimal
