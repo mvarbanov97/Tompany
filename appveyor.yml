@@ -1,5 +1,4 @@
 version: 1.0.{build}
-image: Visual Studio 2019
 configuration: Debug
 platform: Any CPU
 environment:
@@ -8,8 +7,8 @@ environment:
 before_build:
 - cmd: >-
     dotnet restore
-    nuget restore
+    dotnet build
 build:
-  project: C:\projects\tompany\Tompany.sln
+  project: C:\projects\tompany\ASP.NET Core\Tompany.sln
   publish_aspnet_core: true
-  verbosity: minimal 
+  verbosity: minimal
