@@ -7,13 +7,19 @@ environment:
 before_build:
 - cmd: >-
     cd ASP.NET Core
-
-    dotnet restore
-
-    dotnet build
-
+    
     nuget restore
+    choco install opencover.portable
+    choco install codeco
 build:
   project: C:\projects\tompany\ASP.NET Core\Tompany.sln
   publish_aspnet_core: true
   verbosity: minimal
+test_script:
+- packages\opencover\4.7.922\tools\OpenCover.Console.exe -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test" -output:coverage.xml -oldStyle -filter:"+[Tompany.Services.Data*]*" -register:administrator
+after_test:
+  - ps: |
+      $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
+      Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
+      bash codecov.sh -f "coverage.xml" -t 7886e392-05a7-4ae2-a7f0-fb9811de80c7
+  
