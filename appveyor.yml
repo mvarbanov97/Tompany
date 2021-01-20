@@ -5,5 +5,3 @@ before_build:
 build:
   project: Tompany.sln
   verbosity: normal
-test_script:
-- cmd: '- packages\opencover\4.7.922\tools\OpenCover.Console.exe -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test" -output:coverage.xml -oldStyle -filter:"+[Tompany.Services.Data*]*" -register:administrator'
