@@ -1,55 +1,61 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Tompany.Data;
-using Tompany.Data.Models;
-using Tompany.Data.Repositories;
-using Tompany.Services.Mapping;
-using Tompany.Web.ViewModels;
-using Tompany.Web.ViewModels.Destinations.ViewModels;
-using Tompany.Web.ViewModels.Trips.InputModels;
-using Tompany.Web.ViewModels.Trips.ViewModels;
-using Xunit;
-
-namespace Tompany.Services.Data.Tests
+﻿namespace Tompany.Services.Data.Tests
 {
+    using AutoMapper;
+    using Microsoft.EntityFrameworkCore;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Tompany.Data;
+    using Tompany.Data.Models;
+    using Tompany.Data.Repositories;
+    using Tompany.Services.Mapping;
+    using Tompany.Web.ViewModels;
+    using Tompany.Web.ViewModels.Destinations.ViewModels;
+    using Tompany.Web.ViewModels.Trips.InputModels;
+    using Tompany.Web.ViewModels.Trips.ViewModels;
+    using Xunit;
+
     public class TripsServiceTests
     {
+        private TripsService tripsService;
+        private ApplicationDbContext dbContext;
+
+        public async Task InitializeAsync()
+        {
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
+            this.dbContext = new ApplicationDbContext(options);
+            var unitOfWork = new UnitOfWork(this.dbContext);
+            this.tripsService = new TripsService(unitOfWork);
+
+            this.InitializeMapper();
+        }
+
         [Fact]
         public async Task CreateAsyncShouldCreateCorrectly()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: "CreateTripAsyncDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
-            var tripsRepository = new EfDeletableEntityRepository<Trip>(dbContext);
-            var destinationRepository = new EfRepository<Destination>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
-
-            var service = new TripsService(tripsRepository, destinationRepository, usersRepository);
-
-            await dbContext.Users.AddAsync(new ApplicationUser
+            await this.dbContext.Users.AddAsync(new ApplicationUser
             {
                 UserName = "Momchil",
             });
 
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.SaveChangesAsync();
 
-            await service.CreateAsync(new TripCreateInputModel
+            await this.tripsService.CreateAsync(new TripCreateInputModel
             {
-                ApplicationUser = await dbContext.Users.FirstAsync(),
+                ApplicationUser = await this.dbContext.Users.FirstAsync(),
                 FromDestinationName = "Silistra",
                 ToDestinationName = "Sofia",
             });
 
             var expectedTrip = new Trip { FromDestinationName = "Silistra", ToDestinationName = "Sofia" };
 
-            var actualTrip = await dbContext.Trips.FirstOrDefaultAsync(x => x.FromDestinationName == "Silistra" && x.ToDestinationName == "Sofia");
+            var actualTrip = await this.dbContext.Trips.FirstOrDefaultAsync(x => x.FromDestinationName == "Silistra" && x.ToDestinationName == "Sofia");
 
             Assert.NotNull(actualTrip);
             Assert.Equal(expectedTrip.ToDestinationName, actualTrip.ToDestinationName);
@@ -59,31 +65,23 @@ namespace Tompany.Services.Data.Tests
         [Fact]
         public async Task EditAsyncShouldEditCorrectly()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: "EditTripAsyncDb").Options;
-            var dbContext = new ApplicationDbContext(options);
-
-            var tripsRepository = new EfDeletableEntityRepository<Trip>(dbContext);
-            var destinationRepository = new EfRepository<Destination>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
+            await this.InitializeAsync();
 
             var tripId = Guid.NewGuid().ToString();
 
-            await dbContext.Users.AddAsync(new ApplicationUser
+            await this.dbContext.Users.AddAsync(new ApplicationUser
             {
                 UserName = "Momchil",
             });
 
-            await dbContext.Trips.AddAsync(new Trip
+            await this.dbContext.Trips.AddAsync(new Trip
             {
                 Id = tripId,
                 FromDestinationName = "Silistra",
                 ToDestinationName = "Sofia",
             });
 
-            await dbContext.SaveChangesAsync();
-
-            var service = new TripsService(tripsRepository, destinationRepository, usersRepository);
+            await this.dbContext.SaveChangesAsync();
 
             var editModel = new TripEditInputModel
             {
@@ -92,10 +90,10 @@ namespace Tompany.Services.Data.Tests
                 ToDestinationName = "Burgas",
             };
 
-            await service.EditAsync(editModel);
+            await this.tripsService.EditAsync(editModel);
 
-            var result = await dbContext.Trips.FirstOrDefaultAsync();
-            var exceptionResult = await dbContext.Trips.FirstOrDefaultAsync(x => x.Id == "nonExistenceId");
+            var result = await this.dbContext.Trips.FirstOrDefaultAsync();
+            var exceptionResult = await this.dbContext.Trips.FirstOrDefaultAsync(x => x.Id == "nonExistenceId");
 
             Assert.NotNull(result);
             Assert.Equal("Varna", result.FromDestinationName);
@@ -105,43 +103,27 @@ namespace Tompany.Services.Data.Tests
         [Fact]
         public async Task EditAsyncShouldThrowNullReferenceIfTripDoesNotExist()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: "EditTripAsyncThrowNullDb").Options;
-            var dbContext = new ApplicationDbContext(options);
-
-            var tripsRepository = new EfDeletableEntityRepository<Trip>(dbContext);
-            var destinationRepository = new EfRepository<Destination>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
-
-            var service = new TripsService(tripsRepository, destinationRepository, usersRepository);
+            await this.InitializeAsync();
 
             var nonExistenceModel = new TripEditInputModel
             {
                 Id = "nonExistenceId",
             };
 
-            await Assert.ThrowsAsync<NullReferenceException>(() => service.EditAsync(nonExistenceModel));
+            await Assert.ThrowsAsync<NullReferenceException>(() => this.tripsService.EditAsync(nonExistenceModel));
         }
 
         [Fact]
         public async Task DeleteAsyncShouldDeleteCorrectly()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: "DeleteAsyncDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
-            await dbContext.Trips.AddAsync(new Trip { Id = "TripDeleteId" });
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.Trips.AddAsync(new Trip { Id = "TripDeleteId" });
+            await this.dbContext.SaveChangesAsync();
 
-            var tripsRepository = new EfDeletableEntityRepository<Trip>(dbContext);
-            var destinationRepository = new EfRepository<Destination>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
+            await this.tripsService.DeleteAsync("TripDeleteId");
 
-            var service = new TripsService(tripsRepository, destinationRepository, usersRepository);
-
-            await service.DeleteAsync("TripDeleteId");
-
-            var trip = await dbContext.Trips.FirstOrDefaultAsync(x => x.Id == "TripDeleteId");
+            var trip = await this.dbContext.Trips.FirstOrDefaultAsync(x => x.Id == "TripDeleteId");
 
             Assert.Null(trip);
         }
@@ -149,25 +131,15 @@ namespace Tompany.Services.Data.Tests
         [Fact]
         public async Task DeleteAsyncShouldThrowNullReferenceIfTripDoesNotExist()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: "DeleteTripAsyncThrowNullDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
-            var tripsRepository = new EfDeletableEntityRepository<Trip>(dbContext);
-            var destinationRepository = new EfRepository<Destination>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
-
-            var service = new TripsService(tripsRepository, destinationRepository, usersRepository);
-
-            await Assert.ThrowsAsync<NullReferenceException>(() => service.DeleteAsync("NonExistenceId"));
+            await Assert.ThrowsAsync<NullReferenceException>(() => this.tripsService.DeleteAsync("NonExistenceId"));
         }
 
         [Fact]
         public async Task IsTripExistReturnsCorrectValue()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: "IsExistDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
             var user = new ApplicationUser
             {
@@ -178,18 +150,12 @@ namespace Tompany.Services.Data.Tests
                 Id = "ExistingId",
                 User = user,
             };
-            await dbContext.Trips.AddAsync(trip);
-            await dbContext.Users.AddAsync(user);
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.Trips.AddAsync(trip);
+            await this.dbContext.Users.AddAsync(user);
+            await this.dbContext.SaveChangesAsync();
 
-            var tripsRepository = new EfDeletableEntityRepository<Trip>(dbContext);
-            var destinationRepository = new EfRepository<Destination>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
-
-            var service = new TripsService(tripsRepository, destinationRepository, usersRepository);
-
-            var trueResult = await service.IsTripExist("ExistingId", user.UserName);
-            var falseResult = await service.IsTripExist("NonExistingId", user.UserName);
+            var trueResult = await this.tripsService.IsTripExist("ExistingId", user.UserName);
+            var falseResult = await this.tripsService.IsTripExist("NonExistingId", user.UserName);
 
             Assert.True(trueResult);
             Assert.False(falseResult);
@@ -198,25 +164,18 @@ namespace Tompany.Services.Data.Tests
         [Fact]
         public async Task GetByIdShouldReturnEntityInCorrectGenericType()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-               .UseInMemoryDatabase(databaseName: "GetTripByIdDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
-            await dbContext.Trips.AddAsync(new Trip
+            await this.dbContext.Trips.AddAsync(new Trip
             {
                 Id = "TestGetId",
             });
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.SaveChangesAsync();
 
-            var tripsRepository = new EfDeletableEntityRepository<Trip>(dbContext);
-            var destinationRepository = new EfRepository<Destination>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
-
-            var service = new TripsService(tripsRepository, destinationRepository, usersRepository);
             this.InitializeMapper();
 
-            var result = service.GetById<TripEditInputModel>("TestGetId");
-            var expected = await dbContext.Trips.FirstAsync(x => x.Id == "TestGetId");
+            var result = this.tripsService.GetById<TripEditInputModel>("TestGetId");
+            var expected = await this.dbContext.Trips.FirstAsync(x => x.Id == "TestGetId");
 
             Assert.NotNull(result);
             Assert.IsType<TripEditInputModel>(result);
@@ -226,16 +185,14 @@ namespace Tompany.Services.Data.Tests
         [Fact]
         public async Task GetUserTripsWithUserUsernameShouldReturnCorrectly()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-               .UseInMemoryDatabase(databaseName: "GetUserTripsWithUserUsernameDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
             var user = new ApplicationUser
             {
                 Id = "UserTestId",
                 UserName = "Momchil",
             };
-            await dbContext.Trips.AddRangeAsync(
+            await this.dbContext.Trips.AddRangeAsync(
                 new Trip
                 {
                     Id = "TestGetId",
@@ -247,18 +204,12 @@ namespace Tompany.Services.Data.Tests
                     User = user,
                 });
 
-            await dbContext.Users.AddAsync(user);
-            await dbContext.SaveChangesAsync();
-
-            var tripsRepository = new EfDeletableEntityRepository<Trip>(dbContext);
-            var destinationRepository = new EfRepository<Destination>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
-
-            var service = new TripsService(tripsRepository, destinationRepository, usersRepository);
+            await this.dbContext.Users.AddAsync(user);
+            await this.dbContext.SaveChangesAsync();
             this.InitializeMapper();
 
-            var expectedUser = await dbContext.Users.FirstAsync(x => x.Id == "UserTestId");
-            var actualResult = service.GetUserTripsWithUsername<TripEditInputModel>(expectedUser.UserName);
+            var expectedUser = await this.dbContext.Users.FirstAsync(x => x.Id == "UserTestId");
+            var actualResult = this.tripsService.GetUserTripsWithUsername<TripEditInputModel>(expectedUser.UserName);
 
             Assert.NotNull(actualResult);
             Assert.Equal(2, actualResult.Count());
@@ -268,9 +219,7 @@ namespace Tompany.Services.Data.Tests
         [Fact]
         public async Task GetTripPostsShouldReturnCorrectEntities()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-               .UseInMemoryDatabase(databaseName: "GetTripPostseDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
             var car = new Car
             {
@@ -279,8 +228,8 @@ namespace Tompany.Services.Data.Tests
                 IsDeleted = false,
             };
 
-            await dbContext.Cars.AddAsync(car);
-            await dbContext.Trips.AddRangeAsync(
+            await this.dbContext.Cars.AddAsync(car);
+            await this.dbContext.Trips.AddRangeAsync(
                 new Trip
                 {
                     Id = "TestGetId",
@@ -291,72 +240,50 @@ namespace Tompany.Services.Data.Tests
                     Id = "TestGetId2",
                     Car = car,
                 });
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.SaveChangesAsync();
 
-            var tripsRepository = new EfDeletableEntityRepository<Trip>(dbContext);
-            var destinationRepository = new EfRepository<Destination>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
-
-            var service = new TripsService(tripsRepository, destinationRepository, usersRepository);
             this.InitializeMapper();
 
-            var resultOne = service.GetTripPosts<TripEditInputModel>(); // Take all
-            var resultTwo = service.GetTripPosts<TripEditInputModel>(1); // Take one
+            var resultOne = this.tripsService.GetTripPosts<TripEditInputModel>(); // Take all
+            var resultTwo = this.tripsService.GetTripPosts<TripEditInputModel>(1); // Take one
 
             Assert.NotNull(resultOne);
             Assert.NotNull(resultTwo);
             Assert.Equal(2, resultOne.Count());
             Assert.Single(resultTwo);
-            Assert.Equal(dbContext.Trips.FirstOrDefault(x => x.Id == "TestGetId").Id, resultOne.FirstOrDefault(x => x.Id == "TestGetId").Id);
+            Assert.Equal(this.dbContext.Trips.FirstOrDefault(x => x.Id == "TestGetId").Id, resultOne.FirstOrDefault(x => x.Id == "TestGetId").Id);
         }
 
         [Fact]
         public async Task CountShouldReturnCorrectValue()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-               .UseInMemoryDatabase(databaseName: "GetUserTripsWithUserUsernameDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
-
-            await dbContext.Trips.AddRangeAsync(
+            await this.dbContext.Trips.AddRangeAsync(
                                     new Trip(),
                                     new Trip()
                                 );
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.SaveChangesAsync();
 
-            var tripsRepository = new EfDeletableEntityRepository<Trip>(dbContext);
-            var destinationRepository = new EfRepository<Destination>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
-
-            var service = new TripsService(tripsRepository, destinationRepository, usersRepository);
-
-            Assert.Equal(2, service.Count());
+            Assert.Equal(2, this.tripsService.Count());
         }
 
         [Fact]
         public async Task GetAllDestinationsAsyncShouldReturnCorrectValues()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-               .UseInMemoryDatabase(databaseName: "GetAllDestinationsDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
-
-            await dbContext.Destinations.AddRangeAsync(
+            await this.dbContext.Destinations.AddRangeAsync(
                                     new Destination(),
                                     new Destination(),
                                     new Destination()
                                 );
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.SaveChangesAsync();
 
-            var tripsRepository = new EfDeletableEntityRepository<Trip>(dbContext);
-            var destinationRepository = new EfRepository<Destination>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
-
-            var service = new TripsService(tripsRepository, destinationRepository, usersRepository);
             this.InitializeMapper();
 
-            var actualResult = await service.GetAllDestinationsAsync<DestinationViewModel>();
-            var expectedResult = dbContext.Destinations.Count();
+            var actualResult = await this.tripsService.GetAllDestinationsAsync<DestinationViewModel>();
+            var expectedResult = this.dbContext.Destinations.Count();
 
             Assert.NotNull(actualResult);
             Assert.Equal(expectedResult, actualResult.Count());

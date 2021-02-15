@@ -21,39 +21,43 @@ namespace Tompany.Services.Data.Tests
 {
     public class DestinationsServiceTests
     {
+        private DestinationService destinationsService;
+        private ApplicationDbContext dbContext;
+
+        public async Task InitializeAsync()
+        {
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
+            this.dbContext = new ApplicationDbContext(options);
+            var unitOfWork = new UnitOfWork(this.dbContext);
+            this.destinationsService = new DestinationService(unitOfWork);
+
+            this.InitializeMapper();
+        }
+
         [Fact]
         public async Task GetAllDestinationShouldReturnCorrectValue()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "GetAllDestinationsDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
-            await dbContext.Destinations.AddRangeAsync(
+            await this.dbContext.Destinations.AddRangeAsync(
                             new Destination(),
                             new Destination(),
                             new Destination());
 
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.SaveChangesAsync();
 
-            var destinationRepository = new EfRepository<Destination>(dbContext);
-            var tripRepository = new EfDeletableEntityRepository<Trip>(dbContext);
-
-            this.InitializeMapper();
-
-            var service = new DestinationService(destinationRepository, tripRepository);
-            var result = service.GetAllDestinationsAsync();
+            var result = this.destinationsService.GetAllDestinationsAsync();
             Assert.Equal(3, result.Count());
-            Assert.IsType<DestinationViewModel[]>(result);
+            Assert.IsType<List<DestinationViewModel>>(result);
         }
 
         [Fact]
         public async Task GetSearchResultAsyncShouldReturnCorrectDestinations()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "GetSearchResultDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
-            await dbContext.Destinations.AddRangeAsync(
+            await this.dbContext.Destinations.AddRangeAsync(
                                 new Destination
                                 {
                                     Id = 1,
@@ -65,12 +69,12 @@ namespace Tompany.Services.Data.Tests
                                     Name = "Sofia",
                                 });
 
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.SaveChangesAsync();
 
-            var fromDestination = await dbContext.Destinations.FirstAsync(x => x.Id == 1);
-            var toDestination = await dbContext.Destinations.FirstAsync(x => x.Id == 2);
+            var fromDestination = await this.dbContext.Destinations.FirstAsync(x => x.Id == 1);
+            var toDestination = await this.dbContext.Destinations.FirstAsync(x => x.Id == 2);
 
-            await dbContext.Trips.AddAsync(
+            await this.dbContext.Trips.AddAsync(
                                 new Trip
                                 {
                                     FromDestination = fromDestination,
@@ -80,14 +84,9 @@ namespace Tompany.Services.Data.Tests
                                     DateOfDeparture = DateTime.Now,
                                 });
 
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.SaveChangesAsync();
 
-            var destinationRepository = new EfRepository<Destination>(dbContext);
-            var tripRepository = new EfDeletableEntityRepository<Trip>(dbContext);
-            this.InitializeMapper();
-
-            var service = new DestinationService(destinationRepository, tripRepository);
-            var model = await service.GetSearchResultAsync(fromDestination.Id, toDestination.Id, null);
+            var model = await this.destinationsService.GetSearchResultAsync(fromDestination.Id, toDestination.Id, null);
 
             Assert.IsType<TripSearchViewModel>(model);
 
@@ -95,9 +94,8 @@ namespace Tompany.Services.Data.Tests
 
         private void InitializeMapper()
            => AutoMapperConfig.RegisterMappings(
-               typeof(ErrorViewModel).GetTypeInfo().Assembly,
+               typeof(DestinationViewModel).GetTypeInfo().Assembly,
                typeof(TripSearchViewModel).GetTypeInfo().Assembly,
-               typeof(TripDetailsViewModel).GetTypeInfo().Assembly,
-               typeof(DestinationViewModel).GetTypeInfo().Assembly);
+               typeof(TripDetailsViewModel).GetTypeInfo().Assembly);
     }
 }

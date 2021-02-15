@@ -22,29 +22,35 @@ namespace Tompany.Services.Data.Tests
 {
     public class TripRequestsTests
     {
+        private TripRequestsService tripRequestsService;
+        private ApplicationDbContext dbContext;
+
+        public async Task InitializeAsync()
+        {
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
+            this.dbContext = new ApplicationDbContext(options);
+            var unitOfWork = new UnitOfWork(this.dbContext);
+            var mockHub = new Mock<IHubContext<NotificationHub>>().Object;
+            var mockService = new Mock<INotificationService>().Object;
+            this.tripRequestsService = new TripRequestsService(mockHub, unitOfWork, mockService);
+        }
+
         [Fact]
         public async Task GetByIdShouldReturnEntitySuccessfully()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "TripRequestByIdDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
-            var tripReqeustRepository = new EfDeletableEntityRepository<TripRequest>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
-            var mockHub = new Mock<IHubContext<NotificationHub>>().Object;
-            var mockService = new Mock<INotificationService>().Object;
-
-            var service = new TripRequestsService(tripReqeustRepository, usersRepository, mockHub, mockService);
             var tripRequestId = Guid.NewGuid().ToString();
 
-            await dbContext.AddAsync(new TripRequest
+            await this.dbContext.AddAsync(new TripRequest
             {
                 Id = tripRequestId,
             });
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.SaveChangesAsync();
 
-            var fetchedTripRequest = service.GetById(tripRequestId);
-            var expectedTripRequest = await dbContext.TripRequests.FirstOrDefaultAsync(x => x.Id == tripRequestId);
+            var fetchedTripRequest = this.tripRequestsService.GetById(tripRequestId);
+            var expectedTripRequest = await this.dbContext.TripRequests.FirstOrDefaultAsync(x => x.Id == tripRequestId);
 
             Assert.Equal(expectedTripRequest, fetchedTripRequest);
         }
@@ -52,24 +58,14 @@ namespace Tompany.Services.Data.Tests
         [Fact]
         public async Task GetAllRequestByTripIdReturnCorrectEntities()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "AllTripRequestByIdDb").Options;
-            var dbContext = new ApplicationDbContext(options);
-
-            var tripReqeustRepository = new EfDeletableEntityRepository<TripRequest>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
-            var mockHub = new Mock<IHubContext<NotificationHub>>().Object;
-            var mockService = new Mock<INotificationService>().Object;
-
-            var service = new TripRequestsService(tripReqeustRepository, usersRepository, mockHub, mockService);
-            var tripRequestId = Guid.NewGuid().ToString();
+            await this.InitializeAsync();
 
             var tripRequestOne = new TripRequest { Id = "testOne", TripId = "same" };
             var tripRequestTwo = new TripRequest { Id = "testTwo", TripId = "same" };
-            await dbContext.TripRequests.AddRangeAsync(tripRequestOne, tripRequestTwo);
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.TripRequests.AddRangeAsync(tripRequestOne, tripRequestTwo);
+            await this.dbContext.SaveChangesAsync();
 
-            var actualTrips = service.GetAllTripRequestsByTripId("same");
+            var actualTrips = this.tripRequestsService.GetAllTripRequestsByTripId("same");
 
             Assert.Equal(2, actualTrips.Count());
         }
@@ -77,25 +73,16 @@ namespace Tompany.Services.Data.Tests
         [Fact]
         public async Task GetAllPendingTripReuqestByTripIdReturnCorrectEntities()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "AllPendingTripRequestByIdDb").Options;
-            var dbContext = new ApplicationDbContext(options);
-
-            var tripReqeustRepository = new EfDeletableEntityRepository<TripRequest>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
-            var mockHub = new Mock<IHubContext<NotificationHub>>().Object;
-            var mockService = new Mock<INotificationService>().Object;
-
-            var service = new TripRequestsService(tripReqeustRepository, usersRepository, mockHub, mockService);
-            var tripRequestId = Guid.NewGuid().ToString();
+            await this.InitializeAsync();
 
             var tripRequestOne = new TripRequest { Id = "testOne", TripId = "same", RequestStatus = RequestStatus.Pending };
             var tripRequestTwo = new TripRequest { Id = "testTwo", TripId = "same", RequestStatus = RequestStatus.Accepted };
             var tripRequestThree = new TripRequest { Id = "testThree", TripId = "same", RequestStatus = RequestStatus.Declined };
-            await dbContext.TripRequests.AddRangeAsync(tripRequestOne, tripRequestTwo);
-            await dbContext.SaveChangesAsync();
 
-            var actualTripReqeusts = service.GetPendingRequestsByTripId("same");
+            await this.dbContext.TripRequests.AddRangeAsync(tripRequestOne, tripRequestTwo);
+            await this.dbContext.SaveChangesAsync();
+
+            var actualTripReqeusts = this.tripRequestsService.GetPendingRequestsByTripId("same");
 
             Assert.Single(actualTripReqeusts);
         }
@@ -113,6 +100,7 @@ namespace Tompany.Services.Data.Tests
             var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
             var userNotificationsRepository = new EfRepository<UserNotification>(dbContext);
             var notificationService = new NotificationService(usersRepository, userNotificationsRepository);
+            var unitOfWork = new UnitOfWork(dbContext);
 
             var mockClientProxy = new Mock<IClientProxy>();
             var mockClients = new Mock<IHubClients>();
@@ -121,9 +109,10 @@ namespace Tompany.Services.Data.Tests
 
             var hub = new Mock<IHubContext<NotificationHub>>();
             hub.Setup(x => x.Clients).Returns(() => mockClients.Object);
-            var tripService = new TripsService(tripRepository, destinationRepository, usersRepository);
+            var tripService = new TripsService(unitOfWork);
 
-            var service = new TripRequestsService(tripReqeustRepository, usersRepository, hub.Object, notificationService);
+            var service = new TripRequestsService(hub.Object, unitOfWork, notificationService);
+
             await dbContext.Trips.AddAsync(new Trip
             {
                 Id = "123",
@@ -157,25 +146,15 @@ namespace Tompany.Services.Data.Tests
         [Fact]
         public async Task IsRequestAlreadySendReturningCorrectValue()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "TripRequestAlreadySendDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
-            var tripReqeustRepository = new EfDeletableEntityRepository<TripRequest>(dbContext);
-            var usersRepository = new EfDeletableEntityRepository<ApplicationUser>(dbContext);
-            var mockHub = new Mock<IHubContext<NotificationHub>>().Object;
-            var mockService = new Mock<INotificationService>().Object;
-
-            var service = new TripRequestsService(tripReqeustRepository, usersRepository, mockHub, mockService);
             var senderId = Guid.NewGuid().ToString();
 
             var tripRequestOne = new TripRequest { Id = "testOne", TripId = "same", RequestStatus = RequestStatus.Pending, SenderId = senderId };
-            await dbContext.TripRequests.AddAsync(tripRequestOne);
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.TripRequests.AddAsync(tripRequestOne);
+            await this.dbContext.SaveChangesAsync();
 
-            var isSend = await service.IsRequesAlreadySend(senderId, "same");
-
-            Assert.True(isSend);
+            Assert.True(await this.tripRequestsService.IsRequesAlreadySend(senderId, "same"));
         }
     }
 }

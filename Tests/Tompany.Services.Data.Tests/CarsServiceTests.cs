@@ -21,21 +21,26 @@ namespace Tompany.Services.Data.Tests
 {
     public class CarsServiceTests
     {
-        public CarsServiceTests()
+        private CarsService carsService;
+        private ApplicationDbContext dbContext;
+
+        public async Task InitializeAsync()
         {
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
+            this.dbContext = new ApplicationDbContext(options);
+            var unitOfWork = new UnitOfWork(this.dbContext);
+            var mockCloudinary = new Mock<ICloudinaryService>().Object;
+            this.carsService = new CarsService(mockCloudinary, unitOfWork);
+
             this.InitializeMapper();
         }
 
         [Fact]
         public async Task CreateAsyncAddEntitySuccessfullyToDb()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "CreateCarsDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
-            var repository = new EfDeletableEntityRepository<Car>(dbContext);
-
-            this.InitializeMapper();
             var car = new CarCreateInputModel
             {
                 CarImageUrl = GlobalConstants.NoCarPictureLocation,
@@ -50,31 +55,19 @@ namespace Tompany.Services.Data.Tests
                 IsAllowedForPets = true,
             };
 
-            var mockCloudinary = new Mock<ICloudinaryService>().Object;
+            await this.carsService.CreateAsync(Guid.NewGuid().ToString(), car);
 
-            var service = new CarsService(repository, mockCloudinary);
-
-            await service.CreateAsync(Guid.NewGuid().ToString(), car);
-
-            Assert.Equal(1, await dbContext.Cars.CountAsync());
+            Assert.Equal(1, await this.dbContext.Cars.CountAsync());
         }
 
         [Fact]
         public async Task EditAsyncShouldChangeEntityProperties()
         {
-            // Arrange
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "EditCarsDb").Options;
-            var dbContext = new ApplicationDbContext(options);
-
-            var repository = new EfDeletableEntityRepository<Car>(dbContext);
-            var mockCloudinary = new Mock<ICloudinaryService>().Object;
-
-            var service = new CarsService(repository, mockCloudinary);
+            await this.InitializeAsync();
 
             var userId = Guid.NewGuid().ToString();
 
-            await dbContext
+            await this.dbContext
                 .AddAsync(new Car
                 {
                     Id = 1,
@@ -82,7 +75,7 @@ namespace Tompany.Services.Data.Tests
                     Brand = "Lada",
                     Model = "Niva",
                 });
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.SaveChangesAsync();
 
             var carToEdit = new CarEditIputModel
             {
@@ -92,8 +85,8 @@ namespace Tompany.Services.Data.Tests
             };
 
             // Act
-            await service.EditAsync(carToEdit, userId);
-            var actualCar = await dbContext.Cars.FirstOrDefaultAsync(x => x.Id == 1);
+            await this.carsService.EditAsync(carToEdit, userId);
+            var actualCar = await this.dbContext.Cars.FirstOrDefaultAsync(x => x.Id == 1);
 
             // Assert
             Assert.Equal("BMW", actualCar.Brand);
@@ -102,17 +95,11 @@ namespace Tompany.Services.Data.Tests
         [Fact]
         public async Task DeleteAsyncRemoveEntityFromDbSuccessfully()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "DeleteCarsDb").Options;
-            var dbContext = new ApplicationDbContext(options);
-
-            var repository = new EfDeletableEntityRepository<Car>(dbContext);
-            var mockCloudinary = new Mock<ICloudinaryService>().Object;
-            var service = new CarsService(repository, mockCloudinary);
+            await this.InitializeAsync();
 
             var userId = Guid.NewGuid().ToString();
 
-            await dbContext.AddAsync(new Car
+            await this.dbContext.AddAsync(new Car
             {
                 Id = 1,
                 UserId = userId,
@@ -120,82 +107,59 @@ namespace Tompany.Services.Data.Tests
                 Model = "CarModelToDelete",
             });
 
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.SaveChangesAsync();
 
-            await service.DeleteAsync(1, userId);
+            await this.carsService.DeleteAsync(1, userId);
 
             var expectedResult = 0;
-            var actualResult = await dbContext.Cars.CountAsync();
+            var actualResult = await this.dbContext.Cars.CountAsync();
             Assert.Equal(expectedResult, actualResult);
         }
 
         [Fact]
         public async Task DeleteAsyncShouldThrowNullReferenceIfCarDoesNotExistInDb()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "DeleteCarsThatDoesNotExistInDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
-            var repository = new EfDeletableEntityRepository<Car>(dbContext);
-            var mockCloudinary = new Mock<ICloudinaryService>().Object;
-
-            var service = new CarsService(repository, mockCloudinary);
             var userId = Guid.NewGuid().ToString();
 
-            await Assert.ThrowsAsync<NullReferenceException>(() => service.DeleteAsync(1, userId));
+            await Assert.ThrowsAsync<NullReferenceException>(() => this.carsService.DeleteAsync(1, userId));
         }
 
         [Fact]
         public async Task GetCarByIdReturnEntityWhenElementExistWithPassedId()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "CarsGetByIdDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
-            await dbContext.Cars.AddAsync(new Car
+            await this.dbContext.Cars.AddAsync(new Car
             {
                 Id = 1,
             });
 
-            await dbContext.SaveChangesAsync();
-
-            var repository = new EfDeletableEntityRepository<Car>(dbContext);
-            var mockCloudinary = new Mock<ICloudinaryService>().Object;
-
-            var service = new CarsService(repository, mockCloudinary);
+            await this.dbContext.SaveChangesAsync();
 
             this.InitializeMapper();
 
-            var result = service.GetCarById<CarViewModel>(1);
+            var result = this.carsService.GetCarById<CarViewModel>(1);
 
             Assert.Equal(1, result.Id);
             Assert.IsType<CarViewModel>(result);
         }
 
         [Fact]
-        public void GetCarByIdShouldThrowNullReferenceWhenThereIsNoEntityWithPassedId()
+        public async Task GetCarByIdShouldThrowNullReferenceWhenThereIsNoEntityWithPassedId()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "GetUnexistCarDb").Options;
-            var dbContext = new ApplicationDbContext(options);
-
-            var repository = new EfDeletableEntityRepository<Car>(dbContext);
-            var mockCloudinary = new Mock<ICloudinaryService>().Object;
-
-            var service = new CarsService(repository, mockCloudinary);
-            this.InitializeMapper();
+            await this.InitializeAsync();
 
             var actualExMessage = $"Car with id 1 not found.";
 
-            Assert.Throws<NullReferenceException>(() => service.GetCarById<CarViewModel>(1));
+            Assert.Throws<NullReferenceException>(() => this.carsService.GetCarById<CarViewModel>(1));
         }
 
         [Fact]
         public async Task GetUserCarsByIdShouldReturnEntitiesSuccessfully()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "GetUserCarsByIdDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
             var userId = Guid.NewGuid().ToString();
             var user = new ApplicationUser
@@ -219,17 +183,11 @@ namespace Tompany.Services.Data.Tests
                 Brand = "Honda",
             });
 
-            await dbContext.AddRangeAsync(cars);
-            await dbContext.AddAsync(user);
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.AddRangeAsync(cars);
+            await this.dbContext.AddAsync(user);
+            await this.dbContext.SaveChangesAsync();
 
-            var repository = new EfDeletableEntityRepository<Car>(dbContext);
-            var mockCloudinary = new Mock<ICloudinaryService>().Object;
-
-            var service = new CarsService(repository, mockCloudinary);
-            this.InitializeMapper();
-
-            var userCars = service.GetAllUserCarsByUserId<CarViewModel>(userId);
+            var userCars = this.carsService.GetAllUserCarsByUserId<CarViewModel>(userId);
 
             Assert.Equal(2, userCars.Count());
         }
@@ -237,9 +195,7 @@ namespace Tompany.Services.Data.Tests
         [Fact]
         public async Task GetUserCarsByUsernameShouldReturnEntitiesSuccessfully()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "GetUserCarsByUsernameDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
             var user = new ApplicationUser
             {
@@ -261,16 +217,10 @@ namespace Tompany.Services.Data.Tests
                 Brand = "Honda",
             });
 
-            await dbContext.AddRangeAsync(cars);
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.AddRangeAsync(cars);
+            await this.dbContext.SaveChangesAsync();
 
-            var repository = new EfDeletableEntityRepository<Car>(dbContext);
-            var mockCloudinary = new Mock<ICloudinaryService>().Object;
-
-            var service = new CarsService(repository, mockCloudinary);
-            this.InitializeMapper();
-
-            var userCars = service.GetAllUserCarsByUserUsername<CarViewModel>(user.UserName);
+            var userCars = this.carsService.GetAllUserCarsByUserUsername<CarViewModel>(user.UserName);
 
             Assert.Equal(2, userCars.Count());
         }
@@ -278,9 +228,7 @@ namespace Tompany.Services.Data.Tests
         [Fact]
         public async Task IsCarExistShouldReturnCorrectValue()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "IsCarExistDb").Options;
-            var dbContext = new ApplicationDbContext(options);
+            await this.InitializeAsync();
 
             var user = new ApplicationUser
             {
@@ -302,16 +250,11 @@ namespace Tompany.Services.Data.Tests
                 Brand = "Honda",
             });
 
-            await dbContext.AddRangeAsync(cars);
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.AddRangeAsync(cars);
+            await this.dbContext.SaveChangesAsync();
 
-            var repository = new EfDeletableEntityRepository<Car>(dbContext);
-            var mockCloudinary = new Mock<ICloudinaryService>().Object;
-
-            var service = new CarsService(repository, mockCloudinary);
-
-            var result = service.IsCarExists(2, user.Id);
-            var secondResult = service.IsCarExists(3, user.Id);
+            var result = this.carsService.IsCarExists(2, user.Id);
+            var secondResult = this.carsService.IsCarExists(3, user.Id);
 
             Assert.True(result);
             Assert.False(secondResult);
@@ -320,16 +263,9 @@ namespace Tompany.Services.Data.Tests
         [Fact]
         public async Task ExtractCarShouldReturnValidEntity()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "ExtractCarDb").Options;
-            var dbContext = new ApplicationDbContext(options);
-            var repository = new EfDeletableEntityRepository<Car>(dbContext);
-            var mockCloudinary = new Mock<ICloudinaryService>().Object;
-
-            var service = new CarsService(repository, mockCloudinary);
+            await this.InitializeAsync();
 
             var userId = Guid.NewGuid().ToString();
-            this.InitializeMapper();
 
             var car = new Car
             {
@@ -347,11 +283,11 @@ namespace Tompany.Services.Data.Tests
                 IsAllowedForPets = true,
             };
 
-            await dbContext.Cars.AddAsync(car);
-            await dbContext.SaveChangesAsync();
+            await this.dbContext.Cars.AddAsync(car);
+            await this.dbContext.SaveChangesAsync();
 
             var actual = 0;
-            var extractedCar = await service.ExtractCar(1, userId);
+            var extractedCar = await this.carsService.ExtractCar(1, userId);
             if (extractedCar != null)
             {
                 actual = 1;
