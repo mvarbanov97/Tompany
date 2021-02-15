@@ -1,50 +1,42 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Linq;
-using Tompany.Data.Common.Repositories;
-using Tompany.Data.Models;
-using Tompany.Web.Infrastructure.Hubs;
-using Microsoft.EntityFrameworkCore;
-
-namespace Tompany.Web.Infrastructure
+﻿namespace Tompany.Web.Infrastructure
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.SignalR;
+    using Microsoft.EntityFrameworkCore;
+    using Tompany.Data;
+    using Tompany.Data.Models;
+    using Tompany.Web.Infrastructure.Hubs;
+
     public class ChatService : IChatService
     {
-        private readonly IDeletableEntityRepository<ApplicationUser> usersRepository;
-        private readonly IDeletableEntityRepository<Group> groupsRepository;
-        private readonly IDeletableEntityRepository<ChatMessage> chatMessageRepository;
         private readonly IHubContext<ChatHub> hubContext;
+        private readonly IUnitOfWork unitOfWork;
 
         public ChatService(
-            IDeletableEntityRepository<ApplicationUser> usersRepository,
-            IDeletableEntityRepository<Group> groupsRepository,
-            IDeletableEntityRepository<ChatMessage> chatMessageRepository,
-            IHubContext<ChatHub> hubContext)
+            IHubContext<ChatHub> hubContext,
+            IUnitOfWork unitOfWork)
         {
-            this.usersRepository = usersRepository;
             this.hubContext = hubContext;
-            this.groupsRepository = groupsRepository;
-            this.chatMessageRepository = chatMessageRepository;
+            this.unitOfWork = unitOfWork;
         }
 
         public async Task AddUserToGroup(string groupName, string toUsername, string fromUsername)
         {
-            var toUser = this.usersRepository
+            var toUser = this.unitOfWork.Users
                 .All()
                 .FirstOrDefault(x => x.UserName == toUsername);
             var toUserId = toUser.Id;
 
-            var fromUser = this.usersRepository
+            var fromUser = this.unitOfWork.Users
                 .All()
                 .FirstOrDefault(x => x.UserName == fromUsername);
             var fromUsermage = fromUser.ImageUrl;
             var fromUserId = fromUser.Id;
 
-            var targetGroup = this.groupsRepository
+            var targetGroup = this.unitOfWork.Groups
                 .All()
                 .FirstOrDefault(x => x.Name.ToLower() == groupName.ToLower());
 
@@ -70,8 +62,8 @@ namespace Tompany.Web.Infrastructure
                 targetGroup.UsersGroups.Add(targetToUser);
                 targetGroup.UsersGroups.Add(targetFromUser);
 
-                await this.groupsRepository.AddAsync(targetGroup);
-                await this.groupsRepository.SaveChangesAsync();
+                await this.unitOfWork.Groups.AddAsync(targetGroup);
+                await this.unitOfWork.CompleteAsync();
             }
 
             await this.hubContext.Clients.Group(groupName).SendAsync("ReceiveMessage", fromUsername, fromUsermage, $"{fromUsername} has joined the chat.");
@@ -79,49 +71,49 @@ namespace Tompany.Web.Infrastructure
 
         public async Task ReceiveNewMessage(string fromUsername, string message, string group)
         {
-            var fromUser = this.usersRepository.
+            var fromUser = this.unitOfWork.Users.
                 All()
                 .FirstOrDefault(x => x.UserName == fromUsername);
 
             var fromId = fromUser.Id;
             var fromImage = fromUser.ImageUrl;
 
-            await this.chatMessageRepository.AddAsync(new ChatMessage
+            await this.unitOfWork.ChatMessages.AddAsync(new ChatMessage
             {
                 ApplicationUser = fromUser,
-                Group = this.groupsRepository.All().FirstOrDefault(x => x.Name.ToLower() == group.ToLower()),
+                Group = this.unitOfWork.Groups.All().FirstOrDefault(x => x.Name.ToLower() == group.ToLower()),
                 SendedOn = DateTime.UtcNow,
                 ReceiverUsername = fromUser.UserName,
                 RecieverImageUrl = fromUser.ImageUrl,
                 Content = message,
             });
 
-            await this.chatMessageRepository.SaveChangesAsync();
+            await this.unitOfWork.CompleteAsync();
             await this.hubContext.Clients.User(fromId).SendAsync("SendMessage", fromUsername, fromImage, message);
         }
 
         public async Task<string> SendMessageToUser(string fromUsername, string toUsername, string message, string groupName)
         {
-            var toUser = this.usersRepository.All().FirstOrDefault(x => x.UserName == toUsername);
+            var toUser = this.unitOfWork.Users.All().FirstOrDefault(x => x.UserName == toUsername);
             var toId = toUser.Id;
             var toImage = toUser.ImageUrl;
 
-            var fromUser = this.usersRepository.All().FirstOrDefault(x => x.UserName == fromUsername);
+            var fromUser = this.unitOfWork.Users.All().FirstOrDefault(x => x.UserName == fromUsername);
             var fromId = fromUser.Id;
             var fromImage = fromUser.ImageUrl;
 
             var newMessage = new ChatMessage
             {
                 ApplicationUser = fromUser,
-                Group = this.groupsRepository.All().FirstOrDefault(x => x.Name.ToLower() == groupName.ToLower()),
+                Group = this.unitOfWork.Groups.All().FirstOrDefault(x => x.Name.ToLower() == groupName.ToLower()),
                 SendedOn = DateTime.UtcNow,
                 ReceiverUsername = toUser.UserName,
                 RecieverImageUrl = toUser.ImageUrl,
                 Content = message,
             };
 
-            await this.chatMessageRepository.AddAsync(newMessage);
-            await this.chatMessageRepository.SaveChangesAsync();
+            await this.unitOfWork.ChatMessages.AddAsync(newMessage);
+            await this.unitOfWork.CompleteAsync();
             await this.hubContext.Clients.User(toId).SendAsync("ReceiveMessage", fromUsername, fromImage, message);
 
             return toId;
@@ -129,9 +121,9 @@ namespace Tompany.Web.Infrastructure
 
         public async Task SendMessageToGroup(string senderContextId, string fromUsername, string message, string groupName)
         {
-            var fromUser = await this.usersRepository.All().FirstOrDefaultAsync(x => x.UserName == fromUsername);
+            var fromUser = await this.unitOfWork.Users.All().FirstOrDefaultAsync(x => x.UserName == fromUsername);
             var fromUserImage = fromUser.ImageUrl;
-            var toGroup = await this.groupsRepository.All().FirstOrDefaultAsync(x => x.Name.ToLower() == groupName.ToLower());
+            var toGroup = await this.unitOfWork.Groups.All().FirstOrDefaultAsync(x => x.Name.ToLower() == groupName.ToLower());
 
             var newMessage = new ChatMessage
             {
@@ -143,17 +135,17 @@ namespace Tompany.Web.Infrastructure
                 Content = message,
             };
 
-            await this.chatMessageRepository.AddAsync(newMessage);
+            await this.unitOfWork.ChatMessages.AddAsync(newMessage);
             await this.hubContext.Clients.GroupExcept(groupName, senderContextId).SendAsync("SendMessageToGroup", fromUsername, fromUserImage, message);
             await this.hubContext.Clients.User(fromUser.Id).SendAsync("ReceiveMessageSender", fromUsername, fromUserImage, message);
 
-            await this.chatMessageRepository.SaveChangesAsync();
+            await this.unitOfWork.CompleteAsync();
         }
 
         public async Task GroupReceiveNewMessage(string senderContextId, string fromUsername, string message, string group)
         {
-            var fromUser = this.usersRepository.
-                All()
+            var fromUser = this.unitOfWork.Users
+                .All()
                 .FirstOrDefault(x => x.UserName == fromUsername);
 
             var fromId = fromUser.Id;
@@ -162,26 +154,27 @@ namespace Tompany.Web.Infrastructure
             var newMessage = new ChatMessage
             {
                 ApplicationUser = fromUser,
-                Group = this.groupsRepository.All().FirstOrDefault(x => x.Name.ToLower() == group.ToLower()),
+                Group = this.unitOfWork.Groups.All().FirstOrDefault(x => x.Name.ToLower() == group.ToLower()),
                 SendedOn = DateTime.UtcNow,
                 Content = message,
             };
 
-            await this.chatMessageRepository.AddAsync(newMessage);
+            await this.unitOfWork.ChatMessages.AddAsync(newMessage);
             await this.hubContext.Clients.GroupExcept(group, senderContextId).SendAsync("SendMessageToGroup", fromUsername, fromImage, message);
             await this.hubContext.Clients.User(fromId).SendAsync("SenderReceiveMessage", fromUsername, fromImage, message);
-            await this.chatMessageRepository.SaveChangesAsync();
+            await this.unitOfWork.CompleteAsync();
         }
 
         public async Task UserJoinedGroupMessage(string username, string group)
         {
-            var fromUser = this.usersRepository.
-                All()
+            var fromUser = this.unitOfWork.Users
+                .All()
                 .FirstOrDefault(x => x.UserName == username);
+
             var fromImage = fromUser.ImageUrl;
             var joinedGroupMessage = $"{username} has joined the group chat.";
 
-            var dbGroup = await this.groupsRepository.All().FirstOrDefaultAsync(x => x.Name == group);
+            var dbGroup = await this.unitOfWork.Groups.All().FirstOrDefaultAsync(x => x.Name == group);
 
             if (dbGroup == null)
             {
@@ -190,30 +183,30 @@ namespace Tompany.Web.Infrastructure
                     Name = group,
                 };
 
-                await this.groupsRepository.AddAsync(targetGroup);
-                await this.groupsRepository.SaveChangesAsync();
+                await this.unitOfWork.Groups.AddAsync(targetGroup);
+                await this.unitOfWork.CompleteAsync();
             }
 
             var newMessage = new ChatMessage
             {
                 ApplicationUser = fromUser,
-                Group = this.groupsRepository.All().FirstOrDefault(x => x.Name.ToLower() == group.ToLower()),
+                Group = this.unitOfWork.Groups.All().FirstOrDefault(x => x.Name.ToLower() == group.ToLower()),
                 SendedOn = DateTime.UtcNow,
                 Content = joinedGroupMessage,
             };
 
-            await this.chatMessageRepository.AddAsync(newMessage);
+            await this.unitOfWork.ChatMessages.AddAsync(newMessage);
             await this.hubContext.Clients.Group(group).SendAsync("JoinedGroupMessage", username, fromImage, joinedGroupMessage);
-            await this.chatMessageRepository.SaveChangesAsync();
+            await this.unitOfWork.CompleteAsync();
         }
 
         public async Task<ICollection<ChatMessage>> ExtractAllMessages(string group)
         {
-            var targetGroup = await this.groupsRepository.All().FirstOrDefaultAsync(x => x.Name.ToLower() == group.ToLower());
+            var targetGroup = await this.unitOfWork.Groups.All().FirstOrDefaultAsync(x => x.Name.ToLower() == group.ToLower());
 
             if (targetGroup != null)
             {
-                var messages = this.chatMessageRepository
+                var messages = this.unitOfWork.ChatMessages
                     .All()
                     .Where(x => x.GroupId == targetGroup.Id)
                     .OrderBy(x => x.SendedOn)
@@ -223,7 +216,7 @@ namespace Tompany.Web.Infrastructure
 
                 foreach (var message in messages)
                 {
-                    message.ApplicationUser = await this.usersRepository
+                    message.ApplicationUser = await this.unitOfWork.Users
                         .All()
                         .FirstOrDefaultAsync(x => x.Id == message.ApplicationUserId);
                 }

@@ -1,48 +1,42 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tompany.Data.Common.Repositories;
-using Tompany.Data.Models;
-using Tompany.Services.Data.Contracts;
-using Tompany.Services.Mapping;
-using Tompany.Web.ViewModels.Destinations.ViewModels;
-using Tompany.Web.ViewModels.Trips.ViewModels;
-using Tompany.Web.ViewModels.Trips.InputModels;
-
-namespace Tompany.Services.Data
+﻿namespace Tompany.Services.Data
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    using Microsoft.EntityFrameworkCore;
+    using Tompany.Data;
+    using Tompany.Services.Data.Contracts;
+    using Tompany.Services.Mapping;
+    using Tompany.Web.ViewModels.Destinations.ViewModels;
+    using Tompany.Web.ViewModels.Trips.ViewModels;
+
     public class DestinationService : IDestinationService
     {
-        private readonly IRepository<Destination> destinationsRepository;
-        private readonly IRepository<Trip> tripsRepository;
+        private readonly IUnitOfWork unitOfWork;
 
-        public DestinationService(
-            IRepository<Destination> destinationsRepository,
-            IRepository<Trip> tripsRepository)
+        public DestinationService(IUnitOfWork unitOfWork)
         {
-            this.destinationsRepository = destinationsRepository;
-            this.tripsRepository = tripsRepository;
+            this.unitOfWork = unitOfWork;
         }
 
         public IEnumerable<DestinationViewModel> GetAllDestinationsAsync()
         {
-            var destinations = this.destinationsRepository
+            var destinations = this.unitOfWork.Destinations
                 .All()
                 .To<DestinationViewModel>()
-                .ToArray();
+                .ToList();
 
             return destinations;
         }
 
         public async Task<TripSearchViewModel> GetSearchResultAsync(int fromDestinationId, int toDestinationId, DateTime? dateOfDeparture)
         {
-            var fromDestination = await this.destinationsRepository.All().Where(x => x.Id == fromDestinationId).FirstOrDefaultAsync();
-            var toDestination = await this.destinationsRepository.All().Where(x => x.Id == toDestinationId).FirstOrDefaultAsync();
+            var fromDestination = await this.unitOfWork.Destinations.All().Where(x => x.Id == fromDestinationId).FirstOrDefaultAsync();
+            var toDestination = await this.unitOfWork.Destinations.All().Where(x => x.Id == toDestinationId).FirstOrDefaultAsync();
 
-            var trips = this.tripsRepository.All()
+            var trips = this.unitOfWork.Trips.All()
                 .Where(x => x.FromDestinationName == fromDestination.Name && x.ToDestinationName == toDestination.Name)
                 .To<TripDetailsViewModel>()
                 .ToList();

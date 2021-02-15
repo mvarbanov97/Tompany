@@ -1,51 +1,41 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Tompany.Data.Common.Repositories;
-using Tompany.Data.Models;
-using Tompany.Data.Models.Enums;
-using Tompany.Services.Data.Contracts;
-using Tompany.Services.Mapping;
-using Tompany.Web.Infrastructure.Contracts;
-using Tompany.Web.Infrastructure.Hubs;
-using Tompany.Web.ViewModels.Users.ViewModels;
-
-namespace Tompany.Services.Data
+﻿namespace Tompany.Services.Data
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    using Microsoft.AspNetCore.SignalR;
+    using Microsoft.EntityFrameworkCore;
+    using Tompany.Data;
+    using Tompany.Data.Common.Repositories;
+    using Tompany.Data.Models;
+    using Tompany.Data.Models.Enums;
+    using Tompany.Services.Data.Contracts;
+    using Tompany.Services.Mapping;
+    using Tompany.Web.Infrastructure.Contracts;
+    using Tompany.Web.Infrastructure.Hubs;
+    using Tompany.Web.ViewModels.Users.ViewModels;
+
     public class UsersService : IUsersService
     {
-        private readonly IRepository<ApplicationUser> usersRepository;
-        private readonly IRepository<Trip> tripsRepository;
-        private readonly IRepository<TripRequest> tripRequestRepository;
-        private readonly IRepository<UserRating> userRatingRepository;
-        private readonly IRepository<UserTrip> userTripRepository;
         private readonly IHubContext<NotificationHub> hubContext;
+        private readonly IUnitOfWork unitOfWork;
         private readonly INotificationService notificationService;
 
         public UsersService(
-            IRepository<ApplicationUser> usersRepository,
-            IRepository<Trip> tripsRepository,
-            IRepository<TripRequest> tripRequestRepository,
-            IRepository<UserRating> userRatingRepository,
-            IRepository<UserTrip> userTripRepository,
             IHubContext<NotificationHub> hubContext,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            IUnitOfWork unitOfWork)
         {
-            this.usersRepository = usersRepository;
-            this.tripsRepository = tripsRepository;
-            this.tripRequestRepository = tripRequestRepository;
-            this.userRatingRepository = userRatingRepository;
-            this.userTripRepository = userTripRepository;
             this.hubContext = hubContext;
             this.notificationService = notificationService;
+            this.unitOfWork = unitOfWork;
         }
 
         public async Task<ApplicationUserViewModel> ExtractUserInfo(string username, ApplicationUser currentUser)
         {
-            var user = await this.usersRepository.All().FirstOrDefaultAsync(u => u.UserName == username);
+            var user = await this.unitOfWork.Users.All().FirstOrDefaultAsync(u => u.UserName == username);
             var group = new List<string>() { username, currentUser.UserName };
 
             var model = new ApplicationUserViewModel
@@ -79,14 +69,14 @@ namespace Tompany.Services.Data
 
         public ApplicationUser GetUserById(string id)
         {
-            var user = this.usersRepository.All().FirstOrDefault(x => x.Id == id);
+            var user = this.unitOfWork.Users.All().FirstOrDefault(x => x.Id == id);
 
             return user;
         }
 
         public T GetUserByUsername<T>(string username)
         {
-            var user = this.usersRepository.All().Where(x => x.UserName == username).To<ApplicationUserViewModel>().FirstOrDefault();
+            var user = this.unitOfWork.Users.All().Where(x => x.UserName == username).To<ApplicationUserViewModel>().FirstOrDefault();
 
             var userT = AutoMapperConfig.MapperInstance.Map<T>(user);
 
@@ -95,7 +85,7 @@ namespace Tompany.Services.Data
 
         public async Task GetUserCars(string userId)
         {
-            var cars = this.usersRepository.All().Where(x => x.Cars.Any(x => x.UserId == userId));
+            var cars = this.unitOfWork.Users.All().Where(x => x.Cars.Any(x => x.UserId == userId));
         }
 
         public async Task AcceptTripRequest(string senderId, ApplicationUser currentUser, string tripId)
@@ -112,7 +102,7 @@ namespace Tompany.Services.Data
                 throw new NullReferenceException($"There is no passenger with Id {passenger.Id}");
             }
 
-            var trip = await this.tripsRepository
+            var trip = await this.unitOfWork.Trips
                 .All()
                 .Where(x => x.Id == tripId)
                 .Include(x => x.TripRequest)
@@ -134,14 +124,14 @@ namespace Tompany.Services.Data
             var notification = await this.notificationService.GetNotificationByIdAsync(notificationId);
             await this.hubContext.Clients.User(senderId).SendAsync("VisualizeNotification", notification);
 
-            this.tripsRepository.Update(trip);
-            this.tripRequestRepository.Update(tripRequest);
-            await this.tripRequestRepository.SaveChangesAsync();
+            this.unitOfWork.Trips.Update(trip);
+            this.unitOfWork.TripRequests.Update(tripRequest);
+            await this.unitOfWork.CompleteAsync();
         }
 
         public async Task DeclineTripRequest(string senderId, ApplicationUser currentUser, string tripId)
         {
-            var trip = await this.tripsRepository
+            var trip = await this.unitOfWork.Trips
                 .All()
                 .Where(x => x.Id == tripId)
                 .Include(x => x.TripRequest)
@@ -157,18 +147,18 @@ namespace Tompany.Services.Data
             var notification = await this.notificationService.GetNotificationByIdAsync(notificationId);
             await this.hubContext.Clients.User(senderId).SendAsync("VisualizeNotification", notification);
 
-            this.tripRequestRepository.Update(tripRequest);
-            await this.tripRequestRepository.SaveChangesAsync();
+            this.unitOfWork.TripRequests.Update(tripRequest);
+            await this.unitOfWork.CompleteAsync();
         }
 
         public bool IsRequestAlreadySent(string senderId, string tripId)
         {
-            return this.tripRequestRepository.All().Any(x => x.SenderId == senderId && x.TripId == tripId);
+            return this.unitOfWork.TripRequests.All().Any(x => x.SenderId == senderId && x.TripId == tripId);
         }
 
         public ApplicationUserViewModel GetUserByUsername(string username)
         {
-            var user = this.usersRepository.All().Where(x => x.UserName == username).FirstOrDefaultAsync();
+            var user = this.unitOfWork.Users.All().Where(x => x.UserName == username).FirstOrDefaultAsync();
 
             var userT = AutoMapperConfig.MapperInstance.Map<ApplicationUserViewModel>(user);
 
@@ -177,26 +167,26 @@ namespace Tompany.Services.Data
 
         public async Task<bool> IsUserExists(string username)
         {
-            return await this.usersRepository.All().AnyAsync(x => x.UserName == username);
+            return await this.unitOfWork.Users.All().AnyAsync(x => x.UserName == username);
         }
 
         public async Task<int> TakeCreatedTripPostsCountByUsername(string username)
         {
-            return await this.userTripRepository.All().Where(x => x.User.UserName == username).CountAsync();
+            return await this.unitOfWork.UserTrips.All().Where(x => x.User.UserName == username).CountAsync();
         }
 
         public async Task<double> RateUser(ApplicationUser currentUser, string username, int rate)
         {
-            var user = await this.usersRepository.All().FirstOrDefaultAsync(x => x.UserName == username);
+            var user = await this.unitOfWork.Users.All().FirstOrDefaultAsync(x => x.UserName == username);
 
-            var targetRating = await this.userRatingRepository
+            var targetRating = await this.unitOfWork.UserRatings
                 .All()
                 .FirstOrDefaultAsync(x => x.Username == username && x.RaterUsername == currentUser.UserName);
 
             if (targetRating != null)
             {
                 targetRating.Stars = rate;
-                this.userRatingRepository.Update(targetRating);
+                this.unitOfWork.UserRatings.Update(targetRating);
             }
             else
             {
@@ -206,10 +196,10 @@ namespace Tompany.Services.Data
                     Username = username,
                     Stars = rate,
                 };
-                await this.userRatingRepository.AddAsync(targetRating);
+                await this.unitOfWork.UserRatings.AddAsync(targetRating);
             }
 
-            await this.userRatingRepository.SaveChangesAsync();
+            await this.unitOfWork.CompleteAsync();
 
             if (currentUser.UserName != username)
             {
@@ -238,19 +228,20 @@ namespace Tompany.Services.Data
 
         public async Task<int> GetLatestScore(ApplicationUser currentUser, string username)
         {
-            var target = await this.userRatingRepository
+            var target = await this.unitOfWork.UserRatings
                 .All()
                 .FirstOrDefaultAsync(x => x.Username == username && x.RaterUsername == currentUser.UserName);
+
             return target == null ? 0 : target.Stars;
         }
 
         private double CalculateRatingScore(string username)
         {
             double score;
-            var count = this.userRatingRepository.All().Where(x => x.Username == username).Count();
+            var count = this.unitOfWork.UserRatings.All().Where(x => x.Username == username).Count();
             if (count != 0)
             {
-                var totalScore = this.userRatingRepository.All().Where(x => x.Username == username).Sum(x => x.Stars);
+                var totalScore = this.unitOfWork.UserRatings.All().Where(x => x.Username == username).Sum(x => x.Stars);
                 score = Math.Round((double)totalScore / count, 2);
 
                 return score;

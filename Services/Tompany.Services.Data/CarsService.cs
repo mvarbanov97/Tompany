@@ -1,33 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Tompany.Data.Models;
-using System.Threading.Tasks;
-using Tompany.Data.Common.Repositories;
-using Tompany.Services.Data.Contracts;
-using Tompany.Services.Mapping;
-using Tompany.Data;
-using Tompany.Web.ViewModels.Cars.InputModels;
-using Tompany.Web.ViewModels.Cars.ViewModels;
-using Tompany.Services.Data;
-using Microsoft.EntityFrameworkCore;
-using AutoMapper;
-using Tompany.Common;
-
-namespace Tompany.Services.Data
+﻿namespace Tompany.Services.Data
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Tompany.Common;
+    using Tompany.Data;
+    using Tompany.Data.Models;
+    using Tompany.Services.Data.Contracts;
+    using Tompany.Services.Mapping;
+    using Tompany.Web.ViewModels.Cars.InputModels;
+
     public class CarsService : ICarsService
     {
-        private readonly IDeletableEntityRepository<Car> carsRepository;
+        private readonly IUnitOfWork unitOfWork;
         private readonly ICloudinaryService cloudinaryService;
 
         public CarsService(
-            IDeletableEntityRepository<Car> carsRepository,
-            ICloudinaryService cloudinary)
+            ICloudinaryService cloudinary, IUnitOfWork unitOfWork)
         {
-            this.carsRepository = carsRepository;
             this.cloudinaryService = cloudinary;
+            this.unitOfWork = unitOfWork;
         }
 
         public async Task CreateAsync(string userId, CarCreateInputModel input)
@@ -55,13 +49,13 @@ namespace Tompany.Services.Data
                 car.CarImageUrl = carImageUrl;
             }
 
-            await this.carsRepository.AddAsync(car);
-            await this.carsRepository.SaveChangesAsync();
+            await this.unitOfWork.Cars.AddAsync(car);
+            await this.unitOfWork.CompleteAsync();
         }
 
         public async Task EditAsync(CarEditIputModel model, string userId)
         {
-            var car = this.carsRepository.All().Where(x => x.Id == model.Id && x.UserId == userId).FirstOrDefault();
+            var car = this.unitOfWork.Cars.All().Where(x => x.Id == model.Id && x.UserId == userId).FirstOrDefault();
 
             car.CarImageUrl = model.CarImageUrl;
             car.Brand = model.Brand;
@@ -74,13 +68,13 @@ namespace Tompany.Services.Data
             car.IsAirConditiningAvailable = model.IsAirConditiningAvailable;
             car.IsAllowedForPets = model.IsAllowedForPets;
 
-            this.carsRepository.Update(car);
-            await this.carsRepository.SaveChangesAsync();
+            this.unitOfWork.Cars.Update(car);
+            await this.unitOfWork.CompleteAsync();
         }
 
         public async Task DeleteAsync(int id, string userId)
         {
-            var car = await this.carsRepository
+            var car = await this.unitOfWork.Cars
                 .All()
                 .Where(x => x.UserId == userId)
                 .FirstOrDefaultAsync(x => x.Id == id);
@@ -91,13 +85,13 @@ namespace Tompany.Services.Data
             }
 
             car.IsDeleted = true;
-            this.carsRepository.Update(car);
-            await this.carsRepository.SaveChangesAsync();
+            this.unitOfWork.Cars.Update(car);
+            await this.unitOfWork.CompleteAsync();
         }
 
         public T GetCarById<T>(int carId)
         {
-            var car = this.carsRepository
+            var car = this.unitOfWork.Cars
                 .All()
                 .Where(x => x.Id == carId)
                 .To<T>()
@@ -113,21 +107,28 @@ namespace Tompany.Services.Data
 
         public IEnumerable<T> GetAllUserCarsByUserId<T>(string userId)
         {
-            var cars = this.carsRepository.All().Where(x => x.UserId == userId).To<T>().ToList();
+            var cars = this.unitOfWork.Cars
+                .All()
+                .Where(x => x.UserId == userId)
+                .To<T>()
+                .ToList();
 
             return cars;
         }
 
         public IEnumerable<T> GetAllUserCarsByUserUsername<T>(string username)
         {
-            IQueryable<Car> query = this.carsRepository.All().Where(x => x.User.UserName == username);
+            IQueryable<Car> query = this.unitOfWork.Cars
+                .All()
+                .Where(x => x.User.UserName == username);
 
             return query.To<T>().ToList();
         }
 
         public bool IsCarExists(int id, string userId)
         {
-            var car = this.carsRepository.All()
+            var car = this.unitOfWork.Cars
+                .All()
                 .Include(x => x)
                 .Where(x => x.Id == id && x.UserId == userId)
                 .FirstOrDefault();
@@ -142,7 +143,10 @@ namespace Tompany.Services.Data
 
         public async Task<CarEditIputModel> ExtractCar(int id, string userId)
         {
-            var car = await this.carsRepository.All().Where(x => x.Id == id && x.UserId == userId).FirstOrDefaultAsync();
+            var car = await this.unitOfWork.Cars
+                .All()
+                .Where(x => x.Id == id && x.UserId == userId)
+                .FirstOrDefaultAsync();
 
             return new CarEditIputModel
             {

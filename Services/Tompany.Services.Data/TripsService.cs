@@ -1,30 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Tompany.Data.Common.Repositories;
-using Tompany.Data.Models;
-using Tompany.Services.Data.Contracts;
-using Tompany.Services.Mapping;
-using Tompany.Web.ViewModels.Trips.InputModels;
-
-namespace Tompany.Services.Data
+﻿namespace Tompany.Services.Data
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    using Microsoft.EntityFrameworkCore;
+    using Tompany.Data;
+    using Tompany.Data.Models;
+    using Tompany.Services.Data.Contracts;
+    using Tompany.Services.Mapping;
+    using Tompany.Web.ViewModels.Trips.InputModels;
+
     public class TripsService : ITripsService
     {
-        private readonly IRepository<Trip> tripsRepository;
-        private readonly IRepository<Destination> destinationsRepository;
-        private readonly IRepository<ApplicationUser> usersRepository;
+        private readonly IUnitOfWork unitOfWork;
 
-        public TripsService(
-            IRepository<Trip> tripsRepository,
-            IRepository<Destination> destinationsRepository,
-            IRepository<ApplicationUser> usersRepository)
+        public TripsService(IUnitOfWork unitOfWork)
         {
-            this.tripsRepository = tripsRepository;
-            this.destinationsRepository = destinationsRepository;
-            this.usersRepository = usersRepository;
+            this.unitOfWork = unitOfWork;
         }
 
         public async Task CreateAsync(TripCreateInputModel input)
@@ -54,13 +48,13 @@ namespace Tompany.Services.Data
 
             var user = input.ApplicationUser;
             user.UserTrips.Add(userTrip);
-            this.usersRepository.Update(user);
-            await this.usersRepository.SaveChangesAsync();
+            this.unitOfWork.Users.Update(user);
+            await this.unitOfWork.CompleteAsync();
         }
 
         public async Task EditAsync(TripEditInputModel tripToEdit)
         {
-            var trip = this.tripsRepository.All().FirstOrDefault(t => t.Id == tripToEdit.Id);
+            var trip = this.unitOfWork.Trips.All().FirstOrDefault(t => t.Id == tripToEdit.Id);
 
             if (trip == null)
             {
@@ -73,13 +67,13 @@ namespace Tompany.Services.Data
             trip.AdditionalInformation = tripToEdit.AdditionalInformation;
             trip.CarId = tripToEdit.CarId;
 
-            this.tripsRepository.Update(trip);
-            await this.tripsRepository.SaveChangesAsync();
+            this.unitOfWork.Trips.Update(trip);
+            await this.unitOfWork.CompleteAsync();
         }
 
         public async Task DeleteAsync(string id)
         {
-            var tripToDelete = this.tripsRepository.All().FirstOrDefault(t => t.Id == id);
+            var tripToDelete = this.unitOfWork.Trips.All().FirstOrDefault(t => t.Id == id);
 
             if (tripToDelete == null)
             {
@@ -88,20 +82,20 @@ namespace Tompany.Services.Data
 
             tripToDelete.IsDeleted = true;
             tripToDelete.DeletedOn = DateTime.Now;
-            this.tripsRepository.Update(tripToDelete);
-            await this.tripsRepository.SaveChangesAsync();
+            this.unitOfWork.Trips.Update(tripToDelete);
+            await this.unitOfWork.CompleteAsync();
         }
 
         public async Task<bool> IsTripExist(string id, string username)
         {
-            var trip = await this.tripsRepository.All().AnyAsync(x => x.Id == id && x.User.UserName == username);
+            var trip = await this.unitOfWork.Trips.All().AnyAsync(x => x.Id == id && x.User.UserName == username);
 
             return trip;
         }
 
         public T GetById<T>(string id)
         {
-            var trip = this.tripsRepository
+            var trip = this.unitOfWork.Trips
                 .All()
                 .Include(x => x.TripRequest)
                 .Include(x => x.Car)
@@ -116,7 +110,7 @@ namespace Tompany.Services.Data
 
         public Trip GetById(string id)
         {
-            var trip = this.tripsRepository
+            var trip = this.unitOfWork.Trips
                 .All()
                 .Include(x => x.Car)
                 .Include(x => x.Passengers)
@@ -129,7 +123,7 @@ namespace Tompany.Services.Data
 
         public IEnumerable<T> GetUserTripsWithUsername<T>(string username)
         {
-            var cars = this.tripsRepository
+            var cars = this.unitOfWork.Trips
                 .All()
                 .Include(x => x.Passengers)
                 .Include(x => x.Car)
@@ -143,7 +137,7 @@ namespace Tompany.Services.Data
 
         public IEnumerable<T> GetTripPosts<T>(int? take = null, int skip = 0)
         {
-            var tripPosts = this.tripsRepository
+            var tripPosts = this.unitOfWork.Trips
                 .All()
                 .Where(x => x.Car.IsDeleted == false & x.IsDeleted == false)
                 .OrderByDescending(x => x.CreatedOn)
@@ -161,12 +155,12 @@ namespace Tompany.Services.Data
 
         public int Count()
         {
-            return this.tripsRepository.All().Count();
+            return this.unitOfWork.Trips.All().Count();
         }
 
         public async Task<IEnumerable<T>> GetAllDestinationsAsync<T>()
         {
-            IQueryable<Destination> query = this.destinationsRepository.All();
+            IQueryable<Destination> query = this.unitOfWork.Destinations.All();
 
             return await query.To<T>().ToListAsync();
         }
