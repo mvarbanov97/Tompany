@@ -9,10 +9,6 @@ namespace Tompany.Web.ViewModels.Trips.ViewModels
 {
     public class TripListViewModel : IMapFrom<Trip>
     {
-        public int PagesCount { get; set; }
-
-        public int CurrentPage { get; set; }
-
         public IEnumerable<TripDetailsViewModel> Trips { get; set; }
 
         public TripSearchInputModel SearchQuery { get; set; }

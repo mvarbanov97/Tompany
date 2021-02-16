@@ -7,7 +7,9 @@
 
     using Microsoft.EntityFrameworkCore;
     using Tompany.Data;
+    using Tompany.Data.Common.Repositories;
     using Tompany.Data.Models;
+    using Tompany.Data.Repositories;
     using Tompany.Services.Data.Contracts;
     using Tompany.Services.Mapping;
     using Tompany.Web.ViewModels.Trips.InputModels;
@@ -137,13 +139,15 @@
 
         public IEnumerable<T> GetTripPosts<T>(int? take = null, int skip = 0)
         {
-            var tripPosts = this.unitOfWork.Trips
-                .All()
+            IEnumerable<T> tripPosts = this.unitOfWork.Trips
+                .AllAsNoTracking()
+                .Include(x => x.Car)
+                .Include(x => x.User)
+                .Include(x => x.UserTrips)
                 .Where(x => x.Car.IsDeleted == false & x.IsDeleted == false)
                 .OrderByDescending(x => x.CreatedOn)
                 .Skip(skip)
-                .To<T>()
-                .ToList();
+                .To<T>();
 
             if (take.HasValue)
             {

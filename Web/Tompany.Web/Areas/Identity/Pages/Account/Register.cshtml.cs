@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Tompany.Common;
 using Tompany.Data.Models;
+using Tompany.Data.Models.Enums;
 using Tompany.Web.Areas.Identity.Pages.Account.InputModels;
 
 namespace Tompany.Web.Areas.Identity.Pages.Account
@@ -27,17 +28,20 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> userManager;
         private readonly ILogger<RegisterModel> logger;
         private readonly IEmailSender emailSender;
+        private readonly RoleManager<ApplicationRole> roleManager;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            RoleManager<ApplicationRole> roleManager)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.logger = logger;
             this.emailSender = emailSender;
+            this.roleManager = roleManager;
         }
 
         [BindProperty]
@@ -67,27 +71,7 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
                     ImageUrl = GlobalConstants.NoProfilePictureLocation,
                 };
 
-                // For validating unique email
-                IdentityResult result = null;
-                IdentityError[] customErrors = null;
-                try
-                {
-                    result = await this.userManager.CreateAsync(user, this.Input.Password);
-                    await this.userManager.AddToRoleAsync(user, GlobalConstants.UserDefaultRoleName);
-                }
-                catch (DbUpdateException ex)
-                {
-                    result = new IdentityResult();
-
-                    if (ex.InnerException.Message.Contains("IX_AspNetUsers_Email"))
-                    {
-                        var exceptionMessage = $"User with email {user.Email} already exists.";
-                        customErrors = new[]
-                        {
-                            new IdentityError { Code = string.Empty, Description = exceptionMessage },
-                        };
-                    }
-                }
+                var result = await this.userManager.CreateAsync(user, this.Input.Password);
 
                 if (result.Succeeded)
                 {
@@ -103,6 +87,18 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
 
                     await this.emailSender.SendEmailAsync(this.Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                    ApplicationRole role = await this.roleManager.FindByNameAsync(GlobalConstants.UserDefaultRoleName);
+
+                    if (role == null)
+                    {
+                        IdentityResult resultRole = await this.CreateRole(GlobalConstants.UserDefaultRoleName);
+
+                        if (resultRole.Succeeded)
+                        {
+                            role = await this.roleManager.FindByNameAsync(GlobalConstants.UserDefaultRoleName);
+                        }
+                    }
 
                     if (this.userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -123,6 +119,18 @@ namespace Tompany.Web.Areas.Identity.Pages.Account
 
             // If we got this far, something failed, redisplay form
             return this.Page();
+        }
+
+        public async Task<IdentityResult> CreateRole(string role)
+        {
+            Roles roleValue = (Roles)Enum.Parse(typeof(Roles), role);
+            ApplicationRole identityRole = new ApplicationRole
+            {
+                Name = role,
+            };
+
+            IdentityResult result = await this.roleManager.CreateAsync(identityRole);
+            return result;
         }
     }
 }

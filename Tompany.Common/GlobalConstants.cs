@@ -23,5 +23,7 @@
         public const string AcceptedTripRequestMessage = "You have been acceppted for trip";
 
         public const string DeclinedTripRequestMessage = "You trip request has been declined for trip";
+
+        public const int ItemsPerPage = 5;
     }
 }

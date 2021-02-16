@@ -15,11 +15,10 @@
     using Tompany.Web.ViewModels.Destinations.ViewModels;
     using Tompany.Web.ViewModels.Trips.InputModels;
     using Tompany.Web.ViewModels.Trips.ViewModels;
+    using X.PagedList;
 
     public class TripsController : BaseController
     {
-        private const int ItemsPerPage = 5;
-
         private readonly ITripsService tripsService;
         private readonly ICarsService carsService;
         private readonly IViewService viewsService;
@@ -43,17 +42,16 @@
             this.userManager = userManager;
         }
 
-        public async Task<IActionResult> Index(TripSearchInputModel input, int page = 1)
+        public IActionResult Index(int? page)
         {
-            var count = this.tripsService.Count();
+            var pageNumber = page ?? 1;
             this.ViewData["Destinations"] = SelectListGenerator.GetAllDestinations(this.destinationsService);
+            var trips = this.tripsService.GetTripPosts<TripDetailsViewModel>();
 
             var viewModel = new TripListViewModel()
             {
-                Trips = this.tripsService.GetTripPosts<TripDetailsViewModel>(ItemsPerPage, (page - 1) * ItemsPerPage),
-                PagesCount = (int)Math.Ceiling((double)count / ItemsPerPage),
-                CurrentPage = page,
-                SearchQuery = input,
+                Trips = trips.ToPagedList(pageNumber, GlobalConstants.ItemsPerPage),
+                SearchQuery = new TripSearchInputModel(),
             };
 
             return this.View(viewModel);
