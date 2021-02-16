@@ -2,6 +2,9 @@
 @using Tompany.Web.ViewModels
 @using Tompany.Data.Models
 @using Tompany.Data.Models.Enums
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Core.Common
+@using X.PagedList
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.Extensions.Options
 @using Tompany.Web.ViewModels.Cars.InputModels;
@@ -14,7 +17,7 @@
 @using Tompany.Web.ViewModels.Users.InputModels;
 @using Tompany.Web.ViewModels.Users.ViewModels;
 @using Tompany.Web.ViewModels.Chat;
-@using Tompany.Web.ViewModels.Notifications.ViewModels; 
+@using Tompany.Web.ViewModels.Notifications.ViewModels;
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

@@ -1,0 +1,69 @@
+﻿@model TripDetailsViewModel
+
+<div class="center" style="left:75%">
+    <div class="card green">
+        <div class="additional">
+            <div class="user-card">
+            </div>
+            <a asp-controller="Trips" asp-action="Details" asp-route-id="@Model.Id">
+                <div class="more-info">
+                    <h1>@Model.UserUserName</h1>
+                    <div class="coords">
+                        <span>Created On</span>
+                        <span>@Model.CreatedOn</span>
+                    </div>
+                    <div class="coords">
+                        <span>Seats</span>
+                        <span>@Model.Passengers.Count() / @Model.Car.Seats</span>
+                    </div>
+                    <div class="coords">
+                        <span>Price per passanger</span>
+                        <span>@Model.PricePerPassenger BGN</span>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="title">Rating</div>
+                            <i class="fa fa-star"></i>
+                            <div class="value">2</div>
+                        </div>
+                        <div>
+                            <div class="title">Matches</div>
+                            <i class="fa fa-gamepad"></i>
+                            <div class="value">27</div>
+                        </div>
+                        <div>
+                            <div class="title">Pals</div>
+                            <i class="fa fa-group"></i>
+                            <div class="value">123</div>
+                        </div>
+                        <div>
+                            <div class="title">Coffee</div>
+                            <i class="fa fa-coffee"></i>
+                            <div class="value infinity">∞</div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+        <div class="general">
+            <h1>@Model.UserUserName</h1>
+            <div class="coords">
+                <span>Going from</span>
+                <span>/</span>
+                <span>@Model.FromDestinationName</span>
+            </div>
+            <div class="coords">
+                <span>Going to</span>
+                <span>/</span>
+                <span>@Model.ToDestinationName</span>
+            </div>
+            <div class="coords">
+                <span>Date of departure</span>
+                <span>@Model.DateAsString</span>
+            </div>
+            <span class="more">Mouse over the card for more info</span>
+        </div>
+    </div>
+</div>
+

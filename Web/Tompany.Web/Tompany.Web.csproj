@@ -2,23 +2,17 @@
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
-    <Nullable>enable</Nullable>
 		<UserSecretsId>aspnet-Tompany-BBB373B5-EF3F-4DBB-B8AA-7152CEC275BF</UserSecretsId>
 		<AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
 		<LangVersion>latest</LangVersion>
+		<RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
 	</PropertyGroup>
 
 	<PropertyGroup>
 		<CodeAnalysisRuleSet>..\..\Rules.ruleset</CodeAnalysisRuleSet>
 		<ApplicationInsightsResourceId>/subscriptions/dd1ebe1c-9d52-46c9-8f29-3b768a642172/resourceGroups/TompanyApp/providers/microsoft.insights/components/TompanyApp</ApplicationInsightsResourceId>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <Content Remove="wwwroot\towns.json" />
-	</ItemGroup>
-	<ItemGroup>
-		<AdditionalFiles Include="..\..\stylecop.json" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="10.1.1" />
@@ -47,6 +41,7 @@
 		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.164" PrivateAssets="all">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="X.PagedList.Mvc.Core" Version="8.0.7" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -82,4 +77,6 @@
 	<ItemGroup>
 	  <None Include="wwwroot\towns.json" />
 	</ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties bundleconfig_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 </Project>
