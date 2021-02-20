@@ -19,18 +19,18 @@ namespace Tompany.Web.Controllers
     [Authorize]
     public class ChatsController : Controller
     {
-        private readonly ApplicationDbContext db;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IChatService chatService;
+        private readonly IUnitOfWork unitOfWork;
 
         public ChatsController(
-            ApplicationDbContext db,
             UserManager<ApplicationUser> userManager,
-            IChatService chatService)
+            IChatService chatService,
+            IUnitOfWork unitOfWork)
         {
-            this.db = db;
             this.userManager = userManager;
             this.chatService = chatService;
+            this.unitOfWork = unitOfWork;
         }
 
         [Route("Chat/With/{username?}/Group/{group?}")]
@@ -41,7 +41,7 @@ namespace Tompany.Web.Controllers
             var model = new ChatViewModel
             {
                 FromUser = await this.userManager.GetUserAsync(this.HttpContext.User),
-                ToUser = this.db.Users.FirstOrDefault(x => x.UserName == username),
+                ToUser = this.unitOfWork.Users.All().FirstOrDefault(x => x.UserName == username),
                 ChatMessages = await this.chatService.ExtractAllMessages(group),
                 GroupName = group,
             };
@@ -55,7 +55,7 @@ namespace Tompany.Web.Controllers
         {
             var currentUser = await this.userManager.GetUserAsync(this.User);
 
-            var trip = await this.db.Trips.Where(x => x.Id == tripId).Include(x => x.User).Include(x => x.Passengers).FirstOrDefaultAsync();
+            var trip = await this.unitOfWork.Trips.All().Where(x => x.Id == tripId).Include(x => x.User).Include(x => x.Passengers).FirstOrDefaultAsync();
 
             var model = new GroupChatViewModel
             {
