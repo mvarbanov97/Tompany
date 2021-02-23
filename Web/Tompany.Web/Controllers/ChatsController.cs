@@ -40,7 +40,7 @@ namespace Tompany.Web.Controllers
 
             var model = new ChatViewModel
             {
-                FromUser = await this.userManager.GetUserAsync(this.HttpContext.User),
+                FromUser = await this.userManager.GetUserAsync(this.User),
                 ToUser = this.unitOfWork.Users.All().FirstOrDefault(x => x.UserName == username),
                 ChatMessages = await this.chatService.ExtractAllMessages(group),
                 GroupName = group,
@@ -55,7 +55,7 @@ namespace Tompany.Web.Controllers
         {
             var currentUser = await this.userManager.GetUserAsync(this.User);
 
-            var trip = await this.unitOfWork.Trips.All().Where(x => x.Id == tripId).Include(x => x.User).Include(x => x.Passengers).FirstOrDefaultAsync();
+            var trip = this.unitOfWork.Trips.All().Where(x => x.Id == tripId).Include(x => x.User).Include(x => x.Passengers).FirstOrDefault();
 
             var model = new GroupChatViewModel
             {

@@ -29,7 +29,7 @@
             var car = new Car
             {
                 UserId = userId,
-                CarImageUrl = input.CarImageUrl,
+                CarImageUrl = GlobalConstants.NoCarPictureLocation,
                 Brand = input.Brand,
                 Model = input.Model,
                 YearOfManufacture = input.YearOfManufacture,
@@ -57,7 +57,6 @@
         {
             var car = this.unitOfWork.Cars.All().Where(x => x.Id == model.Id && x.UserId == userId).FirstOrDefault();
 
-            car.CarImageUrl = model.CarImageUrl;
             car.Brand = model.Brand;
             car.Model = model.Model;
             car.YearOfManufacture = model.YearOfManufacture;
@@ -67,6 +66,11 @@
             car.IsSmokingAllowed = model.IsSmokingAllowed;
             car.IsAirConditiningAvailable = model.IsAirConditiningAvailable;
             car.IsAllowedForPets = model.IsAllowedForPets;
+
+            if (model.CarImageUrl != null)
+            {
+                car.CarImageUrl = model.CarImageUrl;
+            }
 
             this.unitOfWork.Cars.Update(car);
             await this.unitOfWork.CompleteAsync();

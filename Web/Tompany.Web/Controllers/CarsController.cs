@@ -88,28 +88,20 @@ namespace Tompany.Web.Controllers
         {
             var currentUser = await this.userManager.GetUserAsync(this.User);
 
-            if (this.ModelState.IsValid)
+            if (!this.ModelState.IsValid)
             {
-                bool isCarPictureAttached = false;
-                var carImageUrl = await this.cloudinaryService.UploadImageAsync(
-                        input.CarPicture,
-                        string.Format(GlobalConstants.CloudinaryCarPictureName, currentUser.Id));
-
-                if (carImageUrl != null)
-                {
-                    isCarPictureAttached = true;
-                    if (carImageUrl != input.CarImageUrl)
-                    {
-                        input.CarImageUrl = carImageUrl;
-                    }
-                }
-                else
-                {
-                    input.CarImageUrl = GlobalConstants.NoCarPictureLocation;
-                }
-
-                await this.carsService.EditAsync(input, currentUser.Id);
+                return this.View();
             }
+
+            if (input.CarPicture != null)
+            {
+                string carImageUrl = await this.cloudinaryService.UploadImageAsync(
+                                       input.CarPicture,
+                                       string.Format(GlobalConstants.CloudinaryCarPictureName, currentUser.Id));
+                input.CarImageUrl = carImageUrl;
+            }
+
+            await this.carsService.EditAsync(input, currentUser.Id);
 
             return this.RedirectToAction("Profile", "Users", new { username = currentUser.UserName, tab = "UserAllRegisteredVehicles" });
         }
