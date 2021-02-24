@@ -58,7 +58,7 @@
             <label asp-for="Input.Country"></label>
             <input asp-for="Input.Country" type="hidden" id="countryValue" />
             <select asp-for="Input.Country" name="country" class="form-control countries order-alpha presel-byip " id="countryId" onchange="changeCountry()">
-                <option value="">Select Country</option>
+                <option value="">@(Model.Input.Country == null ? "Select Country" : Model.Input.Country)</option>
             </select>
             <span asp-validation-for="Input.Country" class="text-danger"></span>
         </div>
@@ -66,7 +66,7 @@
             <label asp-for="Input.State"></label>
             <input asp-for="Input.State" type="hidden" id="stateValue" />
             <select name="state" class="form-control states order-alpha" id="stateId" onchange="changeState()">
-                <option value="">Select State</option>
+                <option value="">@(Model.Input.State == null ? "Select State" : Model.Input.State)</option>
             </select>
             <span asp-validation-for="Input.State" class="text-danger"></span>
         </div>
@@ -74,7 +74,7 @@
             <label asp-for="Input.City"></label>
             <input asp-for="Input.City" type="hidden" id="cityValue" />
             <select asp-for="Input.City" name="city" class="form-control cities order-alpha" id="cityId" onchange="changeCity()">
-                <option value="">Select City</option>
+                <option value="">@(Model.Input.City == null ? "Select City" : Model.Input.City)</option>
             </select>
             <span asp-validation-for="Input.City" class="text-danger"></span>
         </div>
@@ -82,6 +82,21 @@
             <label asp-for="Input.Gender"></label>
             <select class="form-control" asp-for="Input.Gender" asp-items="@Html.GetEnumSelectList<Gender>()"></select>
             <span asp-validation-for="Input.Gender" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-3">
+            <label asp-for="Input.CountryCode"></label>
+            <input class="form-control" asp-for="Input.CountryCode" onblur="checkCountryCode(this)">
+            <span asp-validation-for="Input.CountryCode" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-3">
+            <label asp-for="Input.PhoneNumber"></label>
+            <input class="form-control" asp-for="Input.PhoneNumber">
+            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-3">
+            <label asp-for="Input.ZipCode"></label>
+            <input class="form-control" asp-for="Input.ZipCode">
+            <span asp-validation-for="Input.ZipCode" class="text-danger"></span>
         </div>
     </div>
     <hr />
