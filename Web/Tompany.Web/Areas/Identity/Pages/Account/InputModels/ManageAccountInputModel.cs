@@ -28,6 +28,14 @@ namespace Tompany.Web.Areas.Identity.Pages.Account.InputModels
         public string Country { get; set; }
 
         [PersonalData]
+        [Display(Name = "Country Code")]
+        public string CountryCode { get; set; }
+
+        [PersonalData]
+        [Display(Name = "Zip Code")]
+        public string ZipCode { get; set; }
+
+        [PersonalData]
         [Display(Name = "State")]
         [MaxLength(20)]
         [BindProperty]
