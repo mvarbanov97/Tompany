@@ -27,6 +27,30 @@ namespace Tompany.Data.Models
             this.WatchListTrips = new HashSet<WatchListTrip>();
         }
 
+        [ForeignKey(nameof(ZipCode))]
+        public string ZipCodeId { get; set; }
+        public ZipCode ZipCode { get; set; }
+
+        [ForeignKey(nameof(Country))]
+        public string CountryId { get; set; }
+
+        public Country Country { get; set; }
+
+        [ForeignKey(nameof(State))]
+        public string StateId { get; set; }
+
+        public State State { get; set; }
+
+        [ForeignKey(nameof(City))]
+        public string CityId { get; set; }
+
+        public City City { get; set; }
+
+        [ForeignKey(nameof(CountryCode))]
+        public string CountryCodeId { get; set; }
+
+        public CountryCode CountryCode { get; set; }
+
         public string FirstName { get; set; }
 
         public string LastName { get; set; }

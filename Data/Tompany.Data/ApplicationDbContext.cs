@@ -30,6 +30,8 @@
 
         public DbSet<Country> Countries { get; set; }
 
+        public DbSet<CountryCode> CountryCodes { get; set; }
+
         public DbSet<City> Cities { get; set; }
 
         public DbSet<Car> Cars { get; set; }
@@ -100,10 +102,41 @@
                 .WithMany(x => x.UserTrips)
                 .HasForeignKey(x => x.TripId);
 
-            builder.Entity<ApplicationUser>()
-                .HasMany(x => x.UserTrips)
-                .WithOne(x => x.User)
-                .HasForeignKey(x => x.UserId);
+            builder.Entity<City>(entity =>
+            {
+                entity.HasOne(x => x.State)
+                    .WithMany(x => x.Cities)
+                    .HasForeignKey(x => x.StateId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Country)
+                    .WithMany(x => x.Cities)
+                    .HasForeignKey(x => x.CountryId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasMany(x => x.ZipCodes)
+                    .WithOne(x => x.City)
+                    .HasForeignKey(x => x.CityId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<Country>()
+                .HasOne(x => x.CountryCode)
+                .WithMany(x => x.Coutries)
+                .HasForeignKey(x => x.CountryCodeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ApplicationUser>(entity =>
+            {
+                entity.HasMany(x => x.UserTrips)
+                      .WithOne(x => x.User)
+                      .HasForeignKey(x => x.UserId);
+
+                entity.HasOne(x => x.CountryCode)
+                    .WithMany(x => x.ApplicationUsers)
+                    .HasForeignKey(x => x.CountryCodeId)
+                    .IsRequired(false);
+            });
 
             builder.Entity<UserRating>().HasKey(x => new
             {
