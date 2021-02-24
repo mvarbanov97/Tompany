@@ -17,6 +17,16 @@ namespace Tompany.Data
 
         IDeletableEntityRepository<ChatMessage> ChatMessages { get; }
 
+        IDeletableEntityRepository<Country> Countries { get; }
+
+        IDeletableEntityRepository<CountryCode> CountryCodes { get; }
+
+        IDeletableEntityRepository<State> States { get; }
+
+        IDeletableEntityRepository<City> Cities { get; }
+
+        IDeletableEntityRepository<ZipCode> ZipCodes { get; }
+
         IRepository<Destination> Destinations { get; }
 
         IRepository<Trip> Trips { get; }
