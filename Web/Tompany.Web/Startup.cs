@@ -29,6 +29,8 @@
     using Tompany.Web.Infrastructure.Contracts;
     using CloudinaryDotNet;
     using Tompany.Services;
+    using Tompany.Services.Messaging.SecurityModels;
+    using Twilio;
 
     public class Startup
     {
@@ -84,6 +86,13 @@
                 this.configuration["Cloudinary:ApiSecret"]);
             var cloudinary = new Cloudinary(cloudinaryAccount);
             services.AddSingleton(cloudinary);
+
+            // Twilio Authentication
+            var accountSid = this.configuration["Twilio:AccountSID"];
+            var authToken = this.configuration["Twilio:AuthToken"];
+            TwilioClient.Init(accountSid, authToken);
+            services.Configure<TwilioVerifySettings>(this.configuration.GetSection("Twilio"));
+            var test = this.configuration.GetSection("Twilio:VerificationServiceSID");
 
             // Data repositories
             services.AddScoped(typeof(IDeletableEntityRepository<>), typeof(EfDeletableEntityRepository<>));
